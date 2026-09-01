@@ -1,0 +1,13 @@
+{
+  "name":"HOBBYWOOD – Vom Foto zum Projekt",
+  "short_name":"HOBBYWOOD",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#f4f2eb",
+  "theme_color":"#1d3326",
+  "lang":"de",
+  "icons":[
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

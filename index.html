@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#1d3326" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="HOBBYWOOD" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>HOBBYWOOD – Web Pilot</title>
+  <style>
+    :root{--bg:#f4f2eb;--card:#fff;--ink:#172019;--muted:#677069;--accent:#1d3326;--accent2:#e7ece8;--line:#d8ddd9;--warn:#fff3d7;--danger:#fde7e4;--ok:#e5f3e8;}
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+    header{position:sticky;top:0;z-index:5;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;background:rgba(244,242,235,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
+    .brand{font-size:20px;font-weight:850;letter-spacing:.08em}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+    main{max-width:680px;margin:0 auto;padding:22px 16px calc(92px + env(safe-area-inset-bottom));}.screen{display:none}.screen.active{display:block}
+    h1{font-size:31px;line-height:1.07;margin:10px 0 10px}h2{font-size:23px;margin:18px 0 10px}h3{font-size:17px;margin:16px 0 8px}p{line-height:1.45;color:#3d4840}
+    .lead{font-size:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px rgba(0,0,0,.035)}
+    button,.button{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:750;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}
+    .primary{background:var(--accent);color:white}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+    input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:110px;resize:vertical}
+    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+    .tag{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;background:var(--accent2);margin:3px 3px 3px 0}.status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:11px;height:11px;border-radius:50%;background:#599367;margin-top:5px;flex:none}.dot.mid{background:#d9a63b}.dot.unknown{background:#9b9f9b}
+    .notice{border-radius:14px;padding:13px 14px;margin:12px 0;background:var(--warn);line-height:1.4}.danger{background:var(--danger)}.ok{background:var(--ok)}
+    .choice{border:2px solid var(--line);border-radius:16px;padding:15px;margin:10px 0;background:#fff}.choice.selected{border-color:var(--accent);background:#f0f4f1}.choice strong{font-size:18px}.choice p{margin:5px 0 0;font-size:14px}
+    .tabs{display:flex;gap:6px;overflow:auto;padding-bottom:5px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:750}.tab.on{background:var(--accent);color:#fff}.pane{display:none}.pane.on{display:block}
+    table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}
+    .step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}.step p{margin:2px 0}
+    .footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:24px}.hidden{display:none!important}
+    .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}
+    @media(min-width:650px){main{padding-top:34px}.photos{grid-template-columns:repeat(4,1fr)}}
+  </style>
+</head>
+<body>
+<header><div class="brand">HOBBYWOOD</div><div class="sub">Web Pilot 0.1 · Vom Foto zum Projekt</div></header>
+<main>
+<section id="start" class="screen active">
+  <h1>Was möchtest du nachbauen?</h1>
+  <p class="lead">Zeig HOBBYWOOD dein Objekt. Mehrere Ansichten helfen, Konstruktion und Details zu verstehen.</p>
+  <label class="button primary" for="cameraInput">📷 Fotografieren</label>
+  <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
+  <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
+  <input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
+  <button class="ghost" id="demoBtn">Demo-Projekt laden</button>
+  <div class="card"><strong>Meine Projekte</strong><p id="savedCount">Noch keine Projekte gespeichert.</p><button class="secondary" id="openSaved">Gespeichertes Projekt öffnen</button></div>
+</section>
+
+<section id="photos" class="screen">
+  <h1>Dein Projekt</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
+  <div id="photoGrid" class="photos"></div>
+  <label class="button secondary" for="moreInput">+ Weitere Ansicht</label><input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
+  <button class="primary" id="analyzeBtn">Analysieren</button><button class="ghost back">Zurück</button>
+</section>
+
+<section id="analyzing" class="screen">
+  <h1>Ich sehe mir das an …</h1><p>HOBBYWOOD trennt erkennbare Fakten von Annahmen und offenen Punkten.</p><div class="progress"><i id="bar"></i></div>
+  <div class="card"><div>✓ Objekt und Bauteile</div><div>✓ sichtbare Verbindungen</div><div>✓ Materialhinweise</div><div>✓ offene konstruktive Details</div></div>
+</section>
+
+<section id="analysis" class="screen">
+  <h1>Das habe ich erkannt</h1><div class="card"><h2 style="margin-top:0">Badetuch- & Bademantelhalter</h2><p>Holzhalter zur Montage an einem Bad-/Handtuchheizkörper.</p>
+  <div class="status"><span class="dot"></span><div><strong>Waagerechter Holzträger</strong><br><small>Erkannt · hohe Sicherheit</small></div></div>
+  <div class="status"><span class="dot"></span><div><strong>4 Flip-Flop-Elemente mit 4 Kleiderhaken</strong><br><small>Erkannt · hohe Sicherheit</small></div></div>
+  <div class="status"><span class="dot mid"></span><div><strong>Holzwerkstoff / Massivholz</strong><br><small>Erkannt, Holzart nicht bestimmbar</small></div></div></div>
+  <div class="notice"><strong>Noch nicht sicher erkennbar:</strong><br>Wie der Holzträger am Heizkörper befestigt ist.</div>
+  <label class="button primary" for="detailInput">Detailfoto der Rückseite hinzufügen</label><input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple>
+  <button class="secondary" id="detailSim">Ich habe das Detail bereits gezeigt</button>
+</section>
+
+<section id="mount" class="screen">
+  <h1>Befestigung erkannt</h1><div class="card"><p>Der Holzträger wird mit rückseitigen, J-förmigen Haltern an einem waagerechten Heizkörperrohr eingehängt.</p><span class="tag">Erkannt</span><span class="tag">hohe Sicherheit</span></div>
+  <div class="notice"><strong>Offen:</strong> Tragfähigkeit und genaue Abmessungen der Halter sind aus den Bildern nicht verlässlich bestimmbar.</div>
+  <button class="primary" id="toKnowledge">Weiter</button>
+</section>
+
+<section id="knowledge" class="screen">
+  <h1>Was weißt du über das Objekt?</h1><p>Schreib einfach, was du weißt. Material, Größenreferenzen oder verdeckte Verbindungen reichen.</p>
+  <textarea id="knowledgeText">Das Holz stammt von alten Europaletten. Die Flip-Flops wurden nach einem echten Flip-Flop Größe 43–45 angefertigt. Sie sind von hinten durch den Träger verschraubt.</textarea>
+  <button class="primary" id="toUnderstanding">Übernehmen</button>
+</section>
+
+<section id="understanding" class="screen">
+  <h1>So habe ich dein Projekt verstanden</h1>
+  <div class="card">
+    <div class="status"><span class="dot"></span><div><strong>Material</strong><br>altes Europalettenholz</div></div>
+    <div class="status"><span class="dot"></span><div><strong>Träger</strong><br>ca. 110 mm hoch</div></div>
+    <div class="status"><span class="dot"></span><div><strong>Dekorelemente</strong><br>4 Flip-Flops, Vorlage Gr. 43–45</div></div>
+    <div class="status"><span class="dot"></span><div><strong>Flip-Flop-Befestigung</strong><br>von hinten verschraubt</div></div>
+    <div class="status"><span class="dot"></span><div><strong>Montage</strong><br>Einhängehaken am Heizkörper</div></div>
+  </div>
+  <h3>Noch offen</h3><div class="status"><span class="dot unknown"></span><div>Länge des Trägers</div></div><div class="status"><span class="dot unknown"></span><div>Holzstärken</div></div><div class="status"><span class="dot unknown"></span><div>Tragfähigkeit der Heizkörperhaken</div></div>
+  <button class="primary" id="understood">Stimmt so</button><button class="ghost" id="editKnowledge">Korrigieren</button>
+</section>
+
+<section id="mode" class="screen">
+  <h1>Wie möchtest du weitermachen?</h1>
+  <div class="choice selected" data-mode="original"><strong>Original nachbauen</strong><p>Konstruktion und Erscheinungsbild möglichst übernehmen.</p></div>
+  <div class="choice" data-mode="variant"><strong>Eigene Variante bauen</strong><p>Die Idee übernehmen und an deine Wünsche anpassen.</p></div>
+  <button class="primary" id="toMeasure">Weiter</button>
+</section>
+
+<section id="measure" class="screen">
+  <h1>An deinen Heizkörper anpassen</h1><p>Eine „Standardbreite“ wird nicht geraten. Entscheidend ist dein eigener Heizkörper.</p>
+  <label for="width"><strong>Gewünschte Trägerlänge</strong></label><div style="display:flex;gap:8px;align-items:center;margin-top:8px"><input id="width" inputmode="numeric" placeholder="z. B. 800"><strong>mm</strong></div>
+  <div class="notice">Du kannst das Maß für diesen Pilotversuch leer lassen. HOBBYWOOD kennzeichnet es dann als „vor Ort bestimmen“.</div>
+  <button class="primary" id="buildProject">Projekt erstellen</button>
+</section>
+
+<section id="record" class="screen">
+  <h1>Badetuchhalter</h1><p class="lead">aus Palettenholz</p><div><span class="tag">Schwierigkeit ●●○○○</span><span class="tag">Innen / Feuchtraum</span></div>
+  <div class="tabs"><button class="tab on" data-pane="overview">Übersicht</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
+  <div id="overview" class="pane on"><div class="card"><h3 style="margin-top:0">Konstruktion</h3><p>Waagerechter Träger aus Palettenholz, vier aufgeschraubte Flip-Flop-Elemente mit Kleiderhaken und rückseitige Einhängehaken für den Badheizkörper.</p><p><strong>Trägerlänge:</strong> <span id="recordWidth">vor Ort bestimmen</span></p><p><strong>Trägerhöhe:</strong> ca. 110 mm (Referenzaufnahme)</p></div></div>
+  <div id="material" class="pane"><div class="card"><table><tr><th>Bauteil</th><th>Menge</th><th>Angabe</th></tr><tr><td>Träger</td><td>1</td><td id="matWidth">Länge nach Heizkörper × ca. 110 mm</td></tr><tr><td>Flip-Flops</td><td>4</td><td>Palettenholz, Schablone 43–45</td></tr><tr><td>Kleiderhaken</td><td>4</td><td>Metall, nach Wahl</td></tr><tr><td>Einhängehaken</td><td>mind. 2</td><td>passend zum Heizkörperrohr; Tragfähigkeit prüfen</td></tr><tr><td>Schnur</td><td>nach Bedarf</td><td>für Flip-Flop-Riemen</td></tr><tr><td>Holzschrauben</td><td>nach Bedarf</td><td>Länge erst nach Materialstärke festlegen</td></tr></table></div></div>
+  <div id="tools" class="pane"><div class="card"><p><strong>Grundausstattung:</strong> Stichsäge oder Bandsäge, Akkuschrauber, Holzbohrer, Schleifmittel, Zollstock, Winkel, Bleistift, passende Bits.</p><p><strong>Werkstattalternative:</strong> Bei vorhandener Bandsäge Konturen sägen und bis zum Anriss schleifen. Ohne Bandsäge Stichsäge mit Kurvensägeblatt verwenden.</p></div></div>
+  <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
+  <div id="safety" class="pane"><div class="notice"><strong>Palettenholz:</strong> auf Nägel, Metallreste und unbekannte Verunreinigungen prüfen. Nur trockenes, geeignetes Material verwenden.</div><div class="notice"><strong>Heizkörperhaken:</strong> Aus den Fotos sind Tragfähigkeit und Materialeignung nicht verifizierbar. Vor Verwendung prüfen.</div><div class="notice"><strong>Wärme/Feuchtraum:</strong> Kunststoffteile und Oberflächen müssen für Temperatur und Badezimmerklima geeignet sein.</div></div>
+  <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
+  <p class="footerline">Pilotversion: Bildanalyse simuliert. Keine technischen Traglasten werden erfunden.</p>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let photos=[], chosenMode='original';
+function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
+function ingest(files){[...files].forEach(f=>photos.push({url:URL.createObjectURL(f),name:f.name})); renderPhotos();show('photos')}
+function renderPhotos(){ $('#photoGrid').innerHTML=photos.map(p=>`<img src="${p.url}" alt="Projektfoto">`).join('');$('#photoCount').textContent=photos.length}
+['cameraInput','libraryInput','moreInput'].forEach(id=>$('#'+id).addEventListener('change',e=>ingest(e.target.files)));
+$('#demoBtn').onclick=()=>{photos=[{url:'demo_holder.jpeg'},{url:'demo_mount.jpeg'}];renderPhotos();show('photos')};
+$$('.back').forEach(b=>b.onclick=()=>show('start'));
+$('#analyzeBtn').onclick=()=>{show('analyzing');setTimeout(()=>$('#bar').style.width='55%',150);setTimeout(()=>$('#bar').style.width='100%',650);setTimeout(()=>show('analysis'),1050)};
+$('#detailInput').addEventListener('change',e=>{[...e.target.files].forEach(f=>photos.push({url:URL.createObjectURL(f)}));show('mount')});
+$('#detailSim').onclick=()=>show('mount');$('#toKnowledge').onclick=()=>show('knowledge');$('#toUnderstanding').onclick=()=>show('understanding');$('#editKnowledge').onclick=()=>show('knowledge');$('#understood').onclick=()=>show('mode');
+$$('.choice').forEach(c=>c.onclick=()=>{$$('.choice').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');chosenMode=c.dataset.mode});$('#toMeasure').onclick=()=>show('measure');
+const steps=['Palettenholz auswählen, auf Metallreste prüfen und vorbereiten.','Träger auf die benötigte Heizkörperbreite ablängen.','Flip-Flop-Schablone Größe 43–45 auf das Holz übertragen.','Vier Konturen mit Stich- oder Bandsäge ausschneiden.','Kanten und Oberflächen schleifen; Gebrauchsspuren nach Wunsch erhalten.','Bohrungen für die dekorativen Riemen setzen und Schnüre einsetzen.','Je einen Kleiderhaken auf jedem Flip-Flop montieren.','Flip-Flops ausrichten und von der Rückseite des Trägers verschrauben.','Einhängehaken auf der Rückseite passend zum Heizkörper montieren.','Halter einhängen und vorsichtige Belastungsprobe durchführen.'];
+$('#stepsBox').innerHTML=steps.map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${s}</p></div>`).join('');
+$('#buildProject').onclick=()=>{let w=$('#width').value.trim();$('#recordWidth').textContent=w?`${w} mm`:'vor Ort bestimmen';$('#matWidth').textContent=w?`${w} × ca. 110 mm`:'Länge nach Heizkörper × ca. 110 mm';show('record')};
+$$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('on'));$$('.pane').forEach(x=>x.classList.remove('on'));t.classList.add('on');$('#'+t.dataset.pane).classList.add('on')});
+function updateSaved(){let p=localStorage.getItem('hobbywood_project');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
+$('#saveProject').onclick=()=>{localStorage.setItem('hobbywood_project',JSON.stringify({title:'Badetuchhalter aus Palettenholz',width:$('#width').value,mode:chosenMode,date:new Date().toISOString()}));updateSaved();alert('Projekt wurde auf diesem Gerät gespeichert.')};
+$('#openSaved').onclick=()=>{let p=JSON.parse(localStorage.getItem('hobbywood_project')||'null');if(!p)return;$('#width').value=p.width||'';$('#recordWidth').textContent=p.width?`${p.width} mm`:'vor Ort bestimmen';show('record')};
+$('#newProject').onclick=()=>{photos=[];$('#width').value='';renderPhotos();show('start')};updateSaved();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
