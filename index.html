@@ -104,7 +104,7 @@
   <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
   <div id="safety" class="pane"><div id="safetyBox"></div></div>
   <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
-  <p class="footerline">Pilotversion 0.7.3 · Referenzfotos werden lokal im Browser gespeichert.</p>
+  <p class="footerline">Pilotversion 0.7.4 · Referenzfotos werden lokal im Browser gespeichert.</p>
 </section>
 </main>
 
@@ -221,28 +221,42 @@ $$('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.pane));
 
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
+let talkBusy=false;
 function renderTalk(){
  const log=$('#chatLog'); if(!log)return;
  log.innerHTML=chat.length?chat.map(m=>`<div class="notice ${m.role==='assistant'?'ok':''}"><strong>${m.role==='assistant'?"look, talk ’n build":"Du"}:</strong><br>${escapeHtml(m.text)}</div>`).join(''):'<p>Noch kein Werkstattgespräch.</p>';
- const box=$('#editableOpen'), u=analysisState?.unknown||[];
- box.innerHTML=u.length?u.slice(0,3).map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input id="open${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"><button class="secondary" onclick="answerOpen(${i})">Übernehmen</button></div></div>`).join(''):'<div class="ok notice">Keine offenen Punkte.</div>';
+ const box=$('#editableOpen'), u=(analysisState?.unknown||[]).slice(0,3);
+ box.innerHTML=u.length
+  ? u.map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"></div></div>`).join('')+`<button class="secondary" id="acceptOpenAnswers" style="margin-top:10px">Antworten übernehmen</button>`
+  : '<div class="ok notice">Keine offenen Punkte.</div>';
 }
-window.answerOpen=async i=>{
- const v=$('#open'+i).value.trim(); if(!v)return;
- chat.push({role:'user',text:`Zum offenen Punkt "${analysisState.unknown[i]}": ${v}`}); await talkToPro();
-};
-async function talkToPro(){
- const inp=$('#chatInput'),t=inp?.value.trim(); if(t){chat.push({role:'user',text:t});inp.value='';}
+async function submitOpenAnswers(){
+ if(talkBusy)return;
+ const u=(analysisState?.unknown||[]).slice(0,3);
+ const answers=[...document.querySelectorAll('.openAnswer')].map(el=>({index:Number(el.dataset.i),question:u[Number(el.dataset.i)],answer:el.value.trim()})).filter(x=>x.answer);
+ if(!answers.length)return alert('Bitte mindestens eine Antwort eintragen.');
+ const text=answers.map(x=>`• ${x.question} — ${x.answer}`).join('\n');
+ chat.push({role:'user',text:`Antworten zu den offenen Punkten:\n${text}`});
+ await talkToPro({openAnswers:answers,skipInput:true});
+}
+async function talkToPro({openAnswers=[],skipInput=false}={}){
+ if(talkBusy)return;
+ const inp=$('#chatInput'),t=skipInput?'':inp?.value.trim();
+ if(t){chat.push({role:'user',text:t});inp.value='';}
+ if(!t&&!openAnswers.length)return;
+ talkBusy=true;
+ const send=$('#sendChat'), batch=$('#acceptOpenAnswers'); if(send)send.disabled=true;if(batch)batch.disabled=true;
  try{
-  const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysis:analysisState,chat})});
+  const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysis:analysisState,chat,openAnswers})});
   if(!r.ok)throw Error(await r.text()); const d=await r.json();
   if(d.analysis)analysisState=d.analysis;if(d.reply)chat.push({role:'assistant',text:d.reply});
   reconstruction=null;renderTalk();
  }catch(e){alert('Werkstattgespräch fehlgeschlagen: '+e.message)}
+ finally{talkBusy=false;const s=$('#sendChat'),b=$('#acceptOpenAnswers');if(s)s.disabled=false;if(b)b.disabled=false;}
 }
-document.addEventListener('click',e=>{if(e.target?.id==='sendChat')talkToPro()});
+document.addEventListener('click',e=>{if(e.target?.id==='sendChat')talkToPro();if(e.target?.id==='acceptOpenAnswers')submitOpenAnswers()});
 
-function projectPayload(){return {version:'0.7.3',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
+function projectPayload(){return {version:'0.7.4',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
 function updateSaved(){const p=localStorage.getItem('look_talk_n_build_project_0_7');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
 $('#saveProject').onclick=()=>{
   try{

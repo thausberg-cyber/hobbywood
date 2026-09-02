@@ -6,8 +6,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.7.3",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.7.3"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.7.4",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.7.4"}));
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
 async function createJsonResponse(content,repairLabel="Antwort"){
@@ -49,15 +49,32 @@ Runde:${round}`}];addImages(content,images);
 }catch(e){console.error(e);res.status(500).json({error:"analysis_failed",detail:e.message})}});
 
 app.post("/talk",async(req,res)=>{try{
- const {images=[],knowledge="",analysis={},chat=[]}=req.body||{};
- let content=[{type:"input_text",text:`Du bist ein erfahrener Werkstattkollege. Führe mit dem Nutzer ein fachliches Werkstattgespräch auf Augenhöhe, nicht wie einen Prüf- oder Fragebogen. Er darf korrigieren, Maße nennen, widersprechen und Alternativen diskutieren. Prüfe fachlich und stimme nicht automatisch zu. Übernimm belastbare Nutzerangaben und Entscheidungen in den Projektstand. Entferne damit geklärte Punkte aus unknown und frage sie nicht erneut ab. Zerlege eine brauchbare Antwort nicht in neue Unterfragen. Erzeuge pro Nutzerbeitrag hoechstens EINEN neuen offenen Punkt, und nur wenn er fuer Konstruktion, Machbarkeit oder Sicherheit wirklich relevant ist. Nicht sicherheitskritische Detailfragen duerfen offen bleiben, ohne aktiv nachgefragt zu werden. Nichts erfinden. Die reply soll kurz, kollegial und konkret bestaetigen, was uebernommen wurde, und falls noetig genau den einen naechsten Punkt nennen. JSON:
-{"reply":"direkte fachliche Antwort","analysis":{"object":"...","summary":"...","recognized":["..."],"assumptions":["..."],"unknown":["hoechstens die wirklich relevanten noch offenen Punkte"],"safety_notes":["..."]}}
+ const {images=[],knowledge="",analysis={},chat=[],openAnswers=[]}=req.body||{};
+ const answered=Array.isArray(openAnswers)?openAnswers.filter(x=>x&&typeof x.question==="string"&&String(x.answer||"").trim()):[];
+ let content=[{type:"input_text",text:`Du bist ein erfahrener Werkstattkollege. Führe mit dem Nutzer ein fachliches Werkstattgespräch auf Augenhöhe, nicht wie einen Prüf- oder Fragebogen. Er darf korrigieren, Maße nennen, widersprechen und Alternativen diskutieren. Prüfe fachlich und stimme nicht automatisch zu. Nichts erfinden.
+
+Wenn OPEN_ANSWERS vorhanden sind, wurden diese Fragen vom Nutzer bewusst beantwortet. Behandle ihre Angaben als Nutzerangaben/Projektentscheidungen. Stelle dieselben Fragen nicht erneut. Formuliere eine kurze gemeinsame Rückmeldung zu allen Antworten. Erzeuge höchstens EINEN neuen offenen Punkt, und nur wenn er für Konstruktion, Machbarkeit oder Sicherheit wirklich relevant ist. Zerlege brauchbare Antworten nicht in weitere Detailfragen.
+
+Gib JSON zurück:
+{"reply":"kurze fachliche Antwort","recognized_updates":["neue belastbare Nutzerangaben"],"assumption_updates":["nur falls nötig"],"safety_notes":["nur relevante neue Hinweise"],"new_open_point":null}
 Nutzerwissen:${knowledge}
 Projektstand:${JSON.stringify(analysis)}
+OPEN_ANSWERS:${JSON.stringify(answered)}
 Gespräch:${JSON.stringify(chat)}`}];addImages(content,images);
- res.json(await createJsonResponse(content,"talk"));
+ const d=await createJsonResponse(content,"talk");
+ const currentUnknown=Array.isArray(analysis?.unknown)?analysis.unknown:[];
+ const answeredQuestions=new Set(answered.map(x=>x.question));
+ let remaining=currentUnknown.filter(q=>!answeredQuestions.has(q));
+ const newPoint=typeof d.new_open_point==="string"?d.new_open_point.trim():"";
+ if(newPoint && !remaining.includes(newPoint) && !answeredQuestions.has(newPoint)) remaining.push(newPoint);
+ remaining=remaining.slice(0,3);
+ const merged={...analysis};
+ merged.recognized=[...(Array.isArray(analysis?.recognized)?analysis.recognized:[]),...(Array.isArray(d.recognized_updates)?d.recognized_updates:[])];
+ merged.assumptions=[...(Array.isArray(analysis?.assumptions)?analysis.assumptions:[]),...(Array.isArray(d.assumption_updates)?d.assumption_updates:[])];
+ merged.safety_notes=[...(Array.isArray(analysis?.safety_notes)?analysis.safety_notes:[]),...(Array.isArray(d.safety_notes)?d.safety_notes:[])];
+ merged.unknown=remaining;
+ res.json({reply:d.reply||"Projektstand aktualisiert.",analysis:merged});
 }catch(e){console.error(e);res.status(500).json({error:"talk_failed",detail:e.message})}});
-
 app.post("/reconstruct",async(req,res)=>{try{
  const {analysis={},knowledge="",chat=[],images=[]}=req.body||{};
  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". JSON:
@@ -67,4 +84,4 @@ Nutzerwissen:${knowledge}
 Werkstattgespräch:${JSON.stringify(chat)}`}];addImages(content,images);
  res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"reconstruction_failed",detail:e.message})}});
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.7.3 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.7.4 listening on port ${port}`));
