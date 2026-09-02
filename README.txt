@@ -1,9 +1,9 @@
-HOBBYWOOD Web Pilot 0.1
+look 'n build / HOBBYWOOD Web Pilot 0.1
 =======================
 
 Zweck
 -----
-Dieser Pilot bildet den geplanten HOBBYWOOD-1.0-Nutzerfluss als mobile Web-App/PWA ab.
+Dieser Pilot bildet den geplanten look 'n build / HOBBYWOOD-1.0-Nutzerfluss als mobile Web-App/PWA ab.
 Die Bildanalyse ist in Version 0.1 noch simuliert. Fotos werden nur im Browser angezeigt; es erfolgt kein Upload an einen KI-Dienst.
 
 Enthalten
