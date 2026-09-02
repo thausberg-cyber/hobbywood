@@ -104,7 +104,7 @@
   <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
   <div id="safety" class="pane"><div id="safetyBox"></div></div>
   <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
-  <p class="footerline">Pilotversion 0.7 · Referenzfotos werden lokal im Browser gespeichert.</p>
+  <p class="footerline">Pilotversion 0.7.1 · Referenzfotos werden lokal im Browser gespeichert.</p>
 </section>
 </main>
 
@@ -115,8 +115,40 @@ const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let photos=[], analysisState=null, reconstruction=null, round=0, knowledge='', chat=[];
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
-function fileToDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-async function ingest(files){for(const f of [...files]){photos.push({name:f.name,dataUrl:await fileToDataUrl(f)});}renderPhotos();show('photos')}
+async function fileToDataUrl(file){
+  // OpenAI accepts JPEG/PNG/GIF/WebP, but Apple devices may supply HEIC/HEIF.
+  // Safari can display those files, so decode them in-browser and normalize
+  // every upload to a compact JPEG before it is stored or sent to the backend.
+  const objectUrl=URL.createObjectURL(file);
+  try{
+    const img=new Image();
+    await new Promise((resolve,reject)=>{
+      img.onload=resolve;
+      img.onerror=()=>reject(new Error('Bild konnte nicht gelesen werden: '+file.name));
+      img.src=objectUrl;
+    });
+    const maxSide=1800;
+    const scale=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+    canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    return canvas.toDataURL('image/jpeg',0.88);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+async function ingest(files){
+  try{
+    for(const f of [...files]){
+      photos.push({name:f.name,dataUrl:await fileToDataUrl(f)});
+    }
+    renderPhotos();show('photos');
+  }catch(e){
+    alert(e.message);
+  }
+}
 function renderGallery(el,arr){el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[Number(img.dataset.i)].dataUrl))}
 function renderPhotos(){renderGallery($('#photoGrid'),photos);$('#photoCount').textContent=photos.length}
 function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()}
