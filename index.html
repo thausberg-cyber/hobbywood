@@ -21,7 +21,7 @@
     button,.button{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:750;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}
     .primary{background:var(--accent);color:white}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
     textarea,input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:92px;resize:vertical}
-    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos figure{margin:0;position:relative}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.photos figcaption{font-size:11px;color:var(--muted);margin-top:3px}
     .status{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:11px;height:11px;border-radius:50%;background:#599367;margin-top:5px;flex:none}.dot.mid{background:#d9a63b}.dot.unknown{background:#9b9f9b}
     .notice{border-radius:14px;padding:13px 14px;margin:12px 0;background:var(--warn);line-height:1.4}.danger{background:var(--danger)}.ok{background:var(--ok)}
     .tag{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;background:var(--accent2);margin:3px 3px 3px 0}.hidden{display:none!important}
@@ -35,36 +35,47 @@
 <main>
   <section id="start" class="screen active">
     <h1>Was möchtest du nachbauen?</h1>
-    <p class="lead">Fotografiere den Gegenstand. look 'n build erkennt sichtbare Merkmale, trennt Fakten von Vermutungen und fragt gezielt nach fehlenden Informationen.</p>
+    <p class="lead">Fotografiere den Gegenstand. Mehrere Ansichten werden als ein gemeinsamer Projektstand ausgewertet.</p>
     <label class="button primary" for="cameraInput">📷 Fotografieren</label>
-    <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment">
-    <label class="button secondary" for="libraryInput">▣ Foto auswählen</label>
-    <input class="hidden" id="libraryInput" type="file" accept="image/*">
-    <div class="notice"><strong>Pilot 0.3:</strong> Zunächst wird pro Analyseschritt ein Foto ausgewertet. Falls etwas fehlt, fordert die App gezielt ein Detailfoto, ein Maß oder eine Antwort an.</div>
+    <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
+    <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
+    <input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
+    <div class="notice"><strong>Pilot 0.4:</strong> Alle bisherigen Fotos, Antworten und Erkenntnisse bleiben erhalten. look 'n build fordert höchstens eine gezielte Zusatzinformation pro Analyseschritt an.</div>
   </section>
 
   <section id="photos" class="screen">
-    <h1>Dein Foto</h1>
+    <h1>Dein Projekt</h1>
+    <p><span id="photoCount">0</span> Foto(s) im Projektstand.</p>
     <div id="photoGrid" class="photos"></div>
+    <label class="button secondary" for="moreInput">+ Weitere Ansicht hinzufügen</label>
+    <input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
     <label for="note"><strong>Was weißt du bereits? (optional)</strong></label>
-    <textarea id="note" placeholder="z. B. Material, ungefährer Zweck, sichtbare/verdeckt bekannte Verbindung …"></textarea>
-    <button class="primary" id="analyzeBtn">Foto analysieren</button>
+    <textarea id="note" placeholder="z. B. Material, Zweck, Maße oder verdeckt bekannte Verbindung …"></textarea>
+    <button class="primary" id="analyzeBtn">Projektstand analysieren</button>
     <button class="ghost" id="backBtn">Zurück</button>
   </section>
 
   <section id="analyzing" class="screen">
-    <h1>Ich sehe mir das an …</h1>
-    <p>Das Foto wird jetzt tatsächlich über das geschützte Backend analysiert.</p>
+    <h1>Ich sehe mir alles zusammen an …</h1>
+    <p>Alle bisherigen Fotos und Antworten werden gemeinsam ausgewertet.</p>
     <div class="progress"><i></i></div>
-    <div class="card"><div>Objekt und Bauteile</div><div>sichtbare Verbindungen</div><div>Materialhinweise</div><div>offene konstruktive Details</div></div>
+    <div class="card"><div>Objekt und Bauteile</div><div>sichtbare Verbindungen</div><div>Materialhinweise</div><div>bisheriger Erkenntnisstand</div><div>offene konstruktive Details</div></div>
     <p class="small">Beim kostenlosen Testserver kann der erste Aufruf nach längerer Pause bis zu etwa einer Minute dauern.</p>
   </section>
 
   <section id="analysis" class="screen">
-    <h1>Analyse</h1>
+    <h1>Aktueller Projektstand</h1>
     <div id="analysisContent"></div>
     <div id="nextAction"></div>
     <button class="ghost" id="newProject">Neues Objekt</button>
+  </section>
+
+  <section id="understood" class="screen">
+    <h1>Projekt verstanden</h1>
+    <div id="understoodContent"></div>
+    <div class="notice ok"><strong>Die Rekonstruktion kann jetzt weitergehen.</strong><br>Nicht sicher bestimmbare Angaben bleiben ausdrücklich als offen oder vor Ort zu bestimmen markiert.</div>
+    <button class="secondary" id="backToAnalysis">Projektstand ansehen</button>
+    <button class="ghost" id="understoodNew">Neues Objekt</button>
   </section>
 
   <section id="error" class="screen">
@@ -78,23 +89,29 @@
 <script>
 const API_URL='https://look-n-build-backend.onrender.com/analyze';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-let currentFile=null;
+const MAX_FOLLOWUPS=3;
+let photos=[];
+let history=[];
+let round=1;
+let lastAnalysis=null;
 
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
 function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 
-function ingest(file){
-  if(!file)return;
-  currentFile=file;
-  const url=URL.createObjectURL(file);
-  $('#photoGrid').innerHTML=`<img src="${url}" alt="Projektfoto">`;
-  show('photos');
+function ingest(files){
+  const incoming=[...files];
+  if(!incoming.length)return;
+  incoming.forEach(f=>photos.push({file:f,url:URL.createObjectURL(f),name:f.name||`Foto ${photos.length+1}`}));
+  renderPhotos();show('photos');
 }
-$('#cameraInput').addEventListener('change',e=>ingest(e.target.files[0]));
-$('#libraryInput').addEventListener('change',e=>ingest(e.target.files[0]));
+function renderPhotos(){
+  $('#photoGrid').innerHTML=photos.map((p,i)=>`<figure><img src="${p.url}" alt="Projektfoto ${i+1}"><figcaption>Foto ${i+1}</figcaption></figure>`).join('');
+  $('#photoCount').textContent=photos.length;
+}
+['cameraInput','libraryInput','moreInput'].forEach(id=>$('#'+id).addEventListener('change',e=>{ingest(e.target.files);e.target.value=''}));
 $('#backBtn').onclick=()=>show('start');
 
-async function imageToDataUrl(file,maxDim=1600,quality=.82){
+async function imageToDataUrl(file,maxDim=1400,quality=.78){
   const bitmap=await createImageBitmap(file);
   let {width,height}=bitmap;
   const scale=Math.min(1,maxDim/Math.max(width,height));
@@ -105,53 +122,90 @@ async function imageToDataUrl(file,maxDim=1600,quality=.82){
   return canvas.toDataURL('image/jpeg',quality);
 }
 
-async function analyze(){
-  if(!currentFile)return;
+async function analyze(forceProceed=false){
+  if(!photos.length)return;
   show('analyzing');
   try{
-    const imageDataUrl=await imageToDataUrl(currentFile);
+    const imagesDataUrls=[];
+    for(const p of photos) imagesDataUrls.push(await imageToDataUrl(p.file));
     const note=$('#note').value.trim();
-    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl,note})});
+    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imagesDataUrls,note,history,round,forceProceed,maxFollowups:MAX_FOLLOWUPS})});
     let data={};
     try{data=await res.json()}catch{}
     if(!res.ok)throw new Error(data.detail||data.error||`Serverfehler ${res.status}`);
-    renderAnalysis(data);show('analysis');
+    lastAnalysis=data;
+    history.push({round,object:data.object||'',summary:data.summary||'',recognized:data.recognized||[],assumptions:data.assumptions||[],unknown:data.unknown||[],blocking_safety_unknowns:data.blocking_safety_unknowns||[],next_request:data.next_request||{type:'none',instruction:''}});
+    renderAnalysis(data);
+    if(data.ready_for_reconstruction===true || forceProceed){renderUnderstood(data);show('understood')}else show('analysis');
   }catch(err){
     $('#errorText').textContent=err.message||'Unbekannter Fehler';show('error');
   }
 }
-$('#analyzeBtn').onclick=analyze;
-$('#retryBtn').onclick=analyze;
+$('#analyzeBtn').onclick=()=>analyze(false);
+$('#retryBtn').onclick=()=>analyze(false);
+
+function recognizedHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot"></span><div><strong>${esc(x.item||x)}</strong><br><small>Erkannt${x.confidence?' · Sicherheit: '+esc(x.confidence):''}</small></div></div>`).join('') || '<p>Keine sicheren Merkmale gemeldet.</p>'}
+function assumptionsHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot mid"></span><div><strong>${esc(x.item||x)}</strong>${x.reason?`<br><small>Begründung: ${esc(x.reason)}</small>`:''}</div></div>`).join('')}
+function unknownHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x.item||x)}</div></div>`).join('')}
 
 function renderAnalysis(d){
-  const recognized=(d.recognized||[]).map(x=>`<div class="status"><span class="dot"></span><div><strong>${esc(x.item)}</strong><br><small>Erkannt · Sicherheit: ${esc(x.confidence||'—')}</small></div></div>`).join('') || '<p>Keine sicheren Merkmale gemeldet.</p>';
-  const assumptions=(d.assumptions||[]).map(x=>`<div class="status"><span class="dot mid"></span><div><strong>${esc(x.item)}</strong><br><small>Vermutung${x.reason?': '+esc(x.reason):''}</small></div></div>`).join('');
-  const unknown=(d.unknown||[]).map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('');
+  const recognized=recognizedHtml(d.recognized);
+  const assumptions=assumptionsHtml(d.assumptions);
+  const unknown=unknownHtml(d.unknown);
+  const blocking=unknownHtml(d.blocking_safety_unknowns);
   const safety=(d.safety_notes||[]).map(x=>`<div>${esc(x)}</div>`).join('<br>');
   $('#analysisContent').innerHTML=`
-    <div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p>${recognized}</div>
+    <div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p><span class="tag">${photos.length} Foto(s)</span><span class="tag">Analyseschritt ${round}</span>${recognized}</div>
     ${assumptions?`<h2>Vermutet</h2><div class="card">${assumptions}</div>`:''}
     ${unknown?`<h2>Noch offen</h2><div class="card">${unknown}</div>`:''}
+    ${blocking?`<div class="notice danger"><strong>Sicherheitskritisch noch offen</strong>${blocking}</div>`:''}
     ${safety?`<div class="notice"><strong>Sicherheits-/Plausibilitätshinweise</strong><br>${safety}</div>`:''}`;
-  renderNext(d.next_request||{type:'none',instruction:''});
+  renderNext(d);
 }
 
-function renderNext(n){
+function renderNext(d){
+  const n=d.next_request||{type:'none',instruction:''};
   const box=$('#nextAction');
   const instruction=esc(n.instruction||'');
-  if(n.type==='detail_photo'){
-    box.innerHTML=`<div class="notice"><strong>Nächster Schritt:</strong><br>${instruction}</div><label class="button primary" for="detailInput">Detailfoto aufnehmen</label><input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment">`;
-    $('#detailInput').addEventListener('change',e=>{if(e.target.files[0]){currentFile=e.target.files[0];const url=URL.createObjectURL(currentFile);$('#photoGrid').innerHTML=`<img src="${url}" alt="Detailfoto">`;$('#note').value=(n.instruction||'')+'\n'+$('#note').value;show('photos')}});
-  } else if(n.type==='measurement' || n.type==='question'){
-    box.innerHTML=`<div class="notice"><strong>Nächster Schritt:</strong><br>${instruction}</div><textarea id="followup" placeholder="Antwort bzw. Maß eingeben"></textarea><button class="primary" id="sendFollowup">Antwort mit demselben Foto erneut analysieren</button>`;
-    $('#sendFollowup').onclick=()=>{const v=$('#followup').value.trim();if(v){$('#note').value=($('#note').value+'\n'+(n.instruction||'')+' Antwort: '+v).trim();analyze()}};
-  } else {
-    box.innerHTML='<div class="notice ok"><strong>Für diese Analysestufe sind keine weiteren Angaben erforderlich.</strong></div>';
+  const canStop=!(d.blocking_safety_unknowns||[]).length;
+  const limitReached=round>MAX_FOLLOWUPS;
+
+  if(d.ready_for_reconstruction===true || n.type==='none' || (limitReached && canStop)){
+    box.innerHTML='<div class="notice ok"><strong>Für die Rekonstruktion sind genügend Informationen vorhanden.</strong></div><button class="primary" id="acceptState">Projektstand übernehmen</button>';
+    $('#acceptState').onclick=()=>{renderUnderstood(d);show('understood')};
+    return;
   }
+
+  let html=`<div class="notice"><strong>Eine gezielte Rückfrage:</strong><br>${instruction}</div>`;
+  if(n.type==='detail_photo'){
+    html+=`<label class="button primary" for="detailInput">Detailfoto hinzufügen</label><input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple>`;
+  }else if(n.type==='measurement' || n.type==='question'){
+    html+=`<textarea id="followup" placeholder="Antwort bzw. Maß eingeben"></textarea><button class="primary" id="sendFollowup">Antwort übernehmen</button>`;
+  }
+  if(canStop) html+=`<button class="secondary" id="proceedOpen">Mit offenen Punkten weiter</button>`;
+  box.innerHTML=html;
+
+  if(n.type==='detail_photo') $('#detailInput').addEventListener('change',e=>{
+    const fs=[...e.target.files];if(!fs.length)return;
+    fs.forEach(f=>photos.push({file:f,url:URL.createObjectURL(f),name:f.name||`Foto ${photos.length+1}`}));
+    round++;renderPhotos();analyze(false);
+  });
+  if(n.type==='measurement' || n.type==='question') $('#sendFollowup').onclick=()=>{
+    const v=$('#followup').value.trim();if(!v)return;
+    const line=`${n.instruction||'Rückfrage'} Antwort: ${v}`;
+    $('#note').value=($('#note').value+'\n'+line).trim();
+    round++;analyze(false);
+  };
+  if(canStop && $('#proceedOpen')) $('#proceedOpen').onclick=()=>analyze(true);
 }
 
-function reset(){currentFile=null;$('#photoGrid').innerHTML='';$('#note').value='';$('#cameraInput').value='';$('#libraryInput').value='';show('start')}
-$('#newProject').onclick=reset;$('#errorNew').onclick=reset;
+function renderUnderstood(d){
+  const unknown=unknownHtml(d.unknown);
+  $('#understoodContent').innerHTML=`<div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p>${recognizedHtml(d.recognized)}</div>${unknown?`<h2>Bewusst offen gelassen</h2><div class="card">${unknown}</div>`:''}`;
+}
+
+function reset(){photos.forEach(p=>URL.revokeObjectURL(p.url));photos=[];history=[];round=1;lastAnalysis=null;$('#photoGrid').innerHTML='';$('#photoCount').textContent='0';$('#note').value='';show('start')}
+$('#newProject').onclick=reset;$('#errorNew').onclick=reset;$('#understoodNew').onclick=reset;$('#backToAnalysis').onclick=()=>show('analysis');
 
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
