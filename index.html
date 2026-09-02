@@ -12,243 +12,189 @@
   <title>look 'n build – HOBBYWOOD</title>
   <style>
     :root{--bg:#f4f2eb;--card:#fff;--ink:#172019;--muted:#677069;--accent:#1d3326;--accent2:#e7ece8;--line:#d8ddd9;--warn:#fff3d7;--danger:#fde7e4;--ok:#e5f3e8;}
-    *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    header{position:sticky;top:0;z-index:5;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;background:rgba(244,242,235,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+    header{position:sticky;top:0;z-index:5;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;background:rgba(244,242,235,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
     .brand{font-size:20px;font-weight:850;letter-spacing:.08em}.sub{font-size:12px;color:var(--muted);margin-top:2px}
-    main{max-width:680px;margin:0 auto;padding:22px 16px calc(92px + env(safe-area-inset-bottom))}.screen{display:none}.screen.active{display:block}
-    h1{font-size:31px;line-height:1.07;margin:10px 0}h2{font-size:23px;margin:18px 0 10px}p{line-height:1.45;color:#3d4840}.lead{font-size:18px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px rgba(0,0,0,.035)}
+    main{max-width:720px;margin:0 auto;padding:22px 16px calc(92px + env(safe-area-inset-bottom));}.screen{display:none}.screen.active{display:block}
+    h1{font-size:31px;line-height:1.07;margin:10px 0 10px}h2{font-size:23px;margin:18px 0 10px}h3{font-size:17px;margin:16px 0 8px}p{line-height:1.45;color:#3d4840}
+    .lead{font-size:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px rgba(0,0,0,.035)}
     button,.button{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:750;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}
     .primary{background:var(--accent);color:white}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
-    textarea,input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:92px;resize:vertical}
-    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos figure{margin:0;position:relative}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.photos figcaption{font-size:11px;color:var(--muted);margin-top:3px}
-    .status{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:11px;height:11px;border-radius:50%;background:#599367;margin-top:5px;flex:none}.dot.mid{background:#d9a63b}.dot.unknown{background:#9b9f9b}
+    input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:110px;resize:vertical}
+    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:pointer}
+    .tag{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;background:var(--accent2);margin:3px 3px 3px 0}.status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:11px;height:11px;border-radius:50%;background:#599367;margin-top:5px;flex:none}.dot.mid{background:#d9a63b}.dot.unknown{background:#9b9f9b}
     .notice{border-radius:14px;padding:13px 14px;margin:12px 0;background:var(--warn);line-height:1.4}.danger{background:var(--danger)}.ok{background:var(--ok)}
-    .tag{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;background:var(--accent2);margin:3px 3px 3px 0}.hidden{display:none!important}
-    .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:20%;background:var(--accent);animation:pulse 1.7s infinite alternate}
-    @keyframes pulse{from{width:20%}to{width:92%}}.small{font-size:13px;color:var(--muted)}
+    .tabs{display:flex;gap:6px;overflow:auto;padding-bottom:5px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:750}.tab.on{background:var(--accent);color:#fff}.pane{display:none}.pane.on{display:block}
+    table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}
+    .step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}.step p{margin:2px 0}
+    .footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:24px}.hidden{display:none!important}
+    .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}
+    dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);width:auto;background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}
+    dialog::backdrop{background:rgba(0,0,0,.75)} dialog img{display:block;max-width:92vw;max-height:82vh;width:auto;height:auto}
+    .dialogbar{display:flex;justify-content:flex-end;padding:8px;background:#111}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px;border-radius:10px;font-size:14px}
     @media(min-width:650px){main{padding-top:34px}.photos{grid-template-columns:repeat(4,1fr)}}
   </style>
 </head>
 <body>
 <header><div class="brand">look &apos;n build</div><div class="sub">Vom Foto zum eigenen Projekt · Der Online-Workshop von HOBBYWOOD</div></header>
 <main>
-  <section id="start" class="screen active">
-    <h1>Was möchtest du nachbauen?</h1>
-    <p class="lead">Fotografiere den Gegenstand. Mehrere Ansichten werden als ein gemeinsamer Projektstand ausgewertet.</p>
-    <label class="button primary" for="cameraInput">📷 Fotografieren</label>
-    <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
-    <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
-    <input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
-    <div class="notice"><strong>Pilot 0.4:</strong> Alle bisherigen Fotos, Antworten und Erkenntnisse bleiben erhalten. look 'n build fordert höchstens eine gezielte Zusatzinformation pro Analyseschritt an.</div>
-  </section>
+<section id="start" class="screen active">
+  <h1>Was möchtest du nachbauen?</h1>
+  <p class="lead">Zeig look 'n build dein Objekt. Mehrere Ansichten helfen, Konstruktion und Details zu verstehen.</p>
+  <label class="button primary" for="cameraInput">📷 Fotografieren</label>
+  <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
+  <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
+  <input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
+  <div class="card"><strong>Meine Projekte</strong><p id="savedCount">Noch keine Projekte gespeichert.</p><button class="secondary" id="openSaved">Gespeichertes Projekt öffnen</button></div>
+</section>
 
-  <section id="photos" class="screen">
-    <h1>Dein Projekt</h1>
-    <p><span id="photoCount">0</span> Foto(s) im Projektstand.</p>
-    <div id="photoGrid" class="photos"></div>
-    <label class="button secondary" for="moreInput">+ Weitere Ansicht hinzufügen</label>
-    <input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
-    <label for="note"><strong>Was weißt du bereits? (optional)</strong></label>
-    <textarea id="note" placeholder="z. B. Material, Zweck, Maße oder verdeckt bekannte Verbindung …"></textarea>
-    <button class="primary" id="analyzeBtn">Projektstand analysieren</button>
-    <button class="ghost" id="backBtn">Zurück</button>
-  </section>
+<section id="photos" class="screen">
+  <h1>Dein Projekt</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
+  <div id="photoGrid" class="photos"></div>
+  <label class="button secondary" for="moreInput">+ Weitere Ansicht</label><input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
+  <button class="primary" id="analyzeBtn">Analysieren</button><button class="ghost back">Zurück</button>
+</section>
 
-  <section id="analyzing" class="screen">
-    <h1>Ich sehe mir alles zusammen an …</h1>
-    <p>Alle bisherigen Fotos und Antworten werden gemeinsam ausgewertet.</p>
-    <div class="progress"><i></i></div>
-    <div class="card"><div>Objekt und Bauteile</div><div>sichtbare Verbindungen</div><div>Materialhinweise</div><div>bisheriger Erkenntnisstand</div><div>offene konstruktive Details</div></div>
-    <p class="small">Beim kostenlosen Testserver kann der erste Aufruf nach längerer Pause bis zu etwa einer Minute dauern.</p>
-  </section>
+<section id="analyzing" class="screen">
+  <h1>Ich sehe mir das an …</h1><p>look 'n build trennt erkennbare Fakten von Annahmen und offenen Punkten.</p><div class="progress"><i id="bar"></i></div>
+</section>
 
-  <section id="analysis" class="screen">
-    <h1>Aktueller Projektstand</h1>
-    <div id="analysisContent"></div>
-    <div id="nextAction"></div>
-    <button class="ghost" id="newProject">Neues Objekt</button>
-  </section>
+<section id="analysis" class="screen">
+  <h1>Analyse</h1>
+  <div id="analysisCard" class="card"></div>
+  <div id="nextRequest" class="notice hidden"></div>
+  <label id="detailLabel" class="button primary hidden" for="detailInput">Detailfoto hinzufügen</label>
+  <input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple>
+  <button id="acceptAnalysis" class="secondary hidden">Projektstand übernehmen</button>
+</section>
 
-  <section id="understood" class="screen">
-    <h1>Projekt verstanden</h1>
-    <div id="understoodContent"></div>
-    <div class="notice ok"><strong>Der Analyseabschnitt ist abgeschlossen.</strong><br>Nicht sicher bestimmbare Angaben bleiben ausdrücklich als offen oder vor Ort zu bestimmen markiert.</div>
-    <button class="primary" id="startReconstruction">Rekonstruktion erstellen</button>
-    <button class="secondary" id="backToAnalysis">Projektstand ansehen</button>
-    <button class="ghost" id="understoodNew">Neues Objekt</button>
-  </section>
+<section id="ready" class="screen">
+  <h1>Projekt verstanden</h1>
+  <div class="ok notice">Für die Rekonstruktion sind genügend Informationen vorhanden. Verbleibende Unsicherheiten werden im Projekt kenntlich gemacht.</div>
+  <button class="primary" id="reconstructBtn">Rekonstruktion erstellen</button>
+  <button class="secondary" id="viewPhotosReady">Fotos ansehen</button>
+</section>
 
-  <section id="reconstructing" class="screen">
-    <h1>Rekonstruktion wird erstellt …</h1>
-    <p>look 'n build überführt den bestätigten Projektstand jetzt in einen nachvollziehbaren Bauentwurf.</p>
-    <div class="progress"><i></i></div>
-    <div class="card"><div>Bauteile und Maße</div><div>Material und Beschläge</div><div>Werkzeuge</div><div>Arbeitsfolge</div><div>offene Punkte und Sicherheit</div></div>
-  </section>
+<section id="reconstructing" class="screen">
+  <h1>Rekonstruktion wird erstellt …</h1><div class="progress"><i id="bar2"></i></div>
+</section>
 
-  <section id="reconstruction" class="screen">
-    <h1>Rekonstruktion</h1>
-    <div id="reconstructionContent"></div>
-    <button class="secondary" id="reconstructionBack">Projektstand ansehen</button>
-    <button class="ghost" id="reconstructionNew">Neues Objekt</button>
-  </section>
-
-  <section id="error" class="screen">
-    <h1>Analyse nicht möglich</h1>
-    <div class="notice danger" id="errorText"></div>
-    <button class="primary" id="retryBtn">Noch einmal versuchen</button>
-    <button class="ghost" id="errorNew">Neues Objekt</button>
-  </section>
+<section id="record" class="screen">
+  <h1 id="recordTitle">Projekt</h1><p class="lead" id="recordSummary"></p>
+  <div class="tabs">
+    <button class="tab on" data-pane="overview">Übersicht</button>
+    <button class="tab" data-pane="photosPane">Fotos</button>
+    <button class="tab" data-pane="material">Material</button>
+    <button class="tab" data-pane="tools">Werkzeug</button>
+    <button class="tab" data-pane="steps">Bauanleitung</button>
+    <button class="tab" data-pane="safety">Hinweise</button>
+  </div>
+  <div id="overview" class="pane on"><div class="card" id="overviewBox"></div></div>
+  <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Referenzfotos</h3><p>Diese Bilder bleiben Teil deiner Projektakte und können während des Baus erneut geöffnet werden.</p><div id="recordPhotos" class="photos"></div></div></div>
+  <div id="material" class="pane"><div class="card" id="materialBox"></div></div>
+  <div id="tools" class="pane"><div class="card" id="toolsBox"></div></div>
+  <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
+  <div id="safety" class="pane"><div id="safetyBox"></div></div>
+  <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
+  <p class="footerline">Pilotversion 0.6 · Referenzfotos werden lokal im Browser gespeichert.</p>
+</section>
 </main>
 
+<dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Referenzfoto"></dialog>
+
 <script>
-const API_URL='https://look-n-build-backend.onrender.com/analyze';
+const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const MAX_FOLLOWUPS=3;
-let photos=[];
-let history=[];
-let round=1;
-let lastAnalysis=null;
-
+let photos=[], analysisState=null, reconstruction=null, round=0;
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
-function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function fileToDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+async function ingest(files){for(const f of [...files]){photos.push({name:f.name,dataUrl:await fileToDataUrl(f)});}renderPhotos();show('photos')}
+function renderGallery(el,arr){el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[Number(img.dataset.i)].dataUrl))}
+function renderPhotos(){renderGallery($('#photoGrid'),photos);$('#photoCount').textContent=photos.length}
+function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()}
+$('#closeDialog').onclick=()=>$('#photoDialog').close();$('#photoDialog').onclick=e=>{if(e.target===$('#photoDialog'))$('#photoDialog').close()};
+['cameraInput','libraryInput','moreInput'].forEach(id=>$('#'+id).addEventListener('change',e=>ingest(e.target.files)));
+$$('.back').forEach(b=>b.onclick=()=>show('start'));
 
-function ingest(files){
-  const incoming=[...files];
-  if(!incoming.length)return;
-  incoming.forEach(f=>photos.push({file:f,url:URL.createObjectURL(f),name:f.name||`Foto ${photos.length+1}`}));
-  renderPhotos();show('photos');
-}
-function renderPhotos(){
-  $('#photoGrid').innerHTML=photos.map((p,i)=>`<figure><img src="${p.url}" alt="Projektfoto ${i+1}"><figcaption>Foto ${i+1}</figcaption></figure>`).join('');
-  $('#photoCount').textContent=photos.length;
-}
-['cameraInput','libraryInput','moreInput'].forEach(id=>$('#'+id).addEventListener('change',e=>{ingest(e.target.files);e.target.value=''}));
-$('#backBtn').onclick=()=>show('start');
-
-async function imageToDataUrl(file,maxDim=1400,quality=.78){
-  const bitmap=await createImageBitmap(file);
-  let {width,height}=bitmap;
-  const scale=Math.min(1,maxDim/Math.max(width,height));
-  width=Math.max(1,Math.round(width*scale));height=Math.max(1,Math.round(height*scale));
-  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
-  const ctx=canvas.getContext('2d');ctx.drawImage(bitmap,0,0,width,height);
-  if(bitmap.close)bitmap.close();
-  return canvas.toDataURL('image/jpeg',quality);
-}
-
-async function analyze(forceProceed=false){
-  if(!photos.length)return;
-  show('analyzing');
+async function analyze(){
+  if(!photos.length)return alert('Bitte mindestens ein Foto hinzufügen.');
+  show('analyzing');$('#bar').style.width='35%';setTimeout(()=>$('#bar').style.width='70%',400);
   try{
-    const imagesDataUrls=[];
-    for(const p of photos) imagesDataUrls.push(await imageToDataUrl(p.file));
-    const note=$('#note').value.trim();
-    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imagesDataUrls,note,history,round,forceProceed,maxFollowups:MAX_FOLLOWUPS})});
-    let data={};
-    try{data=await res.json()}catch{}
-    if(!res.ok)throw new Error(data.detail||data.error||`Serverfehler ${res.status}`);
-    lastAnalysis=data;
-    history.push({round,object:data.object||'',summary:data.summary||'',recognized:data.recognized||[],assumptions:data.assumptions||[],unknown:data.unknown||[],blocking_safety_unknowns:data.blocking_safety_unknowns||[],next_request:data.next_request||{type:'none',instruction:''}});
-    renderAnalysis(data);
-    if(data.ready_for_reconstruction===true || forceProceed){renderUnderstood(data);show('understood')}else show('analysis');
-  }catch(err){
-    $('#errorText').textContent=err.message||'Unbekannter Fehler';show('error');
+    const res=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      images:photos.map(p=>p.dataUrl),
+      previousState:analysisState,
+      round
+    })});
+    if(!res.ok) throw new Error(await res.text());
+    analysisState=await res.json(); round++;
+    $('#bar').style.width='100%'; setTimeout(renderAnalysis,250);
+  }catch(e){alert('Analyse fehlgeschlagen: '+e.message);show('photos')}
+}
+function renderAnalysis(){
+  const a=analysisState||{};
+  const list=(title,items,cls='')=>`<h3>${title}</h3>${(items||[]).map(x=>`<div class="status"><span class="dot ${cls}"></span><div>${escapeHtml(typeof x==='string'?x:(x.text||JSON.stringify(x)))}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;
+  $('#analysisCard').innerHTML=`<h2 style="margin-top:0">${escapeHtml(a.object||'Objekt')}</h2><p>${escapeHtml(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;
+  const nr=a.next_request||{};
+  const enough=a.enough_information===true || nr.type==='done' || round>=4;
+  if(enough){
+    $('#nextRequest').classList.add('hidden');$('#detailLabel').classList.add('hidden');$('#acceptAnalysis').classList.remove('hidden');
+  }else{
+    $('#nextRequest').textContent=nr.prompt||'Bitte ergänze eine weitere aussagekräftige Ansicht.';$('#nextRequest').classList.remove('hidden');
+    $('#detailLabel').classList.remove('hidden');$('#acceptAnalysis').classList.remove('hidden');
   }
+  show('analysis');
 }
-$('#analyzeBtn').onclick=()=>analyze(false);
-$('#retryBtn').onclick=()=>analyze(false);
+$('#analyzeBtn').onclick=analyze;
+$('#detailInput').addEventListener('change',async e=>{await ingest(e.target.files);await analyze()});
+$('#acceptAnalysis').onclick=()=>show('ready');
+$('#viewPhotosReady').onclick=()=>{renderGallery($('#recordPhotos'),photos);show('record');switchTab('photosPane')};
 
-function recognizedHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot"></span><div><strong>${esc(x.item||x)}</strong><br><small>Erkannt${x.confidence?' · Sicherheit: '+esc(x.confidence):''}</small></div></div>`).join('') || '<p>Keine sicheren Merkmale gemeldet.</p>'}
-function assumptionsHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot mid"></span><div><strong>${esc(x.item||x)}</strong>${x.reason?`<br><small>Begründung: ${esc(x.reason)}</small>`:''}</div></div>`).join('')}
-function unknownHtml(items){return (items||[]).map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x.item||x)}</div></div>`).join('')}
-
-function renderAnalysis(d){
-  const recognized=recognizedHtml(d.recognized);
-  const assumptions=assumptionsHtml(d.assumptions);
-  const unknown=unknownHtml(d.unknown);
-  const blocking=unknownHtml(d.blocking_safety_unknowns);
-  const safety=(d.safety_notes||[]).map(x=>`<div>${esc(x)}</div>`).join('<br>');
-  $('#analysisContent').innerHTML=`
-    <div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p><span class="tag">${photos.length} Foto(s)</span><span class="tag">Analyseschritt ${round}</span>${recognized}</div>
-    ${assumptions?`<h2>Vermutet</h2><div class="card">${assumptions}</div>`:''}
-    ${unknown?`<h2>Noch offen</h2><div class="card">${unknown}</div>`:''}
-    ${blocking?`<div class="notice danger"><strong>Sicherheitskritisch noch offen</strong>${blocking}</div>`:''}
-    ${safety?`<div class="notice"><strong>Sicherheits-/Plausibilitätshinweise</strong><br>${safety}</div>`:''}`;
-  renderNext(d);
-}
-
-function renderNext(d){
-  const n=d.next_request||{type:'none',instruction:''};
-  const box=$('#nextAction');
-  const instruction=esc(n.instruction||'');
-  const canStop=!(d.blocking_safety_unknowns||[]).length;
-  const limitReached=round>MAX_FOLLOWUPS;
-
-  if(d.ready_for_reconstruction===true || n.type==='none' || (limitReached && canStop)){
-    box.innerHTML='<div class="notice ok"><strong>Für die Rekonstruktion sind genügend Informationen vorhanden.</strong></div><button class="primary" id="acceptState">Projektstand übernehmen</button>';
-    $('#acceptState').onclick=()=>{renderUnderstood(d);show('understood')};
-    return;
-  }
-
-  let html=`<div class="notice"><strong>Eine gezielte Rückfrage:</strong><br>${instruction}</div>`;
-  if(n.type==='detail_photo'){
-    html+=`<label class="button primary" for="detailInput">Detailfoto hinzufügen</label><input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple>`;
-  }else if(n.type==='measurement' || n.type==='question'){
-    html+=`<textarea id="followup" placeholder="Antwort bzw. Maß eingeben"></textarea><button class="primary" id="sendFollowup">Antwort übernehmen</button>`;
-  }
-  if(canStop) html+=`<button class="secondary" id="proceedOpen">Mit offenen Punkten weiter</button>`;
-  box.innerHTML=html;
-
-  if(n.type==='detail_photo') $('#detailInput').addEventListener('change',e=>{
-    const fs=[...e.target.files];if(!fs.length)return;
-    fs.forEach(f=>photos.push({file:f,url:URL.createObjectURL(f),name:f.name||`Foto ${photos.length+1}`}));
-    round++;renderPhotos();analyze(false);
-  });
-  if(n.type==='measurement' || n.type==='question') $('#sendFollowup').onclick=()=>{
-    const v=$('#followup').value.trim();if(!v)return;
-    const line=`${n.instruction||'Rückfrage'} Antwort: ${v}`;
-    $('#note').value=($('#note').value+'\n'+line).trim();
-    round++;analyze(false);
-  };
-  if(canStop && $('#proceedOpen')) $('#proceedOpen').onclick=()=>analyze(true);
-}
-
-function renderUnderstood(d){
-  const unknown=unknownHtml(d.unknown);
-  $('#understoodContent').innerHTML=`<div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p>${recognizedHtml(d.recognized)}</div>${unknown?`<h2>Bewusst offen gelassen</h2><div class="card">${unknown}</div>`:''}`;
-}
-
-async function createReconstruction(){
-  if(!lastAnalysis)return;
-  show('reconstructing');
+async function reconstruct(){
+  show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='70%',500);
   try{
-    const imagesDataUrls=[];
-    for(const p of photos) imagesDataUrls.push(await imageToDataUrl(p.file));
-    const res=await fetch('https://look-n-build-backend.onrender.com/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imagesDataUrls,note:$('#note').value.trim(),history,finalAnalysis:lastAnalysis})});
-    let data={};try{data=await res.json()}catch{}
-    if(!res.ok)throw new Error(data.detail||data.error||`Serverfehler ${res.status}`);
-    renderReconstruction(data);show('reconstruction');
-  }catch(err){$('#errorText').textContent=err.message||'Unbekannter Fehler';show('error')}
+    const res=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:analysisState,images:photos.map(p=>p.dataUrl)})});
+    if(!res.ok) throw new Error(await res.text());
+    reconstruction=await res.json();$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},250);
+  }catch(e){alert('Rekonstruktion fehlgeschlagen: '+e.message);show('ready')}
 }
+$('#reconstructBtn').onclick=reconstruct;
 
-function listHtml(items, renderer){return (items||[]).map(renderer).join('')||'<p>Keine Angaben.</p>'}
-function renderReconstruction(d){
-  const dims=listHtml(d.dimensions,x=>`<tr><td>${esc(x.part||'')}</td><td>${esc(x.value||'')}</td><td>${esc(x.status||'')}</td></tr>`);
-  const mats=listHtml(d.materials,x=>`<tr><td>${esc(x.item||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.specification||'')}</td><td>${esc(x.status||'')}</td></tr>`);
-  const tools=listHtml(d.tools,x=>`<div class="status"><span class="dot"></span><div>${esc(x)}</div></div>`);
-  const steps=listHtml(d.steps,(x,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p><strong>${esc(x.title||'Schritt '+(i+1))}</strong><br>${esc(x.instruction||'')}</p></div>`);
-  const open=listHtml(d.open_points,x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`);
-  const safety=listHtml(d.safety_notes,x=>`<div>${esc(x)}</div>`);
-  $('#reconstructionContent').innerHTML=`<div class="card"><h2 style="margin-top:0">${esc(d.project_title||lastAnalysis.object||'Projekt')}</h2><p>${esc(d.construction_summary||'')}</p></div><h2>Bauteile und Maße</h2><div class="card"><table><tr><th>Bauteil</th><th>Angabe</th><th>Status</th></tr>${dims}</table></div><h2>Material</h2><div class="card"><table><tr><th>Position</th><th>Menge</th><th>Spezifikation</th><th>Status</th></tr>${mats}</table></div><h2>Werkzeug</h2><div class="card">${tools}</div><h2>Arbeitsfolge</h2><div class="card">${steps}</div><h2>Offen / vor Ort bestimmen</h2><div class="card">${open}</div><div class="notice"><strong>Sicherheits- und Plausibilitätshinweise</strong><br>${safety}</div>`;
+function renderRecord(){
+  const r=reconstruction||{};
+  $('#recordTitle').textContent=r.title||analysisState?.object||'Projekt';
+  $('#recordSummary').textContent=r.summary||analysisState?.summary||'';
+  $('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${escapeHtml(r.construction||r.summary||'')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul>':''}`;
+  renderGallery($('#recordPhotos'),photos);
+  $('#materialBox').innerHTML=renderTable(r.materials||[]);
+  $('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${escapeHtml(x)}</p>`).join('')||'<p>Keine Angaben.</p>';
+  $('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${escapeHtml(s)}</p></div>`).join('')||'<p>Keine Angaben.</p>';
+  $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${escapeHtml(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
 }
-
-function reset(){photos.forEach(p=>URL.revokeObjectURL(p.url));photos=[];history=[];round=1;lastAnalysis=null;$('#photoGrid').innerHTML='';$('#photoCount').textContent='0';$('#note').value='';show('start')}
-$('#newProject').onclick=reset;$('#errorNew').onclick=reset;$('#understoodNew').onclick=reset;$('#reconstructionNew').onclick=reset;$('#backToAnalysis').onclick=()=>show('analysis');$('#reconstructionBack').onclick=()=>show('understood');$('#startReconstruction').onclick=createReconstruction;
-
-if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+function renderTable(items){
+  if(!items.length)return '<p>Keine Angaben.</p>';
+  return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${escapeHtml(x.item||x.name||'')}</td><td>${escapeHtml(x.quantity||'')}</td><td>${escapeHtml(x.spec||x.details||'')}</td></tr>`).join('')}</table>`;
 }
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id))}
+$$('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.pane));
+
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function projectPayload(){return {version:'0.6',date:new Date().toISOString(),photos,analysisState,reconstruction}}
+function updateSaved(){const p=localStorage.getItem('look_n_build_project_0_6');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
+$('#saveProject').onclick=()=>{
+  try{
+    localStorage.setItem('look_n_build_project_0_6',JSON.stringify(projectPayload()));
+    updateSaved();alert('Projekt einschließlich Referenzfotos wurde auf diesem Gerät gespeichert.');
+  }catch(e){
+    alert('Das Projekt ist für den lokalen Browserspeicher zu groß. Für spätere Versionen ist eine echte Projektablage vorgesehen. Weniger oder kleinere Fotos können helfen.');
+  }
+};
+$('#openSaved').onclick=()=>{
+  const p=JSON.parse(localStorage.getItem('look_n_build_project_0_6')||'null');if(!p)return;
+  photos=p.photos||[];analysisState=p.analysisState||null;reconstruction=p.reconstruction||null;renderPhotos();renderRecord();show('record')
+};
+$('#newProject').onclick=()=>{photos=[];analysisState=null;reconstruction=null;round=0;renderPhotos();show('start')};
+updateSaved();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
