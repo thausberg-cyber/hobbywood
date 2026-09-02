@@ -21,8 +21,8 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '35mb' }));
 
-app.get('/', (_req, res) => res.json({ service: "look 'n build backend", version: '0.4.0', status: 'ok' }));
-app.get('/health', (_req, res) => res.json({ ok: true, version: '0.4.0' }));
+app.get('/', (_req, res) => res.json({ service: "look 'n build backend", version: '0.5.0', status: 'ok' }));
+app.get('/health', (_req, res) => res.json({ ok: true, version: '0.5.0' }));
 
 function cleanJson(text) {
   const raw = String(text || '').trim();
@@ -127,4 +127,59 @@ forceProceed=${forceProceed}.`;
   }
 });
 
-app.listen(PORT, () => console.log(`look 'n build backend 0.4 listening on port ${PORT}`));
+
+app.post('/reconstruct', async (req, res) => {
+  try {
+    if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error: 'OPENAI_API_KEY is not configured' });
+    const imagesDataUrls = Array.isArray(req.body?.imagesDataUrls) ? req.body.imagesDataUrls : [];
+    const validImages = imagesDataUrls.filter(x => typeof x === 'string' && /^data:image\//i.test(x)).slice(0, 10);
+    if (!validImages.length) return res.status(400).json({ error: 'No valid images supplied' });
+    const note = typeof req.body?.note === 'string' ? req.body.note.slice(0, 8000) : '';
+    const history = Array.isArray(req.body?.history) ? req.body.history.slice(-6) : [];
+    const finalAnalysis = req.body?.finalAnalysis && typeof req.body.finalAnalysis === 'object' ? req.body.finalAnalysis : {};
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const policy = `Du bist die Rekonstruktionsstufe von "look 'n build" (HOBBYWOOD). Der Analyseabschnitt ist abgeschlossen. Erstelle aus allen Fotos, Nutzerangaben und dem bestätigten Projektstand einen brauchbaren, aber konservativen Rekonstruktionsentwurf für ein einfaches Holzobjekt.
+
+WICHTIG:
+- Keine erfundenen Maße, Holzarten, Beschläge, Traglasten oder verdeckten Verbindungen.
+- Jede Maß-/Materialangabe erhält einen Status: "erkannt", "gemessen", "vom Nutzer angegeben", "abgeleitet" oder "vor Ort bestimmen".
+- Wenn ein Wert nicht belastbar feststeht, schreibe ausdrücklich "vor Ort bestimmen" statt eine Zahl zu erfinden.
+- Abgeleitete Angaben nur, wenn sie konstruktiv plausibel aus bekannten Angaben folgen; als "abgeleitet" kennzeichnen.
+- Sicherheitskritische Punkte deutlich nennen. Keine Freigabe von Traglasten.
+- Die Arbeitsfolge darf nur Schritte enthalten, die aus dem Projektstand plausibel folgen.
+- Dies ist ein Rekonstruktionsentwurf, keine statische/elektrische/gastechnische Fachplanung.
+
+Antworte AUSSCHLIESSLICH als gültiges JSON:
+{
+  "project_title":"...",
+  "construction_summary":"...",
+  "dimensions":[{"part":"...","value":"...","status":"erkannt|gemessen|vom Nutzer angegeben|abgeleitet|vor Ort bestimmen"}],
+  "materials":[{"item":"...","quantity":"...","specification":"...","status":"erkannt|vom Nutzer angegeben|abgeleitet|vor Ort bestimmen"}],
+  "tools":["..."],
+  "steps":[{"title":"...","instruction":"..."}],
+  "open_points":["..."],
+  "safety_notes":["..."]
+}`;
+
+    const context = `Bestätigte Endanalyse:\n${JSON.stringify(finalAnalysis).slice(0, 14000)}\n\nNutzerwissen:\n${note || '(keine)'}\n\nProjektverlauf:\n${JSON.stringify(history).slice(0, 12000)}`;
+    const content = [
+      { type: 'input_text', text: policy + '\n\n' + context },
+      ...validImages.map(image_url => ({ type: 'input_image', image_url }))
+    ];
+    const response = await client.responses.create({ model: MODEL, input: [{ role: 'user', content }] });
+    const parsed = cleanJson(response.output_text);
+    parsed.dimensions = Array.isArray(parsed.dimensions) ? parsed.dimensions : [];
+    parsed.materials = Array.isArray(parsed.materials) ? parsed.materials : [];
+    parsed.tools = Array.isArray(parsed.tools) ? parsed.tools : [];
+    parsed.steps = Array.isArray(parsed.steps) ? parsed.steps : [];
+    parsed.open_points = Array.isArray(parsed.open_points) ? parsed.open_points : [];
+    parsed.safety_notes = Array.isArray(parsed.safety_notes) ? parsed.safety_notes : [];
+    res.json(parsed);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Reconstruction failed', detail: err?.message || String(err) });
+  }
+});
+
+app.listen(PORT, () => console.log(`look 'n build backend 0.5 listening on port ${PORT}`));

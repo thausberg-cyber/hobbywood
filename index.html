@@ -73,9 +73,24 @@
   <section id="understood" class="screen">
     <h1>Projekt verstanden</h1>
     <div id="understoodContent"></div>
-    <div class="notice ok"><strong>Die Rekonstruktion kann jetzt weitergehen.</strong><br>Nicht sicher bestimmbare Angaben bleiben ausdrücklich als offen oder vor Ort zu bestimmen markiert.</div>
+    <div class="notice ok"><strong>Der Analyseabschnitt ist abgeschlossen.</strong><br>Nicht sicher bestimmbare Angaben bleiben ausdrücklich als offen oder vor Ort zu bestimmen markiert.</div>
+    <button class="primary" id="startReconstruction">Rekonstruktion erstellen</button>
     <button class="secondary" id="backToAnalysis">Projektstand ansehen</button>
     <button class="ghost" id="understoodNew">Neues Objekt</button>
+  </section>
+
+  <section id="reconstructing" class="screen">
+    <h1>Rekonstruktion wird erstellt …</h1>
+    <p>look 'n build überführt den bestätigten Projektstand jetzt in einen nachvollziehbaren Bauentwurf.</p>
+    <div class="progress"><i></i></div>
+    <div class="card"><div>Bauteile und Maße</div><div>Material und Beschläge</div><div>Werkzeuge</div><div>Arbeitsfolge</div><div>offene Punkte und Sicherheit</div></div>
+  </section>
+
+  <section id="reconstruction" class="screen">
+    <h1>Rekonstruktion</h1>
+    <div id="reconstructionContent"></div>
+    <button class="secondary" id="reconstructionBack">Projektstand ansehen</button>
+    <button class="ghost" id="reconstructionNew">Neues Objekt</button>
   </section>
 
   <section id="error" class="screen">
@@ -204,8 +219,32 @@ function renderUnderstood(d){
   $('#understoodContent').innerHTML=`<div class="card"><h2 style="margin-top:0">${esc(d.object||'Objekt')}</h2><p>${esc(d.summary||'')}</p>${recognizedHtml(d.recognized)}</div>${unknown?`<h2>Bewusst offen gelassen</h2><div class="card">${unknown}</div>`:''}`;
 }
 
+async function createReconstruction(){
+  if(!lastAnalysis)return;
+  show('reconstructing');
+  try{
+    const imagesDataUrls=[];
+    for(const p of photos) imagesDataUrls.push(await imageToDataUrl(p.file));
+    const res=await fetch('https://look-n-build-backend.onrender.com/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imagesDataUrls,note:$('#note').value.trim(),history,finalAnalysis:lastAnalysis})});
+    let data={};try{data=await res.json()}catch{}
+    if(!res.ok)throw new Error(data.detail||data.error||`Serverfehler ${res.status}`);
+    renderReconstruction(data);show('reconstruction');
+  }catch(err){$('#errorText').textContent=err.message||'Unbekannter Fehler';show('error')}
+}
+
+function listHtml(items, renderer){return (items||[]).map(renderer).join('')||'<p>Keine Angaben.</p>'}
+function renderReconstruction(d){
+  const dims=listHtml(d.dimensions,x=>`<tr><td>${esc(x.part||'')}</td><td>${esc(x.value||'')}</td><td>${esc(x.status||'')}</td></tr>`);
+  const mats=listHtml(d.materials,x=>`<tr><td>${esc(x.item||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.specification||'')}</td><td>${esc(x.status||'')}</td></tr>`);
+  const tools=listHtml(d.tools,x=>`<div class="status"><span class="dot"></span><div>${esc(x)}</div></div>`);
+  const steps=listHtml(d.steps,(x,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p><strong>${esc(x.title||'Schritt '+(i+1))}</strong><br>${esc(x.instruction||'')}</p></div>`);
+  const open=listHtml(d.open_points,x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`);
+  const safety=listHtml(d.safety_notes,x=>`<div>${esc(x)}</div>`);
+  $('#reconstructionContent').innerHTML=`<div class="card"><h2 style="margin-top:0">${esc(d.project_title||lastAnalysis.object||'Projekt')}</h2><p>${esc(d.construction_summary||'')}</p></div><h2>Bauteile und Maße</h2><div class="card"><table><tr><th>Bauteil</th><th>Angabe</th><th>Status</th></tr>${dims}</table></div><h2>Material</h2><div class="card"><table><tr><th>Position</th><th>Menge</th><th>Spezifikation</th><th>Status</th></tr>${mats}</table></div><h2>Werkzeug</h2><div class="card">${tools}</div><h2>Arbeitsfolge</h2><div class="card">${steps}</div><h2>Offen / vor Ort bestimmen</h2><div class="card">${open}</div><div class="notice"><strong>Sicherheits- und Plausibilitätshinweise</strong><br>${safety}</div>`;
+}
+
 function reset(){photos.forEach(p=>URL.revokeObjectURL(p.url));photos=[];history=[];round=1;lastAnalysis=null;$('#photoGrid').innerHTML='';$('#photoCount').textContent='0';$('#note').value='';show('start')}
-$('#newProject').onclick=reset;$('#errorNew').onclick=reset;$('#understoodNew').onclick=reset;$('#backToAnalysis').onclick=()=>show('analysis');
+$('#newProject').onclick=reset;$('#errorNew').onclick=reset;$('#understoodNew').onclick=reset;$('#reconstructionNew').onclick=reset;$('#backToAnalysis').onclick=()=>show('analysis');$('#reconstructionBack').onclick=()=>show('understood');$('#startReconstruction').onclick=createReconstruction;
 
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
