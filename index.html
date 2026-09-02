@@ -73,13 +73,13 @@
 
 <section id="ready" class="screen">
   <h1>Projekt verstanden</h1>
-  <div class="ok notice">Für die Rekonstruktion sind genügend Informationen vorhanden. Verbleibende Unsicherheiten werden im Projekt kenntlich gemacht.</div>
-  <button class="primary" id="reconstructBtn">Rekonstruktion erstellen</button>
+  <div class="ok notice">Für dein Projekt sind genügend Informationen vorhanden. Verbleibende Unsicherheiten werden im Projekt kenntlich gemacht.</div>
+  <button class="primary" id="reconstructBtn">Mein Projekt erstellen</button>
   <button class="secondary" id="viewPhotosReady">Fotos ansehen</button>
 </section>
 
 <section id="reconstructing" class="screen">
-  <h1>Rekonstruktion wird erstellt …</h1><div class="progress"><i id="bar2"></i></div>
+  <h1>Mein Projekt wird erstellt …</h1><div class="progress"><i id="bar2"></i></div>
 </section>
 
 <section id="record" class="screen">
@@ -98,13 +98,13 @@
 <div id="chatLog"></div>
 <textarea id="chatInput" placeholder="Frag nach, korrigiere etwas, ergänze ein Maß oder schlage eine andere Konstruktion vor …"></textarea>
 <button class="primary" id="sendChat">Beitrag senden</button>
-<h3>Offene Punkte bearbeiten</h3><div id="editableOpen"></div></div></div>
+<h3>Noch offen</h3><div id="editableOpen"></div></div></div>
 <div id="material" class="pane"><div class="card" id="materialBox"></div></div>
   <div id="tools" class="pane"><div class="card" id="toolsBox"></div></div>
   <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
   <div id="safety" class="pane"><div id="safetyBox"></div></div>
   <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
-  <p class="footerline">Pilotversion 0.7.1 · Referenzfotos werden lokal im Browser gespeichert.</p>
+  <p class="footerline">Pilotversion 0.7.3 · Referenzfotos werden lokal im Browser gespeichert.</p>
 </section>
 </main>
 
@@ -194,10 +194,10 @@ $('#viewPhotosReady').onclick=()=>{renderGallery($('#recordPhotos'),photos);rend
 async function reconstruct(){
   show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='70%',500);
   try{
-    const res=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:analysisState,images:photos.map(p=>p.dataUrl)})});
+    const res=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:analysisState,images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),chat})});
     if(!res.ok) throw new Error(await res.text());
     reconstruction=await res.json();$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},250);
-  }catch(e){alert('Rekonstruktion fehlgeschlagen: '+e.message);show('ready')}
+  }catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}
 }
 $('#reconstructBtn').onclick=reconstruct;
 
@@ -225,7 +225,7 @@ function renderTalk(){
  const log=$('#chatLog'); if(!log)return;
  log.innerHTML=chat.length?chat.map(m=>`<div class="notice ${m.role==='assistant'?'ok':''}"><strong>${m.role==='assistant'?"look, talk ’n build":"Du"}:</strong><br>${escapeHtml(m.text)}</div>`).join(''):'<p>Noch kein Werkstattgespräch.</p>';
  const box=$('#editableOpen'), u=analysisState?.unknown||[];
- box.innerHTML=u.length?u.map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input id="open${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"><button class="secondary" onclick="answerOpen(${i})">Übernehmen</button></div></div>`).join(''):'<div class="ok notice">Keine offenen Punkte.</div>';
+ box.innerHTML=u.length?u.slice(0,3).map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input id="open${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"><button class="secondary" onclick="answerOpen(${i})">Übernehmen</button></div></div>`).join(''):'<div class="ok notice">Keine offenen Punkte.</div>';
 }
 window.answerOpen=async i=>{
  const v=$('#open'+i).value.trim(); if(!v)return;
@@ -242,7 +242,7 @@ async function talkToPro(){
 }
 document.addEventListener('click',e=>{if(e.target?.id==='sendChat')talkToPro()});
 
-function projectPayload(){return {version:'0.7',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
+function projectPayload(){return {version:'0.7.3',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
 function updateSaved(){const p=localStorage.getItem('look_talk_n_build_project_0_7');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
 $('#saveProject').onclick=()=>{
   try{
