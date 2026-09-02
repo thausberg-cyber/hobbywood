@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#1d3326" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="look 'n build" />
+  <meta name="apple-mobile-web-app-title" content="look, talk 'n build" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>look 'n build – HOBBYWOOD</title>
+  <title>look, talk 'n build – HOBBYWOOD</title>
   <style>
     :root{--bg:#f4f2eb;--card:#fff;--ink:#172019;--muted:#677069;--accent:#1d3326;--accent2:#e7ece8;--line:#d8ddd9;--warn:#fff3d7;--danger:#fde7e4;--ok:#e5f3e8;}
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);}
@@ -36,11 +36,11 @@
   </style>
 </head>
 <body>
-<header><div class="brand">look &apos;n build</div><div class="sub">Vom Foto zum eigenen Projekt · Der Online-Workshop von HOBBYWOOD</div></header>
+<header><div class="brand">look, talk &apos;n build</div><div class="sub">Sehen. Fachsimpeln. Bauen. · Der Online-Workshop von HOBBYWOOD</div></header>
 <main>
 <section id="start" class="screen active">
   <h1>Was möchtest du nachbauen?</h1>
-  <p class="lead">Zeig look 'n build dein Objekt. Mehrere Ansichten helfen, Konstruktion und Details zu verstehen.</p>
+  <p class="lead">Zeig look, talk 'n build dein Objekt. Mehrere Ansichten helfen, Konstruktion und Details zu verstehen.</p>
   <label class="button primary" for="cameraInput">📷 Fotografieren</label>
   <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
   <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
@@ -52,11 +52,14 @@
   <h1>Dein Projekt</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
   <div id="photoGrid" class="photos"></div>
   <label class="button secondary" for="moreInput">+ Weitere Ansicht</label><input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
-  <button class="primary" id="analyzeBtn">Analysieren</button><button class="ghost back">Zurück</button>
+  <div class="card"><strong>Was weißt du über das Objekt?</strong>
+<p>Maße, Material, verdeckte Verbindungen oder eigene Beobachtungen.</p>
+<textarea id="knowledge" placeholder="z. B. Die Platte ist 19 mm stark. Die Verbindung ist von hinten verschraubt."></textarea></div>
+<button class="primary" id="analyzeBtn">Analysieren & fachsimpeln</button><button class="ghost back">Zurück</button>
 </section>
 
 <section id="analyzing" class="screen">
-  <h1>Ich sehe mir das an …</h1><p>look 'n build trennt erkennbare Fakten von Annahmen und offenen Punkten.</p><div class="progress"><i id="bar"></i></div>
+  <h1>Ich sehe mir das an …</h1><p>look, talk 'n build trennt erkennbare Fakten von Annahmen und offenen Punkten.</p><div class="progress"><i id="bar"></i></div>
 </section>
 
 <section id="analysis" class="screen">
@@ -83,7 +86,7 @@
   <h1 id="recordTitle">Projekt</h1><p class="lead" id="recordSummary"></p>
   <div class="tabs">
     <button class="tab on" data-pane="overview">Übersicht</button>
-    <button class="tab" data-pane="photosPane">Fotos</button>
+    <button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="talkPane">Werkstattgespräch</button>
     <button class="tab" data-pane="material">Material</button>
     <button class="tab" data-pane="tools">Werkzeug</button>
     <button class="tab" data-pane="steps">Bauanleitung</button>
@@ -91,12 +94,17 @@
   </div>
   <div id="overview" class="pane on"><div class="card" id="overviewBox"></div></div>
   <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Referenzfotos</h3><p>Diese Bilder bleiben Teil deiner Projektakte und können während des Baus erneut geöffnet werden.</p><div id="recordPhotos" class="photos"></div></div></div>
-  <div id="material" class="pane"><div class="card" id="materialBox"></div></div>
+  <div id="talkPane" class="pane"><div class="card"><h3 style="margin-top:0">Fachsimpeln mit der Profi-App</h3>
+<div id="chatLog"></div>
+<textarea id="chatInput" placeholder="Frag nach, korrigiere etwas, ergänze ein Maß oder schlage eine andere Konstruktion vor …"></textarea>
+<button class="primary" id="sendChat">Beitrag senden</button>
+<h3>Offene Punkte bearbeiten</h3><div id="editableOpen"></div></div></div>
+<div id="material" class="pane"><div class="card" id="materialBox"></div></div>
   <div id="tools" class="pane"><div class="card" id="toolsBox"></div></div>
   <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
   <div id="safety" class="pane"><div id="safetyBox"></div></div>
   <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
-  <p class="footerline">Pilotversion 0.6 · Referenzfotos werden lokal im Browser gespeichert.</p>
+  <p class="footerline">Pilotversion 0.7 · Referenzfotos werden lokal im Browser gespeichert.</p>
 </section>
 </main>
 
@@ -105,7 +113,7 @@
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-let photos=[], analysisState=null, reconstruction=null, round=0;
+let photos=[], analysisState=null, reconstruction=null, round=0, knowledge='', chat=[];
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
 async function ingest(files){for(const f of [...files]){photos.push({name:f.name,dataUrl:await fileToDataUrl(f)});}renderPhotos();show('photos')}
@@ -123,6 +131,8 @@ async function analyze(){
     const res=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       images:photos.map(p=>p.dataUrl),
       previousState:analysisState,
+      knowledge:($('#knowledge')?.value||knowledge||'').trim(),
+      chat,
       round
     })});
     if(!res.ok) throw new Error(await res.text());
@@ -147,7 +157,7 @@ function renderAnalysis(){
 $('#analyzeBtn').onclick=analyze;
 $('#detailInput').addEventListener('change',async e=>{await ingest(e.target.files);await analyze()});
 $('#acceptAnalysis').onclick=()=>show('ready');
-$('#viewPhotosReady').onclick=()=>{renderGallery($('#recordPhotos'),photos);show('record');switchTab('photosPane')};
+$('#viewPhotosReady').onclick=()=>{renderGallery($('#recordPhotos'),photos);renderTalk();show('record');switchTab('photosPane')};
 
 async function reconstruct(){
   show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='70%',500);
@@ -164,7 +174,7 @@ function renderRecord(){
   $('#recordTitle').textContent=r.title||analysisState?.object||'Projekt';
   $('#recordSummary').textContent=r.summary||analysisState?.summary||'';
   $('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${escapeHtml(r.construction||r.summary||'')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul>':''}`;
-  renderGallery($('#recordPhotos'),photos);
+  renderGallery($('#recordPhotos'),photos);renderTalk();
   $('#materialBox').innerHTML=renderTable(r.materials||[]);
   $('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${escapeHtml(x)}</p>`).join('')||'<p>Keine Angaben.</p>';
   $('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${escapeHtml(s)}</p></div>`).join('')||'<p>Keine Angaben.</p>';
@@ -178,21 +188,43 @@ function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p
 $$('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.pane));
 
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function projectPayload(){return {version:'0.6',date:new Date().toISOString(),photos,analysisState,reconstruction}}
-function updateSaved(){const p=localStorage.getItem('look_n_build_project_0_6');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
+
+function renderTalk(){
+ const log=$('#chatLog'); if(!log)return;
+ log.innerHTML=chat.length?chat.map(m=>`<div class="notice ${m.role==='assistant'?'ok':''}"><strong>${m.role==='assistant'?"look, talk ’n build":"Du"}:</strong><br>${escapeHtml(m.text)}</div>`).join(''):'<p>Noch kein Werkstattgespräch.</p>';
+ const box=$('#editableOpen'), u=analysisState?.unknown||[];
+ box.innerHTML=u.length?u.map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input id="open${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"><button class="secondary" onclick="answerOpen(${i})">Übernehmen</button></div></div>`).join(''):'<div class="ok notice">Keine offenen Punkte.</div>';
+}
+window.answerOpen=async i=>{
+ const v=$('#open'+i).value.trim(); if(!v)return;
+ chat.push({role:'user',text:`Zum offenen Punkt "${analysisState.unknown[i]}": ${v}`}); await talkToPro();
+};
+async function talkToPro(){
+ const inp=$('#chatInput'),t=inp?.value.trim(); if(t){chat.push({role:'user',text:t});inp.value='';}
+ try{
+  const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysis:analysisState,chat})});
+  if(!r.ok)throw Error(await r.text()); const d=await r.json();
+  if(d.analysis)analysisState=d.analysis;if(d.reply)chat.push({role:'assistant',text:d.reply});
+  reconstruction=null;renderTalk();
+ }catch(e){alert('Werkstattgespräch fehlgeschlagen: '+e.message)}
+}
+document.addEventListener('click',e=>{if(e.target?.id==='sendChat')talkToPro()});
+
+function projectPayload(){return {version:'0.7',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
+function updateSaved(){const p=localStorage.getItem('look_talk_n_build_project_0_7');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
 $('#saveProject').onclick=()=>{
   try{
-    localStorage.setItem('look_n_build_project_0_6',JSON.stringify(projectPayload()));
+    localStorage.setItem('look_talk_n_build_project_0_7',JSON.stringify(projectPayload()));
     updateSaved();alert('Projekt einschließlich Referenzfotos wurde auf diesem Gerät gespeichert.');
   }catch(e){
     alert('Das Projekt ist für den lokalen Browserspeicher zu groß. Für spätere Versionen ist eine echte Projektablage vorgesehen. Weniger oder kleinere Fotos können helfen.');
   }
 };
 $('#openSaved').onclick=()=>{
-  const p=JSON.parse(localStorage.getItem('look_n_build_project_0_6')||'null');if(!p)return;
-  photos=p.photos||[];analysisState=p.analysisState||null;reconstruction=p.reconstruction||null;renderPhotos();renderRecord();show('record')
+  const p=JSON.parse(localStorage.getItem('look_talk_n_build_project_0_7')||'null');if(!p)return;
+  photos=p.photos||[];knowledge=p.knowledge||'';analysisState=p.analysisState||null;chat=p.chat||[];reconstruction=p.reconstruction||null;if($('#knowledge'))$('#knowledge').value=knowledge;renderPhotos();renderRecord();show('record')
 };
-$('#newProject').onclick=()=>{photos=[];analysisState=null;reconstruction=null;round=0;renderPhotos();show('start')};
+$('#newProject').onclick=()=>{photos=[];analysisState=null;reconstruction=null;round=0;knowledge='';chat=[];if($('#knowledge'))$('#knowledge').value='';renderPhotos();show('start')};
 updateSaved();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
