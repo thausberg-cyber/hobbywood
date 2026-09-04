@@ -1,278 +1,179 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#1d3326" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="look, talk 'n build" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>look, talk 'n build – HOBBYWOOD</title>
-  <style>
-    :root{--bg:#f4f2eb;--card:#fff;--ink:#172019;--muted:#677069;--accent:#1d3326;--accent2:#e7ece8;--line:#d8ddd9;--warn:#fff3d7;--danger:#fde7e4;--ok:#e5f3e8;}
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);}
-    header{position:sticky;top:0;z-index:5;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;background:rgba(244,242,235,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
-    .brand{font-size:20px;font-weight:850;letter-spacing:.08em}.sub{font-size:12px;color:var(--muted);margin-top:2px}
-    main{max-width:720px;margin:0 auto;padding:22px 16px calc(92px + env(safe-area-inset-bottom));}.screen{display:none}.screen.active{display:block}
-    h1{font-size:31px;line-height:1.07;margin:10px 0 10px}h2{font-size:23px;margin:18px 0 10px}h3{font-size:17px;margin:16px 0 8px}p{line-height:1.45;color:#3d4840}
-    .lead{font-size:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px rgba(0,0,0,.035)}
-    button,.button{appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:750;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}
-    .primary{background:var(--accent);color:white}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
-    input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:110px;resize:vertical}
-    .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:pointer}
-    .tag{display:inline-block;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;background:var(--accent2);margin:3px 3px 3px 0}.status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:11px;height:11px;border-radius:50%;background:#599367;margin-top:5px;flex:none}.dot.mid{background:#d9a63b}.dot.unknown{background:#9b9f9b}
-    .notice{border-radius:14px;padding:13px 14px;margin:12px 0;background:var(--warn);line-height:1.4}.danger{background:var(--danger)}.ok{background:var(--ok)}
-    .tabs{display:flex;gap:6px;overflow:auto;padding-bottom:5px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:750}.tab.on{background:var(--accent);color:#fff}.pane{display:none}.pane.on{display:block}
-    table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}
-    .step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}.step p{margin:2px 0}
-    .footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:24px}.hidden{display:none!important}
-    .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}
-    dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);width:auto;background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}
-    dialog::backdrop{background:rgba(0,0,0,.75)} dialog img{display:block;max-width:92vw;max-height:82vh;width:auto;height:auto}
-    .dialogbar{display:flex;justify-content:flex-end;padding:8px;background:#111}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px;border-radius:10px;font-size:14px}
-    @media(min-width:650px){main{padding-top:34px}.photos{grid-template-columns:repeat(4,1fr)}}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#183327" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="look, talk 'n build" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<title>look, talk 'n build</title>
+<style>
+:root{--bg:#f7f6f1;--card:#fff;--ink:#182019;--muted:#6e746f;--accent:#183327;--accent2:#e9eeea;--line:#dcdedb;--warm:#f2eee4;--warn:#fff4d8;--danger:#f9e7e2;--ok:#e7f2ea;--shadow:0 8px 30px rgba(24,32,25,.055)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:20;background:rgba(247,246,241,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(11px + env(safe-area-inset-top)) 18px 11px}
+.brand{font-size:22px;font-weight:800;letter-spacing:.015em}.claim{font-size:12px;color:var(--muted);margin-top:3px}.by{opacity:.72}
+main{max-width:1180px;margin:0 auto;padding:24px 16px calc(90px + env(safe-area-inset-bottom))}.screen{display:none}.screen.active{display:block}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:14px 0 10px;letter-spacing:-.03em}h2{font-size:25px;margin:20px 0 10px}h3{font-size:17px;margin:17px 0 8px}p{line-height:1.48;color:#3e4740}.lead{font-size:18px;max-width:760px}.eyebrow{text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-size:11px;font-weight:800}
+.grid3{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}.choice{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer;box-shadow:var(--shadow);min-height:160px}.choice strong{font-size:20px;display:block;margin-bottom:8px}.choice p{margin:0}.choice:hover{border-color:#aeb9b1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+button,.button{appearance:none;border:0;border-radius:13px;padding:13px 15px;font-size:15px;font-weight:760;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}.small{width:auto;display:inline-block;padding:9px 12px;font-size:13px;margin:4px 4px 4px 0}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:110px;resize:vertical}label.field{display:block;margin:13px 0 6px;font-size:13px;font-weight:760}.hint{font-size:12px;color:var(--muted)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:pointer}.photoStrip{display:flex;gap:7px;overflow:auto;margin:8px 0}.photoStrip img{width:76px;height:76px;border-radius:10px;object-fit:cover;border:1px solid var(--line)}
+.notice{border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--warn);line-height:1.45}.ok{background:var(--ok)}.danger{background:var(--danger)}
+.tabs{display:flex;gap:6px;overflow:auto;padding:3px 0 7px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:760}.tab.on{background:var(--accent);color:#fff}.pane{display:none}.pane.on{display:block}
+.status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;background:#5e906c;margin-top:5px;flex:none}.dot.mid{background:#d2a340}.dot.unknown{background:#9b9f9b}
+.chatmsg{border-left:3px solid #bdc8c0;padding:9px 12px;margin:10px 0;background:#fafafa;border-radius:0 12px 12px 0}.chatmsg.ai{border-left-color:var(--accent);background:var(--ok)}.chatname{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}.calc{font-variant-numeric:tabular-nums;background:#f5f7f5;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px}
+.talkComposer{position:sticky;bottom:8px;background:rgba(247,246,241,.96);backdrop-filter:blur(14px);padding:10px;border:1px solid var(--line);border-radius:16px;margin-top:16px}.composerActions{display:flex;gap:8px;flex-wrap:wrap}.composerActions .button,.composerActions button{width:auto;margin:3px 0}.pending{font-size:13px;color:var(--muted)}
+.toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}
+.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
+@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:grid;grid-template-columns:minmax(280px,38%) minmax(0,62%);gap:18px}.workspace .side{position:sticky;top:92px;align-self:start}.talkComposer{bottom:14px}}
+</style>
 </head>
 <body>
-<header><div class="brand">look, talk &apos;n build</div><div class="sub">Sehen. Fachsimpeln. Bauen. · Der Online-Workshop von HOBBYWOOD</div></header>
+<header><div class="brand">look, talk ’n build</div><div class="claim">Sehen. Fachsimpeln. Bauen. <span class="by">· by HOBBYWOOD</span></div></header>
 <main>
 <section id="start" class="screen active">
-  <h1>Was möchtest du nachbauen?</h1>
-  <p class="lead">Zeig look, talk 'n build dein Objekt. Mehrere Ansichten helfen, Konstruktion und Details zu verstehen.</p>
-  <label class="button primary" for="cameraInput">📷 Fotografieren</label>
-  <input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
-  <label class="button secondary" for="libraryInput">▣ Fotos auswählen</label>
-  <input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
-  <div class="card"><strong>Meine Projekte</strong><p id="savedCount">Noch keine Projekte gespeichert.</p><button class="secondary" id="openSaved">Gespeichertes Projekt öffnen</button></div>
+  <div class="eyebrow">Dein digitaler Werkstattpartner</div><h1>Was möchtest du heute bauen?</h1>
+  <p class="lead">Starte mit einem vorhandenen Objekt, entwickle eine eigene Idee oder lass dir passende Projekte vorschlagen.</p>
+  <div class="grid3">
+    <button class="choice" id="startCopy"><strong>Objekt nachbauen</strong><p>Fotos zeigen, Konstruktion verstehen, offene Details gemeinsam klären.</p></button>
+    <button class="choice" id="startDevelop"><strong>Eigenes Projekt entwickeln</strong><p>Mit einer groben Vorstellung beginnen und sie im Werkstatt-Talk ausarbeiten.</p></button>
+    <button class="choice" id="startIdeas"><strong>Idee finden</strong><p>Noch kein Projekt? Anlass, Person und Rahmen nennen – die App schlägt passende Ideen vor.</p></button>
+  </div>
+  <div class="card"><strong>Dein Arbeitsbereich</strong><p id="savedCount">Noch keine Projekte gespeichert.</p><button class="secondary" id="openProjects">Meine Projekte</button><button class="ghost" id="openProfile">Meine Werkstatt</button></div>
 </section>
 
 <section id="photos" class="screen">
-  <h1>Dein Projekt</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
+  <div class="eyebrow">Objekt nachbauen</div><h1>Zeig mir dein Objekt.</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
   <div id="photoGrid" class="photos"></div>
-  <label class="button secondary" for="moreInput">+ Weitere Ansicht</label><input class="hidden" id="moreInput" type="file" accept="image/*" capture="environment" multiple>
-  <div class="card"><strong>Was weißt du über das Objekt?</strong>
-<p>Maße, Material, verdeckte Verbindungen oder eigene Beobachtungen.</p>
-<textarea id="knowledge" placeholder="z. B. Die Platte ist 19 mm stark. Die Verbindung ist von hinten verschraubt."></textarea></div>
-<button class="primary" id="analyzeBtn">Analysieren & fachsimpeln</button><button class="ghost back">Zurück</button>
+  <label class="button primary" for="cameraInput">Fotografieren</label><input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
+  <label class="button secondary" for="libraryInput">Fotos auswählen</label><input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
+  <label class="field" for="knowledge">Was weißt du über das Objekt?</label><textarea id="knowledge" placeholder="Maße, Material, verdeckte Verbindungen oder eigene Beobachtungen …"></textarea>
+  <button class="primary" id="analyzeBtn">Analysieren & fachsimpeln</button><button class="ghost backHome">Zur Startseite</button>
 </section>
 
-<section id="analyzing" class="screen">
-  <h1>Ich sehe mir das an …</h1><p>look, talk 'n build trennt erkennbare Fakten von Annahmen und offenen Punkten.</p><div class="progress"><i id="bar"></i></div>
+<section id="develop" class="screen">
+  <div class="eyebrow">Eigenes Projekt entwickeln</div><h1>Womit möchtest du beginnen?</h1>
+  <label class="field">Beschreibe deine Vorstellung</label><textarea id="developText" placeholder="z. B. Ich möchte einen runden Reagenzglas-Halter aus Multiplex bauen …"></textarea>
+  <p class="hint">Fotos oder Skizzen sind optional und können auch später im Talk ergänzt werden.</p>
+  <div id="developPhotos" class="photos"></div><label class="button secondary" for="developInput">Foto oder Skizze hinzufügen</label><input class="hidden" id="developInput" type="file" accept="image/*" multiple>
+  <button class="primary" id="developGo">Projekt starten</button><button class="ghost backHome">Zur Startseite</button>
 </section>
 
-<section id="analysis" class="screen">
-  <h1>Analyse</h1>
-  <div id="analysisCard" class="card"></div>
-  <div id="nextRequest" class="notice hidden"></div>
-  <label id="detailLabel" class="button primary hidden" for="detailInput">Detailfoto hinzufügen</label>
-  <input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple>
-  <button id="acceptAnalysis" class="secondary hidden">Projektstand übernehmen</button>
+<section id="ideas" class="screen">
+  <div class="eyebrow">Idee finden</div><h1>Für wen und wofür?</h1>
+  <div class="card">
+    <label class="field">Für wen?</label><input id="ideaWho" placeholder="z. B. guter Freund, 60 Jahre">
+    <label class="field">Anlass</label><input id="ideaOccasion" placeholder="Geburtstag, Einzug, Weihnachten …">
+    <label class="field">Interessen / Hobbys</label><input id="ideaInterests" placeholder="Kochen, Wein, Garten, Musik …">
+    <label class="field">Zeit</label><input id="ideaTime" placeholder="z. B. ein Wochenende">
+    <label class="field">Materialbudget</label><input id="ideaBudget" placeholder="z. B. bis 80 €">
+    <label class="field">Wirkung</label><select id="ideaStyle"><option>persönlich</option><option>praktisch</option><option>dekorativ</option><option>ungewöhnlich</option><option>hochwertig</option></select>
+  </div>
+  <button class="primary" id="findIdeas">Projektideen finden</button><div id="ideaResults"></div><button class="ghost backHome">Zur Startseite</button>
 </section>
 
-<section id="ready" class="screen">
-  <h1>Projekt verstanden</h1>
-  <div class="ok notice">Für dein Projekt sind genügend Informationen vorhanden. Verbleibende Unsicherheiten werden im Projekt kenntlich gemacht.</div>
-  <button class="primary" id="reconstructBtn">Mein Projekt erstellen</button>
-  <button class="secondary" id="viewPhotosReady">Fotos ansehen</button>
+<section id="profile" class="screen">
+  <div class="eyebrow">Personalisierung</div><h1>Meine Werkstatt</h1>
+  <p class="lead">Die App passt Erklärungstiefe und Fertigungsvorschläge an dein Können und deine tatsächliche Ausstattung an.</p>
+  <div class="card"><label class="field">Wie schätzt du dich ein?</label><select id="skill"><option value="Anfänger">Anfänger</option><option value="Fortgeschritten">Fortgeschritten</option><option value="Erfahren">Erfahren</option><option value="Profi">Profi</option></select></div>
+  <div class="card"><h3 style="margin-top:0">Werkzeuge & Maschinen</h3><p class="hint">Status: Habe ich / Will ich anschaffen / Habe ich nicht</p><div id="toolList"></div><label class="field">Eigenes Werkzeug ergänzen</label><div style="display:flex;gap:8px"><input id="customTool" placeholder="z. B. Langlochbohrmaschine"><button class="secondary small" id="addTool">Hinzufügen</button></div></div>
+  <button class="primary" id="saveProfile">Werkstattprofil speichern</button><button class="ghost backHome">Zur Startseite</button>
 </section>
 
-<section id="reconstructing" class="screen">
-  <h1>Mein Projekt wird erstellt …</h1><div class="progress"><i id="bar2"></i></div>
+<section id="projects" class="screen">
+  <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1><div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
 </section>
+
+<section id="analyzing" class="screen"><h1>Ich sehe mir das an …</h1><p>Fakten, Vermutungen und offene Punkte werden getrennt.</p><div class="progress"><i id="bar"></i></div></section>
+<section id="analysis" class="screen"><h1>Projektstand</h1><div id="analysisCard" class="card"></div><div id="nextRequest" class="notice hidden"></div><label id="detailLabel" class="button secondary hidden" for="detailInput">Foto als Antwort hinzufügen</label><input class="hidden" id="detailInput" type="file" accept="image/*" capture="environment" multiple><button id="acceptAnalysis" class="primary hidden">Projektstand übernehmen</button></section>
+<section id="ready" class="screen"><h1>Bereit für „Mein Projekt“</h1><div class="ok notice">Du kannst den Projektentwurf jetzt erstellen und anschließend jederzeit im Werkstatt-Talk weiterarbeiten.</div><button class="primary" id="reconstructBtn">Mein Projekt erstellen</button><button class="secondary" id="talkFirst">Erst weiter fachsimpeln</button></section>
+<section id="reconstructing" class="screen"><h1>Mein Projekt wird erstellt …</h1><div class="progress"><i id="bar2"></i></div></section>
 
 <section id="record" class="screen">
-  <h1 id="recordTitle">Projekt</h1><p class="lead" id="recordSummary"></p>
-  <div class="tabs">
-    <button class="tab on" data-pane="overview">Übersicht</button>
-    <button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="talkPane">Werkstattgespräch</button>
-    <button class="tab" data-pane="material">Material</button>
-    <button class="tab" data-pane="tools">Werkzeug</button>
-    <button class="tab" data-pane="steps">Bauanleitung</button>
-    <button class="tab" data-pane="safety">Hinweise</button>
+  <div class="workspace">
+    <aside class="side">
+      <div class="eyebrow">Mein Projekt</div><h1 id="recordTitle">Projekt</h1><p id="recordSummary"></p>
+      <div id="sidePhotos" class="photos"></div>
+      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button></div>
+    </aside>
+    <div>
+      <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
+      <div id="talkPane" class="pane on"><div class="card"><div id="chatLog"></div><h3>Noch offen</h3><div id="editableOpen"></div></div>
+        <div class="talkComposer"><textarea id="chatInput" placeholder="Frag mich etwas, lass etwas berechnen, korrigiere Maße oder diskutiere eine andere Lösung …"></textarea><div id="pendingTalkPhotos" class="photoStrip"></div><div class="composerActions"><label class="button secondary small" for="talkPhotoInput">Foto hinzufügen</label><input class="hidden" id="talkPhotoInput" type="file" accept="image/*" capture="environment" multiple><button class="primary small" id="sendChat">Beitrag senden</button></div><div class="hint">Text, Foto oder beides – jederzeit während des Talks.</div></div>
+      </div>
+      <div id="overview" class="pane"><div class="card" id="overviewBox"></div><button class="secondary" id="refreshProject">Mein Projekt neu erstellen</button></div>
+      <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Projektfotos</h3><div id="recordPhotos" class="photos"></div><label class="button secondary" for="recordPhotoInput">Weitere Fotos hinzufügen</label><input class="hidden" id="recordPhotoInput" type="file" accept="image/*" multiple></div></div>
+      <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
+    </div>
   </div>
-  <div id="overview" class="pane on"><div class="card" id="overviewBox"></div></div>
-  <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Referenzfotos</h3><p>Diese Bilder bleiben Teil deiner Projektakte und können während des Baus erneut geöffnet werden.</p><div id="recordPhotos" class="photos"></div></div></div>
-  <div id="talkPane" class="pane"><div class="card"><h3 style="margin-top:0">Fachsimpeln mit der Profi-App</h3>
-<div id="chatLog"></div>
-<textarea id="chatInput" placeholder="Frag nach, korrigiere etwas, ergänze ein Maß oder schlage eine andere Konstruktion vor …"></textarea>
-<button class="primary" id="sendChat">Beitrag senden</button>
-<h3>Noch offen</h3><div id="editableOpen"></div></div></div>
-<div id="material" class="pane"><div class="card" id="materialBox"></div></div>
-  <div id="tools" class="pane"><div class="card" id="toolsBox"></div></div>
-  <div id="steps" class="pane"><div class="card" id="stepsBox"></div></div>
-  <div id="safety" class="pane"><div id="safetyBox"></div></div>
-  <button class="primary" id="saveProject">Projekt speichern</button><button class="secondary" id="newProject">Neues Projekt</button>
-  <p class="footerline">Pilotversion 0.7.4 · Referenzfotos werden lokal im Browser gespeichert.</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.8 · lokale Projektablage auf diesem Gerät</p>
 </section>
 </main>
-
-<dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Referenzfoto"></dialog>
-
+<dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-let photos=[], analysisState=null, reconstruction=null, round=0, knowledge='', chat=[];
+const STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8';
+let current={id:null,title:'',mode:'copy',photos:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
+let pendingTalkPhotos=[];
+let profile={skill:'Fortgeschritten',tools:{}};
+const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
+const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo(0,0)}
-async function fileToDataUrl(file){
-  // OpenAI accepts JPEG/PNG/GIF/WebP, but Apple devices may supply HEIC/HEIF.
-  // Safari can display those files, so decode them in-browser and normalize
-  // every upload to a compact JPEG before it is stored or sent to the backend.
-  const objectUrl=URL.createObjectURL(file);
-  try{
-    const img=new Image();
-    await new Promise((resolve,reject)=>{
-      img.onload=resolve;
-      img.onerror=()=>reject(new Error('Bild konnte nicht gelesen werden: '+file.name));
-      img.src=objectUrl;
-    });
-    const maxSide=1800;
-    const scale=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
-    const canvas=document.createElement('canvas');
-    canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
-    canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-    const ctx=canvas.getContext('2d');
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    return canvas.toDataURL('image/jpeg',0.88);
-  } finally {
-    URL.revokeObjectURL(objectUrl);
-  }
-}
-async function ingest(files){
-  try{
-    for(const f of [...files]){
-      photos.push({name:f.name,dataUrl:await fileToDataUrl(f)});
-    }
-    renderPhotos();show('photos');
-  }catch(e){
-    alert(e.message);
-  }
-}
-function renderGallery(el,arr){el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[Number(img.dataset.i)].dataUrl))}
-function renderPhotos(){renderGallery($('#photoGrid'),photos);$('#photoCount').textContent=photos.length}
-function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()}
-$('#closeDialog').onclick=()=>$('#photoDialog').close();$('#photoDialog').onclick=e=>{if(e.target===$('#photoDialog'))$('#photoDialog').close()};
-['cameraInput','libraryInput','moreInput'].forEach(id=>$('#'+id).addEventListener('change',e=>ingest(e.target.files)));
-$$('.back').forEach(b=>b.onclick=()=>show('start'));
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function resetProject(mode='copy'){current={id:newId(),title:'',mode,photos:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pendingTalkPhotos=[]}
+async function fileToDataUrl(file){const u=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(Error('Bild konnte nicht gelesen werden: '+file.name));img.src=u});const max=1800,s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*s));c.height=Math.max(1,Math.round(img.naturalHeight*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88)}finally{URL.revokeObjectURL(u)}}
+async function addFiles(files,target=current.photos){for(const f of [...files])target.push({id:newId(),name:f.name,dataUrl:await fileToDataUrl(f),addedAt:new Date().toISOString()})}
+function gallery(el,arr){if(!el)return;el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[+img.dataset.i].dataUrl))}
+function renderAllPhotos(){gallery($('#photoGrid'),current.photos);gallery($('#developPhotos'),current.photos);gallery($('#recordPhotos'),current.photos);gallery($('#sidePhotos'),current.photos);$('#photoCount').textContent=current.photos.length}
+function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()} $('#closeDialog').onclick=()=>$('#photoDialog').close();$('#photoDialog').onclick=e=>{if(e.target===$('#photoDialog'))$('#photoDialog').close()}
+function getProjects(){try{return JSON.parse(localStorage.getItem(STORAGE)||'[]')}catch{return []}}
+function putProjects(arr){localStorage.setItem(STORAGE,JSON.stringify(arr));updateSaved()}
+function updateSaved(){const n=getProjects().length;$('#savedCount').textContent=n?`${n} Projekt${n===1?'':'e'} auf diesem Gerät gespeichert.`:'Noch keine Projekte gespeichert.'}
+function saveCurrent(silent=false){current.updatedAt=new Date().toISOString();current.title=current.reconstruction?.title||current.analysis?.object||current.title||'Unbenanntes Projekt';const arr=getProjects(),i=arr.findIndex(p=>p.id===current.id);if(i>=0)arr[i]=current;else arr.unshift(current);try{putProjects(arr);if(!silent)alert('Projekt gespeichert.')}catch(e){alert('Projekt konnte lokal nicht gespeichert werden. Möglicherweise sind zu viele Fotos enthalten.')}}
+function renderProjects(){const arr=getProjects();$('#projectList').innerHTML=arr.length?arr.map(p=>`<div class="card projectCard" data-id="${p.id}"><strong>${esc(p.title||p.analysis?.object||'Unbenanntes Projekt')}</strong><div class="projectMeta">${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')}</div><p>${esc(p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'')}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div>`).join(''):'<div class="card"><p>Noch keine Projekte gespeichert.</p></div>'}
+function loadProject(id){const p=getProjects().find(x=>x.id===id);if(!p)return;current=p;current.photos=current.photos||[];current.chat=current.chat||[];current.round=current.round||0;pendingTalkPhotos=[];renderRecord();show('record');switchTab('talkPane')}
+function loadProfile(){try{profile=JSON.parse(localStorage.getItem(PROFILE)||'null')||profile}catch{};$('#skill').value=profile.skill||'Fortgeschritten';renderToolsProfile()}
+function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
+function profilePayload(){return profile}
 
-async function analyze(){
-  if(!photos.length)return alert('Bitte mindestens ein Foto hinzufügen.');
-  show('analyzing');$('#bar').style.width='35%';setTimeout(()=>$('#bar').style.width='70%',400);
-  try{
-    const res=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      images:photos.map(p=>p.dataUrl),
-      previousState:analysisState,
-      knowledge:($('#knowledge')?.value||knowledge||'').trim(),
-      chat,
-      round
-    })});
-    if(!res.ok) throw new Error(await res.text());
-    analysisState=await res.json(); round++;
-    $('#bar').style.width='100%'; setTimeout(renderAnalysis,250);
-  }catch(e){alert('Analyse fehlgeschlagen: '+e.message);show('photos')}
-}
-function renderAnalysis(){
-  const a=analysisState||{};
-  const list=(title,items,cls='')=>`<h3>${title}</h3>${(items||[]).map(x=>`<div class="status"><span class="dot ${cls}"></span><div>${escapeHtml(typeof x==='string'?x:(x.text||JSON.stringify(x)))}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;
-  $('#analysisCard').innerHTML=`<h2 style="margin-top:0">${escapeHtml(a.object||'Objekt')}</h2><p>${escapeHtml(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;
-  const nr=a.next_request||{};
-  const enough=a.enough_information===true || nr.type==='done' || round>=4;
-  if(enough){
-    $('#nextRequest').classList.add('hidden');$('#detailLabel').classList.add('hidden');$('#acceptAnalysis').classList.remove('hidden');
-  }else{
-    $('#nextRequest').textContent=nr.prompt||'Bitte ergänze eine weitere aussagekräftige Ansicht.';$('#nextRequest').classList.remove('hidden');
-    $('#detailLabel').classList.remove('hidden');$('#acceptAnalysis').classList.remove('hidden');
-  }
-  show('analysis');
-}
-$('#analyzeBtn').onclick=analyze;
-$('#detailInput').addEventListener('change',async e=>{await ingest(e.target.files);await analyze()});
-$('#acceptAnalysis').onclick=()=>show('ready');
-$('#viewPhotosReady').onclick=()=>{renderGallery($('#recordPhotos'),photos);renderTalk();show('record');switchTab('photosPane')};
+$('#startCopy').onclick=()=>{resetProject('copy');$('#knowledge').value='';renderAllPhotos();show('photos')};
+$('#startDevelop').onclick=()=>{resetProject('develop');$('#developText').value='';renderAllPhotos();show('develop')};$('#startIdeas').onclick=()=>show('ideas');
+$$('.backHome').forEach(b=>b.onclick=()=>show('start'));$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=()=>{renderProjects();show('projects')};
+$('#cameraInput').onchange=$('#libraryInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};$('#developInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};
+$('#detailInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await analyze(true)};
+$('#recordPhotoInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();saveCurrent(true)};
+$('#talkPhotoInput').onchange=async e=>{await addFiles(e.target.files,pendingTalkPhotos);gallery($('#pendingTalkPhotos'),pendingTalkPhotos)};
 
-async function reconstruct(){
-  show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='70%',500);
-  try{
-    const res=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:analysisState,images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),chat})});
-    if(!res.ok) throw new Error(await res.text());
-    reconstruction=await res.json();$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},250);
-  }catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}
-}
-$('#reconstructBtn').onclick=reconstruct;
+async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
+$('#analyzeBtn').onclick=()=>analyze();$('#developGo').onclick=()=>analyze();
+function renderAnalysis(){const a=current.analysis||{},list=(t,x,c='')=>`<h3>${t}</h3>${(x||[]).map(v=>`<div class="status"><span class="dot ${c}"></span><div>${esc(v)}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;$('#analysisCard').innerHTML=`<h2 style="margin-top:0">${esc(a.object||'Projekt')}</h2><p>${esc(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;const nr=a.next_request||{},enough=a.enough_information===true||nr.type==='done'||current.round>=4;$('#acceptAnalysis').classList.remove('hidden');if(enough){$('#nextRequest').classList.add('hidden');$('#detailLabel').classList.add('hidden')}else{$('#nextRequest').textContent=nr.prompt||'Was sollten wir noch klären?';$('#nextRequest').classList.remove('hidden');$('#detailLabel').classList.toggle('hidden',nr.type!=='detail_photo')}show('analysis')}
+$('#acceptAnalysis').onclick=()=>show('ready');$('#talkFirst').onclick=()=>{current.reconstruction=current.reconstruction||{title:current.analysis?.object,summary:current.analysis?.summary};renderRecord();show('record');switchTab('talkPane')};
+async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
+$('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
+function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
+function renderRecord(){const r=current.reconstruction||{};$('#recordTitle').textContent=r.title||current.analysis?.object||current.title||'Projekt';$('#recordSummary').textContent=r.summary||current.analysis?.summary||'';$('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;renderAllPhotos();renderTalk();$('#materialBox').innerHTML=renderTable(r.materials||[]);$('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';$('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';$('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';$('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`}
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id))}$$('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.pane));
+function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
+function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
+let busy=false;
+async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';busy=true;renderTalk();try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{busy=false}}
+$('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 
-function renderRecord(){
-  const r=reconstruction||{};
-  $('#recordTitle').textContent=r.title||analysisState?.object||'Projekt';
-  $('#recordSummary').textContent=r.summary||analysisState?.summary||'';
-  $('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${escapeHtml(r.construction||r.summary||'')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+escapeHtml(x)+'</li>').join('')+'</ul>':''}`;
-  renderGallery($('#recordPhotos'),photos);renderTalk();
-  $('#materialBox').innerHTML=renderTable(r.materials||[]);
-  $('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${escapeHtml(x)}</p>`).join('')||'<p>Keine Angaben.</p>';
-  $('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${escapeHtml(s)}</p></div>`).join('')||'<p>Keine Angaben.</p>';
-  $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${escapeHtml(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
-}
-function renderTable(items){
-  if(!items.length)return '<p>Keine Angaben.</p>';
-  return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${escapeHtml(x.item||x.name||'')}</td><td>${escapeHtml(x.quantity||'')}</td><td>${escapeHtml(x.spec||x.details||'')}</td></tr>`).join('')}</table>`;
-}
-function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id))}
-$$('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.pane));
+$('#findIdeas').onclick=async()=>{const brief={who:$('#ideaWho').value,occasion:$('#ideaOccasion').value,interests:$('#ideaInterests').value,time:$('#ideaTime').value,budget:$('#ideaBudget').value,style:$('#ideaStyle').value};$('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';try{const r=await fetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());const d=await r.json();$('#ideaResults').innerHTML=(d.ideas||[]).map((x,i)=>`<div class="idea"><h3>${esc(x.title)}</h3><p>${esc(x.why)}</p><div class="chips"><span class="chip">${esc(x.difficulty)}</span><span class="chip">${esc(x.time)}</span><span class="chip">${esc(x.budget)}</span></div><p>${esc(x.concept)}</p><button class="primary chooseIdea" data-i="${i}">Diese Idee weiterentwickeln</button></div>`).join('');$('#ideaResults').dataset.ideas=JSON.stringify(d.ideas||[])}catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}};
+document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
 
-function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-
-let talkBusy=false;
-function renderTalk(){
- const log=$('#chatLog'); if(!log)return;
- log.innerHTML=chat.length?chat.map(m=>`<div class="notice ${m.role==='assistant'?'ok':''}"><strong>${m.role==='assistant'?"look, talk ’n build":"Du"}:</strong><br>${escapeHtml(m.text)}</div>`).join(''):'<p>Noch kein Werkstattgespräch.</p>';
- const box=$('#editableOpen'), u=(analysisState?.unknown||[]).slice(0,3);
- box.innerHTML=u.length
-  ? u.map((x,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${escapeHtml(x)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Maß, Antwort oder Entscheidung …"></div></div>`).join('')+`<button class="secondary" id="acceptOpenAnswers" style="margin-top:10px">Antworten übernehmen</button>`
-  : '<div class="ok notice">Keine offenen Punkte.</div>';
-}
-async function submitOpenAnswers(){
- if(talkBusy)return;
- const u=(analysisState?.unknown||[]).slice(0,3);
- const answers=[...document.querySelectorAll('.openAnswer')].map(el=>({index:Number(el.dataset.i),question:u[Number(el.dataset.i)],answer:el.value.trim()})).filter(x=>x.answer);
- if(!answers.length)return alert('Bitte mindestens eine Antwort eintragen.');
- const text=answers.map(x=>`• ${x.question} — ${x.answer}`).join('\n');
- chat.push({role:'user',text:`Antworten zu den offenen Punkten:\n${text}`});
- await talkToPro({openAnswers:answers,skipInput:true});
-}
-async function talkToPro({openAnswers=[],skipInput=false}={}){
- if(talkBusy)return;
- const inp=$('#chatInput'),t=skipInput?'':inp?.value.trim();
- if(t){chat.push({role:'user',text:t});inp.value='';}
- if(!t&&!openAnswers.length)return;
- talkBusy=true;
- const send=$('#sendChat'), batch=$('#acceptOpenAnswers'); if(send)send.disabled=true;if(batch)batch.disabled=true;
- try{
-  const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:photos.map(p=>p.dataUrl),knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysis:analysisState,chat,openAnswers})});
-  if(!r.ok)throw Error(await r.text()); const d=await r.json();
-  if(d.analysis)analysisState=d.analysis;if(d.reply)chat.push({role:'assistant',text:d.reply});
-  reconstruction=null;renderTalk();
- }catch(e){alert('Werkstattgespräch fehlgeschlagen: '+e.message)}
- finally{talkBusy=false;const s=$('#sendChat'),b=$('#acceptOpenAnswers');if(s)s.disabled=false;if(b)b.disabled=false;}
-}
-document.addEventListener('click',e=>{if(e.target?.id==='sendChat')talkToPro();if(e.target?.id==='acceptOpenAnswers')submitOpenAnswers()});
-
-function projectPayload(){return {version:'0.7.4',date:new Date().toISOString(),photos,knowledge:($('#knowledge')?.value||knowledge||'').trim(),analysisState,chat,reconstruction}}
-function updateSaved(){const p=localStorage.getItem('look_talk_n_build_project_0_7');$('#savedCount').textContent=p?'1 Projekt lokal auf diesem Gerät gespeichert.':'Noch keine Projekte gespeichert.';$('#openSaved').disabled=!p}
-$('#saveProject').onclick=()=>{
-  try{
-    localStorage.setItem('look_talk_n_build_project_0_7',JSON.stringify(projectPayload()));
-    updateSaved();alert('Projekt einschließlich Referenzfotos wurde auf diesem Gerät gespeichert.');
-  }catch(e){
-    alert('Das Projekt ist für den lokalen Browserspeicher zu groß. Für spätere Versionen ist eine echte Projektablage vorgesehen. Weniger oder kleinere Fotos können helfen.');
-  }
-};
-$('#openSaved').onclick=()=>{
-  const p=JSON.parse(localStorage.getItem('look_talk_n_build_project_0_7')||'null');if(!p)return;
-  photos=p.photos||[];knowledge=p.knowledge||'';analysisState=p.analysisState||null;chat=p.chat||[];reconstruction=p.reconstruction||null;if($('#knowledge'))$('#knowledge').value=knowledge;renderPhotos();renderRecord();show('record')
-};
-$('#newProject').onclick=()=>{photos=[];analysisState=null;reconstruction=null;round=0;knowledge='';chat=[];if($('#knowledge'))$('#knowledge').value='';renderPhotos();show('start')};
-updateSaved();
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile()};$('#saveProfile').onclick=()=>{profile.skill=$('#skill').value;$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));alert('Werkstattprofil gespeichert.');show('start')};
+$('#saveProject').onclick=()=>saveCurrent();$('#backToProjects').onclick=()=>{saveCurrent(true);renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
+document.addEventListener('click',e=>{if(e.target?.classList.contains('openP'))loadProject(e.target.dataset.id);if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){putProjects(getProjects().filter(p=>p.id!==e.target.dataset.id));renderProjects()}}});
+loadProfile();updateSaved();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
