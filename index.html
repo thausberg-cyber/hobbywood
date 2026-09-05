@@ -13,8 +13,8 @@
 <style>
 :root{--bg:#f7f6f1;--card:#fff;--ink:#182019;--muted:#6e746f;--accent:#183327;--accent2:#e9eeea;--line:#dcdedb;--warm:#f2eee4;--warn:#fff4d8;--danger:#f9e7e2;--ok:#e7f2ea;--shadow:0 8px 30px rgba(24,32,25,.055)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;position:relative}body::before{content:"";position:fixed;z-index:-1;pointer-events:none;right:-18vw;top:16vh;width:min(78vw,980px);height:min(78vw,980px);background:url("./tree-ring-bg.jpg") center/contain no-repeat;opacity:.065;filter:grayscale(1) contrast(.82);transform:rotate(-2deg)}
-header{position:sticky;top:0;z-index:20;background:rgba(247,246,241,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(11px + env(safe-area-inset-top)) 18px 11px}
-.brand{font-size:26px;font-weight:800;letter-spacing:.015em}.claim{font-size:12px;color:var(--muted);margin-top:3px}.by{opacity:.72}
+header{position:sticky;top:0;z-index:20;background:rgba(247,246,241,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(11px + env(safe-area-inset-top)) 18px 11px}.headerRow{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.homeTop{width:auto;margin:0;padding:8px 12px;border-radius:999px;font-size:13px;white-space:nowrap}.homeTop.hidden{display:none}
+.brand{font-size:30px;font-weight:800;letter-spacing:.015em;line-height:1.05}.claim{font-size:12px;color:var(--muted);margin-top:3px}.by{opacity:.72}
 main{max-width:1180px;margin:0 auto;padding:24px 16px calc(90px + env(safe-area-inset-bottom))}.screen{display:none}.screen.active{display:block}
 h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:14px 0 10px;letter-spacing:-.03em}h2{font-size:25px;margin:20px 0 10px}h3{font-size:17px;margin:17px 0 8px}p{line-height:1.48;color:#3e4740}.lead{font-size:18px;max-width:760px}.eyebrow{text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-size:11px;font-weight:800}
 .grid3{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}.choice{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer;box-shadow:var(--shadow);min-height:160px}.choice strong{font-size:20px;display:block;margin-bottom:8px}.choice p{margin:0}.choice:hover{border-color:#aeb9b1}
@@ -39,7 +39,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 </style>
 </head>
 <body>
-<header><div class="brand">look, talk ’n build</div><div class="claim">Sehen. Fachsimpeln. Bauen. <span class="by">· by HOBBYWOOD</span></div></header>
+<header><div class="headerRow"><div><div class="brand">look, talk ’n build</div><div class="claim">Sehen. Fachsimpeln. Bauen. <span class="by">· by HOBBYWOOD</span></div></div><button id="homeTop" class="ghost homeTop hidden" type="button">⌂ Start</button></div></header>
 <main>
 <section id="start" class="screen active">
   <div class="eyebrow">Dein digitaler Werkstattpartner</div><h1>Was möchtest du heute bauen?</h1>
@@ -116,8 +116,8 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.8.3 · Fotoauswahl und Projektvorschau</p>
-  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.8.4 · Navigation und Markenauftritt</p>
+  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
@@ -131,7 +131,7 @@ let pendingTalkPhotos=[];
 let profile={skill:'Fortgeschritten',tools:{}};
 const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
 const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
-function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');document.body.classList.toggle('record-open',id==='record');window.scrollTo(0,0)}
+function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');document.body.classList.toggle('record-open',id==='record');const h=$('#homeTop');if(h)h.classList.toggle('hidden',id==='start');window.scrollTo(0,0)}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function resetProject(mode='copy'){current={id:newId(),title:'',mode,photos:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pendingTalkPhotos=[]}
 async function fileToDataUrl(file){const u=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(Error('Bild konnte nicht gelesen werden: '+file.name));img.src=u});const max=1800,s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*s));c.height=Math.max(1,Math.round(img.naturalHeight*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88)}finally{URL.revokeObjectURL(u)}}
@@ -183,7 +183,13 @@ function profilePayload(){return profile}
 
 $('#startCopy').onclick=()=>{resetProject('copy');$('#knowledge').value='';renderAllPhotos();show('photos')};
 $('#startDevelop').onclick=()=>{resetProject('develop');$('#developText').value='';renderAllPhotos();show('develop')};$('#startIdeas').onclick=()=>show('ideas');
-$$('.backHome').forEach(b=>b.onclick=()=>show('start'));$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{await renderProjects();show('projects')};
+async function goStart(){
+  // Projektzustand bleibt erhalten; gespeicherte Projekte bleiben ohnehin in IndexedDB.
+  show('start');
+}
+$$('.backHome').forEach(b=>b.onclick=goStart);
+$('#homeTop').onclick=goStart;
+$$('.dockHome').forEach(b=>b.onclick=goStart);$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{await renderProjects();show('projects')};
 $('#cameraInput').onchange=$('#libraryInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};$('#developInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};
 ['detailCameraInput','detailLibraryInput'].forEach(id=>$('#'+id).onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await analyze(true)});
 $('#recordPhotoInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await saveCurrent(true)};
