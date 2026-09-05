@@ -138,7 +138,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.4 · Werkstattskizze mit geschlossenen Bauteilflächen</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.5 · Werkstattskizze nach Referenzdarstellung</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -297,8 +297,58 @@ function ensureSketchDepthDimensions(spec={},analysis={}){
   }
   return out;
 }
+function formatDimLabel(d){
+  if(!d)return'';
+  const value=d.value??d.label??'';
+  const unit=d.unit||(/cm|mm|m\b/i.test(String(d.label||''))?'':'cm');
+  return `${value}${unit?` ${unit}`:''}`.trim();
+}
+function dimByRole(analysis={},role){return (analysis.dimensions||[]).find(d=>d.role===role)}
+function isOpenWallBoxAnalysis(analysis={}){
+  const blob=normalizeSketchText([
+    analysis.title,analysis.summary,...(analysis.facts||[]),...(analysis.assumptions||[])
+  ].filter(Boolean).join(' '));
+  const hasCore=['width_total','height_total','depth_top','depth_bottom'].every(r=>!!dimByRole(analysis,r));
+  const boxWords=/(kasten|wandkasten|regal|ruckwand|seitenwand|vorne offen|offen)/.test(blob);
+  return hasCore&&boxWords;
+}
+function canonicalOpenWallBoxDrawing(analysis={}){
+  if(!isOpenWallBoxAnalysis(analysis))return null;
+  const w=dimByRole(analysis,'width_total'),h=dimByRole(analysis,'height_total');
+  const dt=dimByRole(analysis,'depth_top'),db=dimByRole(analysis,'depth_bottom');
+  // Ruhige, fest definierte Werkstattperspektive nach der abgestimmten Referenz.
+  const A=[220,210], B=[760,210], C=[760,505], D=[170,505]; // Vorderkanten/Seiten
+  const A2=[305,145], B2=[845,145];                        // hintere Oberkante
+  const C2=[845,430], D2=[305,430];                        // Rückwand unten
+  return {
+    polygons:[
+      {points:[A,A2,B2,B],fill:'#f1f0ea',width:3},                       // oberer Boden
+      {points:[D,D2,C2,C],fill:'#e9e8e1',width:3},                       // unterer Boden
+      {points:[A,A2,D2,D],fill:'#efeee8',width:3},                       // linke Seitenwand
+      {points:[B,B2,C2,C],fill:'#e5e4dd',width:3},                       // rechte Seitenwand
+      {points:[A2,B2,C2,D2],fill:'#ecebe5',width:3}                      // Rückwand
+    ],
+    lines:[],circles:[],
+    dimensions:[
+      {label:formatDimLabel(w),x1:305,y1:105,x2:845,y2:105},
+      {label:formatDimLabel(h),x1:900,y1:145,x2:900,y2:505},
+      {label:formatDimLabel(dt),x1:185,y1:188,x2:280,y2:118},
+      {label:formatDimLabel(db),x1:775,y1:535,x2:870,y2:462}
+    ],
+    labels:[
+      {text:'oberer Boden',x:475,y:180,size:22},
+      {text:'unterer Boden',x:485,y:485,size:22},
+      {text:'Rückwand',x:520,y:315,size:22},
+      {text:'linke Seitenwand',x:185,y:355,size:20},
+      {text:'rechte Seitenwand',x:755,y:355,size:20}
+    ]
+  };
+}
+function drawingForDisplay(spec={},analysis={}){
+  return canonicalOpenWallBoxDrawing(analysis)||ensureSketchDepthDimensions(spec,analysis);
+}
 function renderTechnicalDrawing(spec={},analysis={}){
-  spec=ensureSketchDepthDimensions(spec,analysis);
+  spec=drawingForDisplay(spec,analysis);
   const W=1000,H=700, stroke='#182019', dim='#5d665f';
   let out=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Werkstattskizze" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="700" fill="#fff"/>`;
   const safeNum=v=>Math.max(-100,Math.min(1100,Number(v)||0));

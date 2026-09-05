@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.4",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.4"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.5",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.5"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -108,6 +108,7 @@ Regeln:
 - Wenn ein oberer Boden vorhanden ist, MUSS er als eigenes Bauteil sichtbar sein, aber konstruktiv AM KASTEN ANLIEGEN: nicht abgehoben, nicht schwebend, keine Lücke zwischen oberem Boden, Seitenwänden und Rückwand. Vorder- und Rückkante des oberen Bodens müssen mit den angrenzenden Bauteilen verbunden sein.
 - Wenn sowohl depth_top als auch depth_bottom vorhanden oder naheliegend sind, zeige oben und unten zwei getrennte Böden mit unterschiedlicher Tiefe. Nutze handwerkliche Beschriftungen wie "oberer Boden", "unterer Boden", "Rückwand", "linke Seitenwand", "rechte Seitenwand".
 - Für einen offenen Wandkasten in Perspektive sollen die fünf vorhandenen Bauteilflächen räumlich konsistent sein: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Keine dieser Flächen darf versehentlich nur als Kante erscheinen.
+- Zeichne solche Wandkästen bevorzugt in einer ruhigen Werkstattperspektive: obere und untere Bodenfläche klar sichtbar, beide Seitenwände als geschlossene Flächen, Rückwand mittig, keine explodierte Darstellung und keine schwebenden Bauteile. Maßlinien liegen außerhalb des Werkstücks und dürfen sich nicht überschneiden.
 - Bemaßungen dürfen nicht doppelt vorkommen. Ein Maß wie 20 cm oder 60 cm genau EINMAL eintragen. Maßtexte und Maßlinien dürfen einander und andere Maßtexte nicht überlagern. Die Höhenbemaßung rechts und die untere Tiefenbemaßung müssen räumlich getrennt bleiben.
 - Koordinaten müssen zwischen 40 und 960 (x) bzw. 40 und 660 (y) liegen.
 - Für eine Kasten-/Möbelskizze nutze bevorzugt wenige Polygone/Linien; für Bohrungen circles.
@@ -154,6 +155,7 @@ Wichtig:
 - Wenn depth_bottom bestätigt ist, MUSS die Zeichnung unten einen eigenen unteren Boden mit erkennbarer Tiefe als geschlossene Fläche zeigen.
 - Wenn beide Tiefen bestätigt sind, soll die Darstellung klar zwischen oberem Boden, unterem Boden und Rückwand unterscheiden.
 - Bei Kasten-/Regalformen MUSS jede vorhandene Platte als geschlossene Fläche erscheinen: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Besonders die linke Seitenwand darf nicht auf eine einzelne Konturlinie reduziert werden.
+- Verwende eine ruhige, zusammenhängende Werkstattperspektive wie bei einer sauberen Handskizzen-Reinzeichnung: keine explodierten Bauteile, keine schwebenden Böden, Maßlinien außerhalb des Werkstücks und mit ausreichend Abstand zueinander.
 - Bemaßungen nie doppelt eintragen. 20 cm und 60 cm jeweils nur einmal. Maßtexte nicht überlagern; 60-cm-Tiefenmaß mit Abstand zur 80-cm-Höhenbemaßung platzieren.
 
 Gib ausschließlich JSON im gleichen Schema zurück:
@@ -222,4 +224,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.4 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.5 listening on port ${port}`));
