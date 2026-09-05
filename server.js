@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.1",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.1"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.2",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.2"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -99,9 +99,12 @@ Regeln:
 - confidence ist "certain", "likely" oder "uncertain".
 - Bei likely/uncertain MUSST du eine konkrete confirmation_question erzeugen, statt die Richtung stillschweigend festzulegen.
 - Beispiel: Eine seitlich an einer Bodenkante notierte "60" ist bei einem Kasten eher eine Tiefe als eine Breite; wenn die Zuordnung nicht zweifelsfrei ist, frage: "Sind die 60 cm die Tiefe des unteren Bodens?".
+- Beispiel: Eine oben eingetragene "20" an einem kurzen oberen Brett ist bei einem Wandkasten meist die Tiefe des oberen Bodens; wenn das nicht glasklar ist, frage: "Sind die 20 cm die Tiefe des oberen Bodens?".
 - drawing darf nur Maße als endgültig bemaßen, deren confidence "certain" ist. Unsichere Maße dürfen höchstens mit "?" gekennzeichnet werden.
 - drawing ist eine vereinfachte technische Darstellung in einem festen Koordinatensystem 1000 x 700. Zeichne nur Geometrie, die du aus der Handskizze nachvollziehen kannst.
 - drawing ist KEIN CAD und muss keine exakte Perspektive wiedergeben. Es soll Aufbau, Maße, Lochreihen und wichtige Details verständlich zeigen.
+- Wichtig bei Kasten-, Regal- und Wandkastenskizzen: Wenn ein oberer Boden vorhanden ist, MUSS er als eigenes Bauteil sichtbar sein. Zeige den oberen Boden mit eigener Vorderkante und Rückkante; stelle ihn nicht nur als Beschriftung auf einer Deckfläche dar.
+- Wenn sowohl depth_top als auch depth_bottom vorhanden oder naheliegend sind, zeige oben und unten zwei getrennte Böden mit unterschiedlicher Tiefe. Nutze handwerkliche Beschriftungen wie "oberer Boden", "unterer Boden", "Rückwand", "linke Seitenwand", "rechte Seitenwand".
 - Koordinaten müssen zwischen 40 und 960 (x) bzw. 40 und 660 (y) liegen.
 - Für eine Kasten-/Möbelskizze nutze bevorzugt wenige Polygone/Linien; für Bohrungen circles.
 - Maximal 20 Linien, 8 Polygone, 24 Kreise, 12 Bemaßungen und 12 Beschriftungen.
@@ -143,6 +146,9 @@ Wichtig:
 - Aktualisiere die Werkstattskizze so, dass Bemaßung und Geometrie zur bestätigten Bedeutung passen.
 - Für einen Wandkasten gilt typischerweise: Breite horizontal von links nach rechts, Höhe vertikal, Tiefe in der perspektivisch nach hinten laufenden Richtung.
 - Die Beschriftung soll handwerklich klar sein: "oberer Boden" statt "Oberteil", "unterer Boden" statt nur "Boden", sofern dies aus den Angaben folgt.
+- Wenn depth_top bestätigt ist, MUSS die Zeichnung oben einen eigenen oberen Boden mit erkennbarer Tiefe und sichtbarer Vorderkante zeigen.
+- Wenn depth_bottom bestätigt ist, MUSS die Zeichnung unten einen eigenen unteren Boden mit erkennbarer Tiefe zeigen.
+- Wenn beide Tiefen bestätigt sind, soll die Darstellung klar zwischen oberem Boden, unterem Boden und Rückwand unterscheiden.
 
 Gib ausschließlich JSON im gleichen Schema zurück:
 {
@@ -210,4 +216,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.1 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.2 listening on port ${port}`));
