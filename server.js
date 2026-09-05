@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.1",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.1"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -93,7 +93,13 @@ Regeln:
 - Erfinde keine Maße.
 - Unsichere Lesarten kommen nach assumptions oder unknown.
 - facts enthält sichere konstruktive Aussagen als kurze Sätze.
-- dimensions enthält nur sicher gelesene Maße.
+- dimensions enthält nur gelesene Maße und zusätzlich ihre Bedeutung.
+- Jedes Maß bekommt role aus: width_total, height_total, depth_top, depth_bottom, depth_general, thickness, spacing_horizontal, spacing_vertical, offset_horizontal, offset_vertical, diameter, radius, other.
+- role_label ist eine kurze handwerkliche Bezeichnung, z. B. "Gesamtbreite", "Höhe", "obere Tiefe", "untere Tiefe".
+- confidence ist "certain", "likely" oder "uncertain".
+- Bei likely/uncertain MUSST du eine konkrete confirmation_question erzeugen, statt die Richtung stillschweigend festzulegen.
+- Beispiel: Eine seitlich an einer Bodenkante notierte "60" ist bei einem Kasten eher eine Tiefe als eine Breite; wenn die Zuordnung nicht zweifelsfrei ist, frage: "Sind die 60 cm die Tiefe des unteren Bodens?".
+- drawing darf nur Maße als endgültig bemaßen, deren confidence "certain" ist. Unsichere Maße dürfen höchstens mit "?" gekennzeichnet werden.
 - drawing ist eine vereinfachte technische Darstellung in einem festen Koordinatensystem 1000 x 700. Zeichne nur Geometrie, die du aus der Handskizze nachvollziehen kannst.
 - drawing ist KEIN CAD und muss keine exakte Perspektive wiedergeben. Es soll Aufbau, Maße, Lochreihen und wichtige Details verständlich zeigen.
 - Koordinaten müssen zwischen 40 und 960 (x) bzw. 40 und 660 (y) liegen.
@@ -105,7 +111,8 @@ Gib ausschließlich JSON:
  "title":"kurzer Name",
  "summary":"kurze Beschreibung",
  "facts":["..."],
- "dimensions":[{"label":"Gesamtbreite","value":100,"unit":"cm","meaning":"..."}],
+ "dimensions":[{"label":"100","value":100,"unit":"cm","role":"width_total","role_label":"Gesamtbreite","confidence":"certain","meaning":"volle Breite des Kastens"}],
+ "confirmation_questions":[{"dimension_role":"depth_bottom","question":"Sind die 60 cm die Tiefe des unteren Bodens?","suggested_answer":"Ja, 60 cm untere Tiefe."}],
  "assumptions":["..."],
  "unknown":["..."],
  "drawing":{
@@ -121,6 +128,40 @@ Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
   addImages(content,[image]);
   res.json(await createJsonResponse(content,"sketch"));
 }catch(e){console.error(e);res.status(500).json({error:"sketch_failed",detail:e.message})}});
+
+
+app.post("/sketch/refine",async(req,res)=>{try{
+  const {image="",previous={},confirmations=[],knowledge="",analysis={},profile={}}=req.body||{};
+  if(!image) return res.status(400).json({error:"sketch_image_required"});
+  let content=[{type:"input_text",text:`Du überarbeitest eine bereits gelesene Werkstattskizze anhand ausdrücklicher Nutzerbestätigungen. ${workshopLanguage} ${profileText(profile)}
+Wichtig:
+- Nutzerbestätigungen haben Vorrang vor deiner bisherigen Interpretation.
+- Ordne Maße fachlich korrekt als Breite, Höhe, obere/untere Tiefe, Abstand, Durchmesser usw. zu.
+- Erfinde keine neuen Maße.
+- Wenn nach den Bestätigungen noch etwas für die Maßrichtung unklar ist, stelle höchstens 2 confirmation_questions.
+- Wenn ein Maß bestätigt wurde, setze confidence auf "certain".
+- Aktualisiere die Werkstattskizze so, dass Bemaßung und Geometrie zur bestätigten Bedeutung passen.
+- Für einen Wandkasten gilt typischerweise: Breite horizontal von links nach rechts, Höhe vertikal, Tiefe in der perspektivisch nach hinten laufenden Richtung.
+- Die Beschriftung soll handwerklich klar sein: "oberer Boden" statt "Oberteil", "unterer Boden" statt nur "Boden", sofern dies aus den Angaben folgt.
+
+Gib ausschließlich JSON im gleichen Schema zurück:
+{
+ "title":"...",
+ "summary":"...",
+ "facts":["..."],
+ "dimensions":[{"label":"60","value":60,"unit":"cm","role":"depth_bottom","role_label":"untere Tiefe","confidence":"certain","meaning":"Tiefe des unteren Bodens"}],
+ "confirmation_questions":[],
+ "assumptions":["..."],
+ "unknown":["..."],
+ "drawing":{"polygons":[],"lines":[],"circles":[],"dimensions":[],"labels":[]}
+}
+Bisherige Skizzenauswertung:${JSON.stringify(previous)}
+Nutzerbestätigungen:${JSON.stringify(confirmations)}
+Projektwissen:${knowledge}
+Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
+  addImages(content,[image]);
+  res.json(await createJsonResponse(content,"sketch_refine"));
+}catch(e){console.error(e);res.status(500).json({error:"sketch_refine_failed",detail:e.message})}});
 
 app.post("/analyze",async(req,res)=>{try{
   const {images=[],knowledge="",previousState=null,chat=[],round=0,profile={},sketches=[]}=req.body||{};
@@ -169,4 +210,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.1 listening on port ${port}`));

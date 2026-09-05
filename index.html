@@ -31,7 +31,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
-.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchConfirm{display:grid;gap:10px;margin-top:14px}.sketchConfirmRow{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.sketchConfirmRow label{display:block;font-weight:800;margin-bottom:6px}.sketchConfirmRow input{width:100%;box-sizing:border-box}.dimRole{font-size:12px;color:var(--muted);font-weight:700}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
@@ -106,7 +106,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
   <div class="sketchGrid">
     <div>
       <div class="card"><h3 style="margin-top:0">Deine Handskizze</h3><img id="sketchSourcePreview" class="sketchSource" alt="Hochgeladene Handskizze"></div>
-      <div class="card"><h3 style="margin-top:0">Erkannt</h3><div id="sketchFacts" class="sketchFacts"></div><div id="sketchUnknown"></div></div>
+      <div class="card"><h3 style="margin-top:0">Erkannt</h3><div id="sketchFacts" class="sketchFacts"></div><div id="sketchUnknown"></div><div id="sketchConfirmBox" class="sketchConfirm"></div><button class="secondary hidden" id="refineSketch">Angaben bestätigen & Zeichnung aktualisieren</button></div>
     </div>
     <div>
       <div class="card sketchCard"><h3 style="margin-top:0">Saubere Werkstattskizze</h3><p class="hint">Planungshilfe, keine normgerechte CAD-Zeichnung. Nicht sicher erkannte Angaben bleiben als offen markiert.</p><div id="sketchDrawing" class="drawingWrap"></div></div>
@@ -138,7 +138,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9 · Handskizze → Werkstattskizze → Projektwissen</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.1 · Maßbedeutung bestätigen und Zeichnung nachführen</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -267,10 +267,13 @@ function renderSketchReview(){
   if(!pendingSketch)return;
   $('#sketchSourcePreview').src=pendingSketch.dataUrl;
   const a=pendingSketch.analysis||{};
-  const facts=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
+  const facts=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.role?` · ${d.role_label||d.role}`:''}${d.meaning?` – ${d.meaning}`:''}`)];
   $('#sketchFacts').innerHTML=facts.length?facts.map(x=>`<div class="sketchFact">${esc(x)}</div>`):'<p>Keine sicheren Angaben erkannt.</p>';
   const assumptions=(a.assumptions||[]),unknown=(a.unknown||[]);
   $('#sketchUnknown').innerHTML=(assumptions.length?`<h3>Vermutet</h3>${assumptions.map(x=>`<div class="status"><span class="dot mid"></span><div>${esc(x)}</div></div>`).join('')}`:'')+(unknown.length?`<h3>Noch unklar</h3>${unknown.map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('')}`:'');
+  const qs=a.confirmation_questions||[];
+  $('#sketchConfirmBox').innerHTML=qs.length?`<h3>Bitte kurz bestätigen</h3>${qs.map((q,i)=>`<div class="sketchConfirmRow"><label>${esc(q.question)}</label><input data-q="${i}" value="${esc(q.suggested_answer||'')}" placeholder="Deine Antwort …"></div>`).join('')}`:'';
+  $('#refineSketch').classList.toggle('hidden',!qs.length);
   $('#sketchDrawing').innerHTML=renderTechnicalDrawing(a.drawing||{});
   show('sketchReview');
 }
@@ -304,8 +307,39 @@ function renderSketches(){
   const ss=current.sketches||[];
   box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div class="drawingWrap">${renderTechnicalDrawing(s.drawing||s.analysis?.drawing||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
 }
+
+$('#refineSketch').onclick=async()=>{
+  if(!pendingSketch)return;
+  const btn=$('#refineSketch');
+  const answers=[...$('#sketchConfirmBox').querySelectorAll('input[data-q]')].map(el=>({
+    id:Number(el.dataset.q),
+    question:(pendingSketch.analysis?.confirmation_questions||[])[Number(el.dataset.q)]?.question||'',
+    answer:(el.value||'').trim()
+  })).filter(x=>x.answer);
+  if(!answers.length)return alert('Bitte mindestens eine Angabe bestätigen oder korrigieren.');
+  btn.disabled=true;btn.textContent='Zeichnung wird aktualisiert …';
+  try{
+    const r=await fetch(API+'/sketch/refine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      image:pendingSketch.dataUrl,
+      previous:pendingSketch.analysis||{},
+      confirmations:answers,
+      knowledge:current.knowledge||'',
+      analysis:current.analysis||{},
+      profile:profilePayload()
+    })});
+    if(!r.ok)throw Error(await r.text());
+    pendingSketch.analysis=await r.json();
+    pendingSketch.drawing=pendingSketch.analysis?.drawing||{};
+    renderSketchReview();
+  }catch(e){alert('Skizze konnte nicht aktualisiert werden: '+e.message)}
+  finally{btn.disabled=false;btn.textContent='Angaben bestätigen & Zeichnung aktualisieren'}
+};
+
 $('#confirmSketch').onclick=async()=>{
   if(!pendingSketch)return;
+  if((pendingSketch.analysis?.confirmation_questions||[]).length){
+    return alert('Bitte bestätige zuerst die noch unklaren Maße und aktualisiere die Zeichnung.');
+  }
   pendingSketch.confirmedAt=new Date().toISOString();
   current.sketches=current.sketches||[];current.sketches.push(pendingSketch);
   mergeSketchIntoAnalysis(pendingSketch);
