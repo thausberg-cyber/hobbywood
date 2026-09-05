@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.8.0",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.8.0"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.8.2",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.8.2"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -38,6 +38,8 @@ function normalizeImageDataUrl(value,index){
 }
 const addImages=(c,imgs=[])=>{imgs.forEach((v,i)=>c.push({type:"input_image",image_url:normalizeImageDataUrl(v,i)}));return c};
 const profileText=p=>`Nutzerprofil: Erfahrungsniveau=${p?.skill||"nicht angegeben"}. Werkzeuge=${JSON.stringify(p?.tools||{})}. Passe Erklärungsniveau, Fachsprache und Fertigungsvorschläge daran an. Bevorzuge vorhandene Werkzeuge. Als 'will ich anschaffen' markierte Werkzeuge dürfen als Option genannt werden, aber nicht als vorhanden behandelt werden.`;
+
+const workshopLanguage=`Sprich bodenständig und handwerklich, wie ein erfahrener Kollege an der Werkbank. Kurze, klare Sätze. Nutze übliche Werkstattbegriffe. Keine Architekten-, Gutachter-, Verwaltungs- oder Hochschulsprache. Vermeide Wörter wie „hinsichtlich“, „zu verifizieren“, „Tragfähigkeit zu evaluieren“, „konstruktive Ausführung“ oder unnötig abstrakte Formulierungen, wenn eine einfache Werkstattformulierung reicht. Erkläre Fachbegriffe nur, wenn das Erfahrungsniveau des Nutzers das sinnvoll macht.`;
 
 function calcCirclePattern(spec={}){
   const d=Number(spec.pitch_diameter_mm);
@@ -84,7 +86,7 @@ function runCalculation(spec){
 app.post("/analyze",async(req,res)=>{try{
   const {images=[],knowledge="",previousState=null,chat=[],round=0,profile={}}=req.body||{};
   if(!images.length&&!knowledge.trim()) return res.status(400).json({error:"images_or_description_required"});
-  let content=[{type:"input_text",text:`Du bist der erfahrene Werkstattkollege von "look, talk 'n build". Analysiere das Projekt aus Bildern und Nutzerwissen. Erfinde keine Maße, Holzarten, verdeckten Verbindungen oder Tragfähigkeiten. Trenne erkannt, vermutet und offen. Priorisiere streng: maximal 3 offene Punkte. next_request enthält nur EINE konkrete nächste Frage oder Fotoanforderung. ${profileText(profile)}\nJSON:\n{"object":"...","summary":"...","recognized":["..."],"assumptions":["..."],"unknown":["..."],"safety_notes":["..."],"enough_information":true,"next_request":{"type":"done|detail_photo|measurement|question","prompt":"..."}}\nNutzerwissen:${knowledge}\nBisher:${JSON.stringify(previousState)}\nDialog:${JSON.stringify(chat)}\nRunde:${round}`}];
+  let content=[{type:"input_text",text:`Du bist der erfahrene Werkstattkollege von "look, talk 'n build". Analysiere das Projekt aus Bildern und Nutzerwissen. Erfinde keine Maße, Holzarten, verdeckten Verbindungen oder Tragfähigkeiten. Trenne erkannt, vermutet und offen. Priorisiere streng: maximal 3 offene Punkte. next_request enthält nur EINE konkrete nächste Frage oder Fotoanforderung. ${workshopLanguage} ${profileText(profile)}\nJSON:\n{"object":"...","summary":"...","recognized":["..."],"assumptions":["..."],"unknown":["..."],"safety_notes":["..."],"enough_information":true,"next_request":{"type":"done|detail_photo|measurement|question","prompt":"..."}}\nNutzerwissen:${knowledge}\nBisher:${JSON.stringify(previousState)}\nDialog:${JSON.stringify(chat)}\nRunde:${round}`}];
   addImages(content,images);
   res.json(await createJsonResponse(content,"analysis"));
 }catch(e){console.error(e);res.status(500).json({error:"analysis_failed",detail:e.message})}});
@@ -92,12 +94,12 @@ app.post("/analyze",async(req,res)=>{try{
 app.post("/talk",async(req,res)=>{try{
   const {images=[],knowledge="",analysis={},chat=[],openAnswers=[],profile={}}=req.body||{};
   const answered=Array.isArray(openAnswers)?openAnswers.filter(x=>x&&typeof x.question==="string"&&String(x.answer||"").trim()):[];
-  let content=[{type:"input_text",text:`Du bist ein erfahrener Werkstattkollege und führst einen echten beidseitigen Dialog. Der Nutzer darf jederzeit Fragen stellen, rechnen lassen, widersprechen, Entscheidungen treffen, Maße nennen oder Fotos nachreichen. Antworte zuerst auf SEINE Frage; stelle nur dann eine Rückfrage, wenn sie wirklich nötig ist. Prüfe fachlich und stimme nicht automatisch zu. Nichts erfinden. ${profileText(profile)}\n\nWenn eine belastbare Werkstattberechnung nötig ist, gib zusätzlich ein calculator-Objekt aus. Unterstützte Typen:\n1) circle_pattern: {"type":"circle_pattern","pitch_diameter_mm":430,"hole_diameter_mm":20,"center_pitch_mm":40} ODER edge_gap_mm statt center_pitch_mm.\n2) equal_spacing: {"type":"equal_spacing","length_mm":1000,"count":6}\n3) rectangle: {"type":"rectangle","length_mm":800,"width_mm":400,"thickness_mm":18}\nWenn keine Berechnung nötig ist: calculator=null. Bei Zahlenfragen, die in diese Typen passen, nutze calculator statt selbst zu rechnen.\n\nWenn OPEN_ANSWERS vorhanden sind, gelten diese als bewusst beantwortete Projektpunkte. Dieselben Fragen nicht erneut stellen. Erzeuge höchstens EINEN neuen offenen Punkt. Fotos können eine Antwort vollständig ersetzen, wenn das Bild die Information tatsächlich zeigt.\n\nGib JSON zurück:\n{"reply":"kurze fachliche Antwort","recognized_updates":["..."],"assumption_updates":["..."],"safety_notes":["..."],"new_open_point":null,"calculator":null}\nNutzerwissen:${knowledge}\nProjektstand:${JSON.stringify(analysis)}\nOPEN_ANSWERS:${JSON.stringify(answered)}\nGespräch:${JSON.stringify(chat)}`}];
+  let content=[{type:"input_text",text:`Du bist ein erfahrener Werkstattkollege und führst einen echten beidseitigen Dialog. Der Nutzer darf jederzeit Fragen stellen, rechnen lassen, widersprechen, Entscheidungen treffen, Maße nennen oder Fotos nachreichen. Antworte zuerst auf SEINE Frage; stelle nur dann eine Rückfrage, wenn sie wirklich nötig ist. Prüfe fachlich und stimme nicht automatisch zu. Nichts erfinden. ${workshopLanguage} ${profileText(profile)}\n\nWenn eine belastbare Werkstattberechnung nötig ist, gib zusätzlich ein calculator-Objekt aus. Unterstützte Typen:\n1) circle_pattern: {"type":"circle_pattern","pitch_diameter_mm":430,"hole_diameter_mm":20,"center_pitch_mm":40} ODER edge_gap_mm statt center_pitch_mm.\n2) equal_spacing: {"type":"equal_spacing","length_mm":1000,"count":6}\n3) rectangle: {"type":"rectangle","length_mm":800,"width_mm":400,"thickness_mm":18}\nWenn keine Berechnung nötig ist: calculator=null. Bei Zahlenfragen, die in diese Typen passen, nutze calculator statt selbst zu rechnen.\n\nWenn OPEN_ANSWERS vorhanden sind, gelten diese als bewusst beantwortete Projektpunkte. Dieselben Fragen nicht erneut stellen. Erzeuge höchstens EINEN neuen offenen Punkt. Fotos können eine Antwort vollständig ersetzen, wenn das Bild die Information tatsächlich zeigt.\n\nGib JSON zurück:\n{"reply":"kurze fachliche Antwort","recognized_updates":["..."],"assumption_updates":["..."],"safety_notes":["..."],"new_open_point":null,"calculator":null}\nNutzerwissen:${knowledge}\nProjektstand:${JSON.stringify(analysis)}\nOPEN_ANSWERS:${JSON.stringify(answered)}\nGespräch:${JSON.stringify(chat)}`}];
   addImages(content,images);
   const d=await createJsonResponse(content,"talk");
   const calc=runCalculation(d.calculator);
   if(calc){
-    const calcPrompt=[{type:"input_text",text:`Formuliere zu dieser bereits exakt berechneten Werkstattberechnung eine kurze fachliche Antwort auf Deutsch. Erfinde keine anderen Zahlen. Weise auf Widersprüche in Nutzervorgaben hin, wenn sie sich aus den Daten ergeben. Rechnung:${JSON.stringify(calc)}\nBisherige beabsichtigte Antwort:${d.reply||""}`}];
+    const calcPrompt=[{type:"input_text",text:`Formuliere zu dieser bereits exakt berechneten Werkstattberechnung eine kurze, bodenständige Werkstatt-Antwort auf Deutsch. ${workshopLanguage} Erfinde keine anderen Zahlen. Weise auf Widersprüche in Nutzervorgaben hin, wenn sie sich aus den Daten ergeben. Rechnung:${JSON.stringify(calc)}\nBisherige beabsichtigte Antwort:${d.reply||""}`}];
     const x=await client.responses.create({model,input:[{role:"user",content:calcPrompt}]});
     d.reply=x.output_text.trim();
   }
@@ -117,15 +119,15 @@ app.post("/talk",async(req,res)=>{try{
 
 app.post("/ideas",async(req,res)=>{try{
   const {brief={},profile={}}=req.body||{};
-  const content=[{type:"input_text",text:`Entwickle 4 konkrete, realistisch baubare Geschenk- oder DIY-Projektideen. Keine belanglosen Listen; jede Idee soll erkennbar aus Empfänger, Anlass, Interessen, Zeit, Budget und Werkstattprofil abgeleitet sein. ${profileText(profile)}\nJSON:{"ideas":[{"title":"...","why":"...","difficulty":"Anfänger|Fortgeschritten|Erfahren|Profi","time":"...","budget":"...","main_tools":["..."],"concept":"..."}]}\nBrief:${JSON.stringify(brief)}`}];
+  const content=[{type:"input_text",text:`Entwickle 4 konkrete, realistisch baubare Geschenk- oder DIY-Projektideen. ${workshopLanguage} Keine belanglosen Listen; jede Idee soll erkennbar aus Empfänger, Anlass, Interessen, Zeit, Budget und Werkstattprofil abgeleitet sein. ${profileText(profile)}\nJSON:{"ideas":[{"title":"...","why":"...","difficulty":"Anfänger|Fortgeschritten|Erfahren|Profi","time":"...","budget":"...","main_tools":["..."],"concept":"..."}]}\nBrief:${JSON.stringify(brief)}`}];
   res.json(await createJsonResponse(content,"ideas"));
 }catch(e){console.error(e);res.status(500).json({error:"ideas_failed",detail:e.message})}});
 
 app.post("/reconstruct",async(req,res)=>{try{
   const {analysis={},knowledge="",chat=[],images=[],profile={}}=req.body||{};
-  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"tools":["..."],"steps":["..."],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}`}];
+  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. ${workshopLanguage} Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"tools":["..."],"steps":["..."],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}`}];
   addImages(content,images);
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.8.0 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.8.2 listening on port ${port}`));
