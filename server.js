@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.2",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.2"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.3a",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.3a"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -216,4 +216,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.2 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.3a listening on port ${port}`));
