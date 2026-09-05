@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.3a",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.3a"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.4",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.4"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -103,8 +103,12 @@ Regeln:
 - drawing darf nur Maße als endgültig bemaßen, deren confidence "certain" ist. Unsichere Maße dürfen höchstens mit "?" gekennzeichnet werden.
 - drawing ist eine vereinfachte technische Darstellung in einem festen Koordinatensystem 1000 x 700. Zeichne nur Geometrie, die du aus der Handskizze nachvollziehen kannst.
 - drawing ist KEIN CAD und muss keine exakte Perspektive wiedergeben. Es soll Aufbau, Maße, Lochreihen und wichtige Details verständlich zeigen.
-- Wichtig bei Kasten-, Regal- und Wandkastenskizzen: Wenn ein oberer Boden vorhanden ist, MUSS er als eigenes Bauteil sichtbar sein. Zeige den oberen Boden mit eigener Vorderkante und Rückkante; stelle ihn nicht nur als Beschriftung auf einer Deckfläche dar.
+- Wichtig bei Kasten-, Regal- und Wandkastenskizzen: Alle plattenförmigen Bauteile werden als GESCHLOSSENE FLÄCHEN (Polygone) gezeichnet, nicht nur als einzelne Linien. Das betrifft mindestens oberen Boden, unteren Boden, linke Seitenwand, rechte Seitenwand und Rückwand, soweit diese vorhanden sind.
+- Die linke Seitenwand MUSS ebenso als sichtbare Fläche dargestellt werden wie die rechte Seitenwand. Nicht nur ihre Vorderkante zeichnen.
+- Wenn ein oberer Boden vorhanden ist, MUSS er als eigenes Bauteil sichtbar sein, aber konstruktiv AM KASTEN ANLIEGEN: nicht abgehoben, nicht schwebend, keine Lücke zwischen oberem Boden, Seitenwänden und Rückwand. Vorder- und Rückkante des oberen Bodens müssen mit den angrenzenden Bauteilen verbunden sein.
 - Wenn sowohl depth_top als auch depth_bottom vorhanden oder naheliegend sind, zeige oben und unten zwei getrennte Böden mit unterschiedlicher Tiefe. Nutze handwerkliche Beschriftungen wie "oberer Boden", "unterer Boden", "Rückwand", "linke Seitenwand", "rechte Seitenwand".
+- Für einen offenen Wandkasten in Perspektive sollen die fünf vorhandenen Bauteilflächen räumlich konsistent sein: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Keine dieser Flächen darf versehentlich nur als Kante erscheinen.
+- Bemaßungen dürfen nicht doppelt vorkommen. Ein Maß wie 20 cm oder 60 cm genau EINMAL eintragen. Maßtexte und Maßlinien dürfen einander und andere Maßtexte nicht überlagern. Die Höhenbemaßung rechts und die untere Tiefenbemaßung müssen räumlich getrennt bleiben.
 - Koordinaten müssen zwischen 40 und 960 (x) bzw. 40 und 660 (y) liegen.
 - Für eine Kasten-/Möbelskizze nutze bevorzugt wenige Polygone/Linien; für Bohrungen circles.
 - Maximal 20 Linien, 8 Polygone, 24 Kreise, 12 Bemaßungen und 12 Beschriftungen.
@@ -119,7 +123,7 @@ Gib ausschließlich JSON:
  "assumptions":["..."],
  "unknown":["..."],
  "drawing":{
-   "polygons":[{"points":[[x,y],[x,y],[x,y]],"fill":"#f7f7f5","width":3}],
+   "polygons":[{"component":"linke Seitenwand","points":[[x,y],[x,y],[x,y],[x,y]],"fill":"#f7f7f5","width":3}],
    "lines":[{"x1":0,"y1":0,"x2":0,"y2":0,"width":3}],
    "circles":[{"cx":0,"cy":0,"r":7}],
    "dimensions":[{"x1":0,"y1":0,"x2":0,"y2":0,"label":"100 cm"}],
@@ -146,9 +150,11 @@ Wichtig:
 - Aktualisiere die Werkstattskizze so, dass Bemaßung und Geometrie zur bestätigten Bedeutung passen.
 - Für einen Wandkasten gilt typischerweise: Breite horizontal von links nach rechts, Höhe vertikal, Tiefe in der perspektivisch nach hinten laufenden Richtung.
 - Die Beschriftung soll handwerklich klar sein: "oberer Boden" statt "Oberteil", "unterer Boden" statt nur "Boden", sofern dies aus den Angaben folgt.
-- Wenn depth_top bestätigt ist, MUSS die Zeichnung oben einen eigenen oberen Boden mit erkennbarer Tiefe und sichtbarer Vorderkante zeigen.
-- Wenn depth_bottom bestätigt ist, MUSS die Zeichnung unten einen eigenen unteren Boden mit erkennbarer Tiefe zeigen.
+- Wenn depth_top bestätigt ist, MUSS die Zeichnung oben einen eigenen oberen Boden mit erkennbarer Tiefe und sichtbarer Vorder- und Rückkante zeigen. Der obere Boden liegt konstruktiv auf/an den Seitenwänden und der Rückwand an; er darf NICHT abgehoben oder schwebend gezeichnet werden.
+- Wenn depth_bottom bestätigt ist, MUSS die Zeichnung unten einen eigenen unteren Boden mit erkennbarer Tiefe als geschlossene Fläche zeigen.
 - Wenn beide Tiefen bestätigt sind, soll die Darstellung klar zwischen oberem Boden, unterem Boden und Rückwand unterscheiden.
+- Bei Kasten-/Regalformen MUSS jede vorhandene Platte als geschlossene Fläche erscheinen: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Besonders die linke Seitenwand darf nicht auf eine einzelne Konturlinie reduziert werden.
+- Bemaßungen nie doppelt eintragen. 20 cm und 60 cm jeweils nur einmal. Maßtexte nicht überlagern; 60-cm-Tiefenmaß mit Abstand zur 80-cm-Höhenbemaßung platzieren.
 
 Gib ausschließlich JSON im gleichen Schema zurück:
 {
@@ -216,4 +222,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.3a listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.4 listening on port ${port}`));

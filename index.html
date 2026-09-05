@@ -138,7 +138,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.3a · Tiefenbemaßung und Cache-Korrektur</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.4 · Werkstattskizze mit geschlossenen Bauteilflächen</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -266,24 +266,33 @@ function pickSketchDims(analysis={}){
   }
   return found;
 }
+function dimensionNumberKey(v=''){
+  const m=String(v||'').replace(',','.').match(/-?\d+(?:\.\d+)?/);
+  return m?String(Number(m[0])):'';
+}
 function ensureSketchDepthDimensions(spec={},analysis={}){
   const out={...spec,dimensions:[...(spec.dimensions||[])]};
-  const existing=new Set(out.dimensions.map(d=>normalizeSketchText(d.label)));
+  const existingLabels=new Set(out.dimensions.map(d=>normalizeSketchText(d.label)));
+  const existingNumbers=new Set(out.dimensions.map(d=>dimensionNumberKey(d.label)).filter(Boolean));
   const dims=pickSketchDims(analysis);
   const b=drawingBounds(spec);
   const w=Math.max(160,b.maxX-b.minX), h=Math.max(120,b.maxY-b.minY);
-  if(dims.topDepth && !existing.has(normalizeSketchText(dims.topDepth))){
+  const missing=label=>{
+    const lk=normalizeSketchText(label), nk=dimensionNumberKey(label);
+    return !existingLabels.has(lk) && (!nk || !existingNumbers.has(nk));
+  };
+  if(dims.topDepth && missing(dims.topDepth)){
     out.dimensions.push({
-      label:dims.topDepth,
-      x1:b.minX-40, y1:b.minY+Math.round(h*0.36),
-      x2:b.minX+Math.round(w*0.18), y2:b.minY-24
+      label:/[a-z]/i.test(String(dims.topDepth))?dims.topDepth:`${dims.topDepth} cm`,
+      x1:b.minX-34, y1:b.minY+Math.round(h*0.17),
+      x2:b.minX+Math.round(w*0.10), y2:b.minY-20
     });
   }
-  if(dims.bottomDepth && !existing.has(normalizeSketchText(dims.bottomDepth))){
+  if(dims.bottomDepth && missing(dims.bottomDepth)){
     out.dimensions.push({
-      label:dims.bottomDepth,
-      x1:b.maxX-Math.round(w*0.10), y1:b.maxY+18,
-      x2:b.maxX+38, y2:b.maxY-Math.round(h*0.16)
+      label:/[a-z]/i.test(String(dims.bottomDepth))?dims.bottomDepth:`${dims.bottomDepth} cm`,
+      x1:b.maxX+18, y1:b.maxY-8,
+      x2:b.maxX+70, y2:b.maxY-Math.round(h*0.15)
     });
   }
   return out;
