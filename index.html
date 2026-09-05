@@ -243,7 +243,53 @@ function svgEl(name,attrs={},text=''){
   const a=Object.entries(attrs).map(([k,v])=>`${k}="${esc(v)}"`).join(' ');
   return `<${name}${a?' '+a:''}>${text}</${name}>`;
 }
-function renderTechnicalDrawing(spec={}){
+function normalizeSketchText(v=''){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function drawingBounds(spec={}){
+  const pts=[];
+  for(const p of (spec.polygons||[])) for(const q of (p.points||[])) if(Array.isArray(q)&&q.length>=2) pts.push([Number(q[0])||0,Number(q[1])||0]);
+  for(const l of (spec.lines||[])) pts.push([Number(l.x1)||0,Number(l.y1)||0],[Number(l.x2)||0,Number(l.y2)||0]);
+  for(const c of (spec.circles||[])) pts.push([Number(c.cx)||0,Number(c.cy)||0]);
+  if(!pts.length) return {minX:140,maxX:860,minY:140,maxY:560};
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+}
+function pickSketchDims(analysis={}){
+  const dims=analysis?.dimensions||[];
+  const found={};
+  for(const d of dims){
+    const label=d.label||[d.value,d.unit].filter(Boolean).join(' ');
+    const blob=normalizeSketchText([d.label,d.role,d.role_label,d.meaning,d.context,d.name].filter(Boolean).join(' '));
+    if(!found.width && /(gesamtbreite|gesamtbreite des kastens|breite|gesamtbreite)/.test(blob)) found.width=label;
+    else if(!found.height && /(gesamt\s*hohe|gesamthohe|hohe|hoehe)/.test(blob)) found.height=label;
+    else if(!found.topDepth && /(ober(er|e)?\s*boden|deckplatte|obere\s*tiefe|tiefe\s*oben)/.test(blob)) found.topDepth=label;
+    else if(!found.bottomDepth && /(unter(er|e)?\s*boden|kastenboden|untere\s*tiefe|tiefe\s*unten|boden\s*uber\s*die\s*volle\s*untere\s*tiefe)/.test(blob)) found.bottomDepth=label;
+  }
+  return found;
+}
+function ensureSketchDepthDimensions(spec={},analysis={}){
+  const out={...spec,dimensions:[...(spec.dimensions||[])]};
+  const existing=new Set(out.dimensions.map(d=>normalizeSketchText(d.label)));
+  const dims=pickSketchDims(analysis);
+  const b=drawingBounds(spec);
+  const w=Math.max(160,b.maxX-b.minX), h=Math.max(120,b.maxY-b.minY);
+  if(dims.topDepth && !existing.has(normalizeSketchText(dims.topDepth))){
+    out.dimensions.push({
+      label:dims.topDepth,
+      x1:b.minX-40, y1:b.minY+Math.round(h*0.36),
+      x2:b.minX+Math.round(w*0.18), y2:b.minY-24
+    });
+  }
+  if(dims.bottomDepth && !existing.has(normalizeSketchText(dims.bottomDepth))){
+    out.dimensions.push({
+      label:dims.bottomDepth,
+      x1:b.maxX-Math.round(w*0.10), y1:b.maxY+18,
+      x2:b.maxX+38, y2:b.maxY-Math.round(h*0.16)
+    });
+  }
+  return out;
+}
+function renderTechnicalDrawing(spec={},analysis={}){
+  spec=ensureSketchDepthDimensions(spec,analysis);
   const W=1000,H=700, stroke='#182019', dim='#5d665f';
   let out=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Werkstattskizze" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="700" fill="#fff"/>`;
   const safeNum=v=>Math.max(-100,Math.min(1100,Number(v)||0));
@@ -253,7 +299,7 @@ function renderTechnicalDrawing(spec={}){
   }
   for(const l of (spec.lines||[]).slice(0,60))out+=`<line x1="${safeNum(l.x1)}" y1="${safeNum(l.y1)}" x2="${safeNum(l.x2)}" y2="${safeNum(l.y2)}" stroke="${stroke}" stroke-width="${Math.max(1,Math.min(8,Number(l.width)||3))}" stroke-linecap="round"/>`;
   for(const c of (spec.circles||[]).slice(0,60))out+=`<circle cx="${safeNum(c.cx)}" cy="${safeNum(c.cy)}" r="${Math.max(2,Math.min(100,Number(c.r)||8))}" fill="none" stroke="${stroke}" stroke-width="3"/>`;
-  for(const d of (spec.dimensions||[]).slice(0,30)){
+  for(const d of (spec.dimensions||[]).slice(0,40)){
     const x1=safeNum(d.x1),y1=safeNum(d.y1),x2=safeNum(d.x2),y2=safeNum(d.y2);
     out+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${dim}" stroke-width="2"/>`;
     out+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${dim}"/><circle cx="${x2}" cy="${y2}" r="3" fill="${dim}"/>`;
@@ -274,7 +320,7 @@ function renderSketchReview(){
   const qs=a.confirmation_questions||[];
   $('#sketchConfirmBox').innerHTML=qs.length?`<h3>Bitte kurz bestätigen</h3>${qs.map((q,i)=>`<div class="sketchConfirmRow"><label>${esc(q.question)}</label><input data-q="${i}" value="${esc(q.suggested_answer||'')}" placeholder="Deine Antwort …"></div>`).join('')}`:'';
   $('#refineSketch').classList.toggle('hidden',!qs.length);
-  $('#sketchDrawing').innerHTML=renderTechnicalDrawing(a.drawing||{});
+  $('#sketchDrawing').innerHTML=renderTechnicalDrawing(a.drawing||{},a);
   show('sketchReview');
 }
 async function startSketch(file,returnScreen='record'){
@@ -305,7 +351,7 @@ function mergeSketchIntoAnalysis(s){
 function renderSketches(){
   const box=$('#sketchList');if(!box)return;
   const ss=current.sketches||[];
-  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div class="drawingWrap">${renderTechnicalDrawing(s.drawing||s.analysis?.drawing||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
+  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div class="drawingWrap">${renderTechnicalDrawing(s.drawing||s.analysis?.drawing||{},s.analysis||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
 }
 
 $('#refineSketch').onclick=async()=>{
