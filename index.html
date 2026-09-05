@@ -31,7 +31,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
-.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
@@ -56,7 +56,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
   <div class="eyebrow">Objekt nachbauen</div><h1>Zeig mir dein Objekt.</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
   <div id="photoGrid" class="photos"></div>
   <label class="button primary" for="cameraInput">Fotografieren</label><input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
-  <label class="button secondary" for="libraryInput">Fotos auswählen</label><input class="hidden" id="libraryInput" type="file" accept="image/*" multiple>
+  <label class="button secondary" for="libraryInput">Fotos auswählen</label><input class="hidden" id="libraryInput" type="file" accept="image/*" multiple><label class="button ghost" for="sketchInputPhotos">Skizze ergänzen</label><input class="hidden" id="sketchInputPhotos" type="file" accept="image/*">
   <label class="field" for="knowledge">Was weißt du über das Objekt?</label><textarea id="knowledge" placeholder="Maße, Material, verdeckte Verbindungen oder eigene Beobachtungen …"></textarea>
   <button class="primary" id="analyzeBtn">Analysieren & fachsimpeln</button><button class="ghost backHome">Zur Startseite</button>
 </section>
@@ -65,7 +65,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
   <div class="eyebrow">Eigenes Projekt entwickeln</div><h1>Womit möchtest du beginnen?</h1>
   <label class="field">Beschreibe deine Vorstellung</label><textarea id="developText" placeholder="z. B. Ich möchte einen runden Reagenzglas-Halter aus Multiplex bauen …"></textarea>
   <p class="hint">Fotos oder Skizzen sind optional und können auch später im Talk ergänzt werden.</p>
-  <div id="developPhotos" class="photos"></div><label class="button secondary" for="developInput">Foto oder Skizze hinzufügen</label><input class="hidden" id="developInput" type="file" accept="image/*" multiple>
+  <div id="developPhotos" class="photos"></div><label class="button secondary" for="developInput">Projektfoto hinzufügen</label><input class="hidden" id="developInput" type="file" accept="image/*" multiple><label class="button ghost" for="sketchInputDevelop">Skizze ergänzen</label><input class="hidden" id="sketchInputDevelop" type="file" accept="image/*">
   <button class="primary" id="developGo">Projekt starten</button><button class="ghost backHome">Zur Startseite</button>
 </section>
 
@@ -94,6 +94,28 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
   <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1><div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
 </section>
 
+
+<section id="sketchWorking" class="screen">
+  <div class="eyebrow">Werkstattskizze</div><h1>Ich lese deine Skizze …</h1>
+  <p>Ich trenne erkannte Maße von Vermutungen und mache daraus eine saubere Werkstattskizze.</p>
+  <div class="progress"><i id="sketchBar"></i></div>
+</section>
+
+<section id="sketchReview" class="screen">
+  <div class="eyebrow">Skizze ergänzen</div><h1>Habe ich deine Skizze richtig verstanden?</h1>
+  <div class="sketchGrid">
+    <div>
+      <div class="card"><h3 style="margin-top:0">Deine Handskizze</h3><img id="sketchSourcePreview" class="sketchSource" alt="Hochgeladene Handskizze"></div>
+      <div class="card"><h3 style="margin-top:0">Erkannt</h3><div id="sketchFacts" class="sketchFacts"></div><div id="sketchUnknown"></div></div>
+    </div>
+    <div>
+      <div class="card sketchCard"><h3 style="margin-top:0">Saubere Werkstattskizze</h3><p class="hint">Planungshilfe, keine normgerechte CAD-Zeichnung. Nicht sicher erkannte Angaben bleiben als offen markiert.</p><div id="sketchDrawing" class="drawingWrap"></div></div>
+    </div>
+  </div>
+  <button class="primary" id="confirmSketch">Stimmt so – ins Projekt übernehmen</button>
+  <button class="secondary" id="retrySketch">Andere Skizze verwenden</button>
+  <button class="ghost" id="cancelSketch">Abbrechen</button>
+</section>
 <section id="analyzing" class="screen"><h1>Ich sehe mir das an …</h1><p>Fakten, Vermutungen und offene Punkte werden getrennt.</p><div class="progress"><i id="bar"></i></div></section>
 <section id="analysis" class="screen"><h1>Projektstand</h1><div id="analysisCard" class="card"></div><div id="nextRequest" class="notice hidden"></div><div id="detailPhotoActions" class="card hidden"><strong>Foto als Antwort hinzufügen</strong><div class="composerActions"><label class="button secondary small" for="detailCameraInput">Foto aufnehmen</label><input class="hidden" id="detailCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="detailLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="detailLibraryInput" type="file" accept="image/*" multiple></div></div><button id="acceptAnalysis" class="primary hidden">Projektstand übernehmen</button></section>
 <section id="ready" class="screen"><h1>Bereit für „Mein Projekt“</h1><div class="ok notice">Du kannst den Projektentwurf jetzt erstellen und anschließend jederzeit im Werkstatt-Talk weiterarbeiten.</div><button class="primary" id="reconstructBtn">Mein Projekt erstellen</button><button class="secondary" id="talkFirst">Erst weiter fachsimpeln</button></section>
@@ -107,17 +129,17 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button></div>
     </aside>
     <div>
-      <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
+      <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
       <div id="talkPane" class="pane on"><div class="card"><div id="chatLog"></div><h3>Noch offen</h3><div id="editableOpen"></div></div>
-        <div class="talkComposer"><textarea id="chatInput" placeholder="Frag mich etwas, lass etwas berechnen, korrigiere Maße oder diskutiere eine andere Lösung …"></textarea><div id="pendingTalkPhotos" class="photoStrip"></div><div class="composerActions"><label class="button secondary small" for="talkCameraInput">Foto aufnehmen</label><input class="hidden" id="talkCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="talkLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="talkLibraryInput" type="file" accept="image/*" multiple><button class="primary small" id="sendChat">Beitrag senden</button></div><div id="talkWorking" class="talkWorking"><span class="spinner" aria-hidden="true"></span><span>Ich schaue mir das an …</span></div><div class="hint">Text, Foto oder beides – jederzeit während des Talks.</div></div>
+        <div class="talkComposer"><textarea id="chatInput" placeholder="Frag mich etwas, lass etwas berechnen, korrigiere Maße oder diskutiere eine andere Lösung …"></textarea><div id="pendingTalkPhotos" class="photoStrip"></div><div class="composerActions"><label class="button secondary small" for="talkCameraInput">Foto aufnehmen</label><input class="hidden" id="talkCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="talkLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="talkLibraryInput" type="file" accept="image/*" multiple><label class="button ghost small" for="talkSketchInput">Skizze ergänzen</label><input class="hidden" id="talkSketchInput" type="file" accept="image/*"><button class="primary small" id="sendChat">Beitrag senden</button></div><div id="talkWorking" class="talkWorking"><span class="spinner" aria-hidden="true"></span><span>Ich schaue mir das an …</span></div><div class="hint">Text, Foto oder beides – jederzeit während des Talks.</div></div>
       </div>
       <div id="overview" class="pane"><div class="card" id="overviewBox"></div><button class="secondary" id="refreshProject">Mein Projekt neu erstellen</button></div>
-      <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Projektfotos</h3><div id="recordPhotos" class="photos"></div><label class="button secondary" for="recordPhotoInput">Weitere Fotos hinzufügen</label><input class="hidden" id="recordPhotoInput" type="file" accept="image/*" multiple></div></div>
+      <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Projektfotos</h3><div id="recordPhotos" class="photos"></div><label class="button secondary" for="recordPhotoInput">Weitere Fotos hinzufügen</label><input class="hidden" id="recordPhotoInput" type="file" accept="image/*" multiple></div></div><div id="sketchPane" class="pane"><div class="card"><h3 style="margin-top:0">Werkstattskizzen</h3><p class="hint">Eine schnelle Handskizze kann Maße und Aufbau oft besser klären als ein weiteres Foto.</p><div id="sketchList"></div><div class="composerActions"><label class="button secondary small" for="recordSketchCamera">Skizze fotografieren</label><input class="hidden" id="recordSketchCamera" type="file" accept="image/*" capture="environment"><label class="button secondary small" for="recordSketchLibrary">Skizze auswählen</label><input class="hidden" id="recordSketchLibrary" type="file" accept="image/*"></div></div></div>
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.8.4 · Navigation und Markenauftritt</p>
-  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9 · Handskizze → Werkstattskizze → Projektwissen</p>
+  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
@@ -126,14 +148,15 @@ const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
-let current={id:null,title:'',mode:'copy',photos:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
+let current={id:null,title:'',mode:'copy',photos:[],sketches:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
 let pendingTalkPhotos=[];
+let pendingSketch=null, sketchReturnScreen='record';
 let profile={skill:'Fortgeschritten',tools:{}};
 const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
 const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
 function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');document.body.classList.toggle('record-open',id==='record');const h=$('#homeTop');if(h)h.classList.toggle('hidden',id==='start');window.scrollTo(0,0)}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function resetProject(mode='copy'){current={id:newId(),title:'',mode,photos:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pendingTalkPhotos=[]}
+function resetProject(mode='copy'){current={id:newId(),title:'',mode,photos:[],sketches:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pendingTalkPhotos=[];pendingSketch=null}
 async function fileToDataUrl(file){const u=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(Error('Bild konnte nicht gelesen werden: '+file.name));img.src=u});const max=1800,s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*s));c.height=Math.max(1,Math.round(img.naturalHeight*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88)}finally{URL.revokeObjectURL(u)}}
 async function addFiles(files,target=current.photos){for(const f of [...files])target.push({id:newId(),name:f.name,dataUrl:await fileToDataUrl(f),addedAt:new Date().toISOString()})}
 function gallery(el,arr){if(!el)return;el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[+img.dataset.i].dataUrl))}
@@ -142,8 +165,18 @@ function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()} $
 function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(PROJECT_STORE))db.createObjectStore(PROJECT_STORE,{keyPath:'id'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB konnte nicht geöffnet werden.'))})}
 function dataUrlToBlob(dataUrl){const [meta,b64]=String(dataUrl||'').split(',');const mime=(meta.match(/^data:([^;]+)/)||[])[1]||'image/jpeg';const bin=atob(b64||''),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new Blob([bytes],{type:mime})}
 function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Foto konnte nicht geladen werden.'));r.readAsDataURL(blob)})}
-async function projectForStorage(project){const copy=typeof structuredClone==='function'?structuredClone(project):JSON.parse(JSON.stringify(project));copy.photos=await Promise.all((project.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,blob:p.blob instanceof Blob?p.blob:dataUrlToBlob(p.dataUrl)})));return copy}
-async function projectForUi(project){const copy=project;copy.photos=await Promise.all((copy.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,dataUrl:p.dataUrl||await blobToDataUrl(p.blob)})));copy.chat=copy.chat||[];copy.round=copy.round||0;return copy}
+async function projectForStorage(project){
+  const copy=typeof structuredClone==='function'?structuredClone(project):JSON.parse(JSON.stringify(project));
+  copy.photos=await Promise.all((project.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,blob:p.blob instanceof Blob?p.blob:dataUrlToBlob(p.dataUrl)})));
+  copy.sketches=await Promise.all((project.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,blob:s.blob instanceof Blob?s.blob:dataUrlToBlob(s.dataUrl)})));
+  return copy
+}
+async function projectForUi(project){
+  const copy=project;
+  copy.photos=await Promise.all((copy.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,dataUrl:p.dataUrl||await blobToDataUrl(p.blob)})));
+  copy.sketches=await Promise.all((copy.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,dataUrl:s.dataUrl||await blobToDataUrl(s.blob)})));
+  copy.chat=copy.chat||[];copy.round=copy.round||0;return copy
+}
 async function dbPutProject(project){const db=await openDb(),stored=await projectForStorage(project);return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readwrite');tx.objectStore(PROJECT_STORE).put(stored);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
 async function dbGetProject(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).get(id);req.onsuccess=async()=>{db.close();try{resolve(req.result?await projectForUi(req.result):null)}catch(e){reject(e)}};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
 async function dbGetProjects(){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).getAll();req.onsuccess=()=>{const arr=req.result||[];db.close();arr.sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));resolve(arr)};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
@@ -152,7 +185,7 @@ async function migrateLegacyProjects(){let legacy=[];try{legacy=JSON.parse(local
 async function updateSaved(){try{const n=(await dbGetProjects()).length;$('#savedCount').textContent=n?`${n} Projekt${n===1?'':'e'} auf diesem Gerät gespeichert.`:'Noch keine Projekte gespeichert.'}catch(e){$('#savedCount').textContent='Lokale Projektablage nicht verfügbar.'}}
 async function saveCurrent(silent=false){current.updatedAt=new Date().toISOString();current.title=current.reconstruction?.title||current.analysis?.object||current.title||'Unbenanntes Projekt';try{await dbPutProject(current);await updateSaved();if(!silent)alert('Projekt gespeichert.')}catch(e){console.error(e);alert('Projekt konnte nicht gespeichert werden. Bitte prüfe den freien Gerätespeicher und versuche es erneut.')}}
 async function projectPreview(p){
-  const first=(p.photos||[])[0];
+  const first=(p.photos||[])[0]||(p.sketches||[])[0];
   if(!first)return '';
   try{
     if(first.dataUrl)return first.dataUrl;
@@ -166,7 +199,7 @@ async function renderProjects(){
     const rows=await Promise.all(arr.map(async p=>{
       const preview=await projectPreview(p);
       const title=esc(p.title||p.analysis?.object||'Unbenanntes Projekt');
-      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'}`;
+      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}`;
       const summary=esc(p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
       const thumb=preview?`<img class="projectThumb" src="${preview}" alt="Projektvorschau">`:`<div class="projectThumb placeholder">Noch kein Foto</div>`;
       return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong><div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
@@ -176,7 +209,7 @@ async function renderProjects(){
     $('#projectList').innerHTML='<div class="danger notice">Projektablage konnte nicht geöffnet werden.</div>';
   }
 }
-async function loadProject(id){try{const p=await dbGetProject(id);if(!p)return;current=p;pendingTalkPhotos=[];renderRecord();show('record');switchTab('talkPane')}catch(e){alert('Projekt konnte nicht geöffnet werden: '+e.message)}}
+async function loadProject(id){try{const p=await dbGetProject(id);if(!p)return;current=p;current.sketches=current.sketches||[];pendingTalkPhotos=[];renderRecord();show('record');switchTab('talkPane')}catch(e){alert('Projekt konnte nicht geöffnet werden: '+e.message)}}
 function loadProfile(){try{profile=JSON.parse(localStorage.getItem(PROFILE)||'null')||profile}catch{};$('#skill').value=profile.skill||'Fortgeschritten';renderToolsProfile()}
 function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
 function profilePayload(){return profile}
@@ -195,20 +228,115 @@ $('#cameraInput').onchange=$('#libraryInput').onchange=async e=>{await addFiles(
 $('#recordPhotoInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await saveCurrent(true)};
 ['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).onchange=async e=>{await addFiles(e.target.files,pendingTalkPhotos);gallery($('#pendingTalkPhotos'),pendingTalkPhotos)});
 
-async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
+
+function sketchContext(){
+  return (current.sketches||[]).map(s=>({
+    title:s.analysis?.title||'Werkstattskizze',
+    summary:s.analysis?.summary||'',
+    facts:s.analysis?.facts||[],
+    dimensions:s.analysis?.dimensions||[],
+    assumptions:s.analysis?.assumptions||[],
+    unknown:s.analysis?.unknown||[]
+  }));
+}
+function svgEl(name,attrs={},text=''){
+  const a=Object.entries(attrs).map(([k,v])=>`${k}="${esc(v)}"`).join(' ');
+  return `<${name}${a?' '+a:''}>${text}</${name}>`;
+}
+function renderTechnicalDrawing(spec={}){
+  const W=1000,H=700, stroke='#182019', dim='#5d665f';
+  let out=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Werkstattskizze" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="700" fill="#fff"/>`;
+  const safeNum=v=>Math.max(-100,Math.min(1100,Number(v)||0));
+  for(const p of (spec.polygons||[]).slice(0,20)){
+    const pts=(p.points||[]).slice(0,20).map(q=>`${safeNum(q[0])},${safeNum(q[1])}`).join(' ');
+    if(pts)out+=`<polygon points="${pts}" fill="${p.fill||'none'}" stroke="${stroke}" stroke-width="${Math.max(1,Math.min(8,Number(p.width)||3))}" stroke-linejoin="round"/>`
+  }
+  for(const l of (spec.lines||[]).slice(0,60))out+=`<line x1="${safeNum(l.x1)}" y1="${safeNum(l.y1)}" x2="${safeNum(l.x2)}" y2="${safeNum(l.y2)}" stroke="${stroke}" stroke-width="${Math.max(1,Math.min(8,Number(l.width)||3))}" stroke-linecap="round"/>`;
+  for(const c of (spec.circles||[]).slice(0,60))out+=`<circle cx="${safeNum(c.cx)}" cy="${safeNum(c.cy)}" r="${Math.max(2,Math.min(100,Number(c.r)||8))}" fill="none" stroke="${stroke}" stroke-width="3"/>`;
+  for(const d of (spec.dimensions||[]).slice(0,30)){
+    const x1=safeNum(d.x1),y1=safeNum(d.y1),x2=safeNum(d.x2),y2=safeNum(d.y2);
+    out+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${dim}" stroke-width="2"/>`;
+    out+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${dim}"/><circle cx="${x2}" cy="${y2}" r="3" fill="${dim}"/>`;
+    const mx=(x1+x2)/2,my=(y1+y2)/2-8;
+    out+=`<text x="${mx}" y="${my}" text-anchor="middle" font-family="-apple-system,Arial,sans-serif" font-size="24" font-weight="700" fill="${stroke}">${esc(d.label||'')}</text>`;
+  }
+  for(const t of (spec.labels||[]).slice(0,40))out+=`<text x="${safeNum(t.x)}" y="${safeNum(t.y)}" font-family="-apple-system,Arial,sans-serif" font-size="${Math.max(16,Math.min(34,Number(t.size)||22))}" fill="${stroke}">${esc(t.text||'')}</text>`;
+  out+='</svg>';return out
+}
+function renderSketchReview(){
+  if(!pendingSketch)return;
+  $('#sketchSourcePreview').src=pendingSketch.dataUrl;
+  const a=pendingSketch.analysis||{};
+  const facts=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
+  $('#sketchFacts').innerHTML=facts.length?facts.map(x=>`<div class="sketchFact">${esc(x)}</div>`):'<p>Keine sicheren Angaben erkannt.</p>';
+  const assumptions=(a.assumptions||[]),unknown=(a.unknown||[]);
+  $('#sketchUnknown').innerHTML=(assumptions.length?`<h3>Vermutet</h3>${assumptions.map(x=>`<div class="status"><span class="dot mid"></span><div>${esc(x)}</div></div>`).join('')}`:'')+(unknown.length?`<h3>Noch unklar</h3>${unknown.map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('')}`:'');
+  $('#sketchDrawing').innerHTML=renderTechnicalDrawing(a.drawing||{});
+  show('sketchReview');
+}
+async function startSketch(file,returnScreen='record'){
+  if(!file)return;
+  sketchReturnScreen=returnScreen;
+  const dataUrl=await fileToDataUrl(file);
+  pendingSketch={id:newId(),name:file.name||'Handskizze',dataUrl,addedAt:new Date().toISOString(),analysis:null};
+  show('sketchWorking');$('#sketchBar').style.width='35%';setTimeout(()=>$('#sketchBar').style.width='72%',350);
+  try{
+    const r=await fetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()
+    })});
+    if(!r.ok)throw Error(await r.text());
+    pendingSketch.analysis=await r.json();pendingSketch.drawing=pendingSketch.analysis?.drawing||{};
+    $('#sketchBar').style.width='100%';setTimeout(renderSketchReview,180);
+  }catch(e){alert('Skizze konnte nicht ausgewertet werden: '+e.message);show(returnScreen)}
+}
+function mergeSketchIntoAnalysis(s){
+  const a=s.analysis||{},existing=current.analysis||{object:current.title||a.title||'Projekt',summary:a.summary||'',recognized:[],assumptions:[],unknown:[],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};
+  const add=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
+  const uniq=arr=>[...new Set(arr.filter(Boolean))];
+  current.analysis={...existing,
+    recognized:uniq([...(existing.recognized||[]),...add]),
+    assumptions:uniq([...(existing.assumptions||[]),...(a.assumptions||[])]),
+    unknown:uniq([...(existing.unknown||[]),...(a.unknown||[])]).slice(0,3)
+  };
+}
+function renderSketches(){
+  const box=$('#sketchList');if(!box)return;
+  const ss=current.sketches||[];
+  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div class="drawingWrap">${renderTechnicalDrawing(s.drawing||s.analysis?.drawing||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
+}
+$('#confirmSketch').onclick=async()=>{
+  if(!pendingSketch)return;
+  pendingSketch.confirmedAt=new Date().toISOString();
+  current.sketches=current.sketches||[];current.sketches.push(pendingSketch);
+  mergeSketchIntoAnalysis(pendingSketch);
+  current.reconstruction=null;
+  current.chat=current.chat||[];
+  current.chat.push({role:'assistant',text:`Skizze übernommen: ${pendingSketch.analysis?.summary||'Die erkannten Maße und Angaben sind jetzt Teil des Projektstands.'}`});
+  pendingSketch=null;renderRecord();await saveCurrent(true);
+  if(sketchReturnScreen==='photos'){renderAllPhotos();show('photos')}
+  else if(sketchReturnScreen==='develop'){renderAllPhotos();show('develop')}
+  else {show('record');switchTab('sketchPane')}
+};
+$('#retrySketch').onclick=()=>{pendingSketch=null;show(sketchReturnScreen)};
+$('#cancelSketch').onclick=()=>{pendingSketch=null;show(sketchReturnScreen)};
+['sketchInputPhotos'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'photos'));
+['sketchInputDevelop'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'develop'));
+['recordSketchCamera','recordSketchLibrary','talkSketchInput'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'record'));
+
+async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
 $('#analyzeBtn').onclick=()=>analyze();$('#developGo').onclick=()=>analyze();
 function renderAnalysis(){const a=current.analysis||{},list=(t,x,c='')=>`<h3>${t}</h3>${(x||[]).map(v=>`<div class="status"><span class="dot ${c}"></span><div>${esc(v)}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;$('#analysisCard').innerHTML=`<h2 style="margin-top:0">${esc(a.object||'Projekt')}</h2><p>${esc(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;const nr=a.next_request||{},enough=a.enough_information===true||nr.type==='done'||current.round>=4;$('#acceptAnalysis').classList.remove('hidden');if(enough){$('#nextRequest').classList.add('hidden');$('#detailPhotoActions').classList.add('hidden')}else{$('#nextRequest').textContent=nr.prompt||'Was sollten wir noch klären?';$('#nextRequest').classList.remove('hidden');$('#detailPhotoActions').classList.toggle('hidden',nr.type!=='detail_photo')}show('analysis')}
 $('#acceptAnalysis').onclick=()=>show('ready');$('#talkFirst').onclick=()=>{current.reconstruction=current.reconstruction||{title:current.analysis?.object,summary:current.analysis?.summary};renderRecord();show('record');switchTab('talkPane')};
-async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
+async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
 $('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
 function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
-function renderRecord(){const r=current.reconstruction||{};$('#recordTitle').textContent=r.title||current.analysis?.object||current.title||'Projekt';$('#recordSummary').textContent=r.summary||current.analysis?.summary||'';$('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;renderAllPhotos();renderTalk();$('#materialBox').innerHTML=renderTable(r.materials||[]);$('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';$('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';$('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';$('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`}
+function renderRecord(){const r=current.reconstruction||{};$('#recordTitle').textContent=r.title||current.analysis?.object||current.title||'Projekt';$('#recordSummary').textContent=r.summary||current.analysis?.summary||'';$('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;renderAllPhotos();renderSketches();renderTalk();$('#materialBox').innerHTML=renderTable(r.materials||[]);$('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';$('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';$('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';$('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`}
 function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));if(id!=='talkPane')window.scrollTo({top:Math.max(0,$('#record').offsetTop-70),behavior:'smooth'})}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 let busy=false;
 function setTalkBusy(on){busy=on;const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
-async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
+async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
 $('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 
 $('#findIdeas').onclick=async()=>{const brief={who:$('#ideaWho').value,occasion:$('#ideaOccasion').value,interests:$('#ideaInterests').value,time:$('#ideaTime').value,budget:$('#ideaBudget').value,style:$('#ideaStyle').value};$('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';try{const r=await fetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());const d=await r.json();$('#ideaResults').innerHTML=(d.ideas||[]).map((x,i)=>`<div class="idea"><h3>${esc(x.title)}</h3><p>${esc(x.why)}</p><div class="chips"><span class="chip">${esc(x.difficulty)}</span><span class="chip">${esc(x.time)}</span><span class="chip">${esc(x.budget)}</span></div><p>${esc(x.concept)}</p><button class="primary chooseIdea" data-i="${i}">Diese Idee weiterentwickeln</button></div>`).join('');$('#ideaResults').dataset.ideas=JSON.stringify(d.ideas||[])}catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}};
