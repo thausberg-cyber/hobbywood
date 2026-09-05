@@ -31,7 +31,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
-.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchConfirm{display:grid;gap:10px;margin-top:14px}.sketchConfirmRow{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.sketchConfirmRow label{display:block;font-weight:800;margin-bottom:6px}.sketchConfirmRow input{width:100%;box-sizing:border-box}.dimRole{font-size:12px;color:var(--muted);font-weight:700}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchConfirm{display:grid;gap:10px;margin-top:14px}.sketchConfirmRow{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.sketchConfirmRow label{display:block;font-weight:800;margin-bottom:6px}.sketchConfirmRow input{width:100%;box-sizing:border-box}.dimRole{font-size:12px;color:var(--muted);font-weight:700}.dimEdit{display:grid;grid-template-columns:minmax(140px,1fr) minmax(90px,.7fr) 82px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.dimEdit:last-child{border-bottom:0}.dimEdit label{font-size:13px;font-weight:800}.dimEdit input,.dimEdit select{padding:9px 10px;font-size:14px}.readBlock{margin-top:14px}.readBlock h3{margin-bottom:7px}@media(max-width:620px){.dimEdit{grid-template-columns:1fr 90px}.dimEdit label{grid-column:1/-1}}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
@@ -97,22 +97,30 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 
 <section id="sketchWorking" class="screen">
   <div class="eyebrow">Werkstattskizze</div><h1>Ich lese deine Skizze …</h1>
-  <p>Ich trenne erkannte Maße von Vermutungen und mache daraus eine saubere Werkstattskizze.</p>
+  <p>Ich lese Maße, Bauteile und konstruktive Hinweise aus deiner Skizze. Unsichere Angaben markiere ich zum Bestätigen.</p>
   <div class="progress"><i id="sketchBar"></i></div>
 </section>
 
 <section id="sketchReview" class="screen">
-  <div class="eyebrow">Skizze ergänzen</div><h1>Habe ich deine Skizze richtig verstanden?</h1>
+  <div class="eyebrow">Skizze ergänzen</div><h1>Habe ich deine Skizze richtig gelesen?</h1>
+  <p class="lead">Die Handskizze bleibt im Projekt. Ich übernehme daraus Maße, Bauteile und Hinweise – ohne sie automatisch neu zu zeichnen.</p>
   <div class="sketchGrid">
     <div>
       <div class="card"><h3 style="margin-top:0">Deine Handskizze</h3><img id="sketchSourcePreview" class="sketchSource" alt="Hochgeladene Handskizze"></div>
-      <div class="card"><h3 style="margin-top:0">Erkannt</h3><div id="sketchFacts" class="sketchFacts"></div><div id="sketchUnknown"></div><div id="sketchConfirmBox" class="sketchConfirm"></div><button class="secondary hidden" id="refineSketch">Angaben bestätigen & Zeichnung aktualisieren</button></div>
     </div>
     <div>
-      <div class="card sketchCard"><h3 style="margin-top:0">Saubere Werkstattskizze</h3><p class="hint">Planungshilfe, keine normgerechte CAD-Zeichnung. Nicht sicher erkannte Angaben bleiben als offen markiert.</p><div id="sketchDrawing" class="drawingWrap"></div></div>
+      <div class="card sketchCard">
+        <h3 style="margin-top:0">Aus deiner Skizze gelesen</h3>
+        <div id="sketchFacts" class="sketchFacts"></div>
+        <div id="sketchDimensions"></div>
+        <button class="secondary hidden" id="applySketchDimensions">Korrigierte Maße übernehmen</button>
+        <div id="sketchUnknown"></div>
+        <div id="sketchConfirmBox" class="sketchConfirm"></div>
+        <button class="secondary hidden" id="refineSketch">Unsichere Angaben prüfen</button>
+      </div>
     </div>
   </div>
-  <button class="primary" id="confirmSketch">Stimmt so – ins Projekt übernehmen</button>
+  <button class="primary" id="confirmSketch">Angaben ins Projekt übernehmen</button>
   <button class="secondary" id="retrySketch">Andere Skizze verwenden</button>
   <button class="ghost" id="cancelSketch">Abbrechen</button>
 </section>
@@ -138,7 +146,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.6 · Bauteile als Bretter mit sichtbaren Kanten</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.7 · Handskizze als schnelle Maß- und Bauteileingabe</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -390,18 +398,48 @@ function renderTechnicalDrawing(spec={},analysis={}){
   for(const t of (spec.labels||[]).slice(0,40))out+=`<text x="${safeNum(t.x)}" y="${safeNum(t.y)}" font-family="-apple-system,Arial,sans-serif" font-size="${Math.max(16,Math.min(34,Number(t.size)||22))}" fill="${stroke}">${esc(t.text||'')}</text>`;
   out+='</svg>';return out
 }
+const DIM_ROLE_LABELS={width_total:'Gesamtbreite',height_total:'Gesamthöhe',depth_top:'obere Tiefe',depth_bottom:'untere Tiefe',depth_general:'Tiefe',thickness:'Materialstärke',spacing_horizontal:'waagerechter Abstand',spacing_vertical:'senkrechter Abstand',offset_horizontal:'waagerechter Randabstand',offset_vertical:'senkrechter Randabstand',diameter:'Durchmesser',radius:'Radius',other:'sonstiges Maß'};
+function dimensionEditor(a={}){
+  const dims=a.dimensions||[];
+  if(!dims.length)return '<div class="readBlock"><h3>Maße</h3><p>Noch keine eindeutigen Maße erkannt.</p></div>';
+  const roleOpts=Object.entries(DIM_ROLE_LABELS).map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('');
+  return `<div class="readBlock"><h3>Maße</h3><p class="hint">Du kannst erkannte Werte oder ihre Bedeutung direkt korrigieren.</p>${dims.map((d,i)=>`<div class="dimEdit"><label>${esc(d.role_label||DIM_ROLE_LABELS[d.role]||d.meaning||'Maß')}</label><input data-dim-value="${i}" value="${esc(d.value??d.label??'')}" inputmode="decimal" aria-label="Maßwert"><input data-dim-unit="${i}" value="${esc(d.unit||'')}" aria-label="Einheit"><select data-dim-role="${i}" aria-label="Bedeutung">${roleOpts}</select></div>`).join('')}</div>`;
+}
+function setDimensionRoleValues(){
+  if(!pendingSketch)return;
+  [...document.querySelectorAll('[data-dim-role]')].forEach(el=>{const d=pendingSketch.analysis?.dimensions?.[Number(el.dataset.dimRole)];if(d)el.value=d.role||'other'});
+}
+function applyDimensionEdits(){
+  if(!pendingSketch)return;
+  const dims=pendingSketch.analysis?.dimensions||[];
+  dims.forEach((d,i)=>{
+    const v=document.querySelector(`[data-dim-value="${i}"]`),u=document.querySelector(`[data-dim-unit="${i}"]`),r=document.querySelector(`[data-dim-role="${i}"]`);
+    if(v){const raw=v.value.trim().replace(',','.');const num=Number(raw);d.value=Number.isFinite(num)?num:v.value.trim();d.label=String(v.value.trim());}
+    if(u)d.unit=u.value.trim();
+    if(r){d.role=r.value;d.role_label=DIM_ROLE_LABELS[r.value]||d.role_label||'Maß';}
+    d.confidence='certain';
+  });
+  pendingSketch.analysis.confirmation_questions=(pendingSketch.analysis.confirmation_questions||[]).filter(q=>!dims.some(d=>d.role===q.dimension_role));
+}
+function sketchDataSummary(a={}){
+  const dims=(a.dimensions||[]).map(d=>`<div class="sketchFact"><strong>${esc(d.role_label||DIM_ROLE_LABELS[d.role]||'Maß')}:</strong> ${esc(d.value)} ${esc(d.unit||'')}</div>`).join('');
+  const facts=(a.facts||[]).map(x=>`<div class="sketchFact">${esc(x)}</div>`).join('');
+  const unknown=(a.unknown||[]).map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('');
+  return `${facts}${dims}${unknown?`<h3>Noch offen</h3>${unknown}`:''}`||'<p>Noch keine Angaben erkannt.</p>';
+}
 function renderSketchReview(){
   if(!pendingSketch)return;
   $('#sketchSourcePreview').src=pendingSketch.dataUrl;
   const a=pendingSketch.analysis||{};
-  const facts=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.role?` · ${d.role_label||d.role}`:''}${d.meaning?` – ${d.meaning}`:''}`)];
-  $('#sketchFacts').innerHTML=facts.length?facts.map(x=>`<div class="sketchFact">${esc(x)}</div>`):'<p>Keine sicheren Angaben erkannt.</p>';
+  $('#sketchFacts').innerHTML=(a.facts||[]).length?`<div class="readBlock"><h3>Bauteile & Hinweise</h3>${(a.facts||[]).map(x=>`<div class="sketchFact">${esc(x)}</div>`).join('')}</div>`:'<div class="readBlock"><h3>Bauteile & Hinweise</h3><p>Keine sicheren Angaben erkannt.</p></div>';
+  $('#sketchDimensions').innerHTML=dimensionEditor(a);
+  setDimensionRoleValues();
+  $('#applySketchDimensions').classList.toggle('hidden',!(a.dimensions||[]).length);
   const assumptions=(a.assumptions||[]),unknown=(a.unknown||[]);
-  $('#sketchUnknown').innerHTML=(assumptions.length?`<h3>Vermutet</h3>${assumptions.map(x=>`<div class="status"><span class="dot mid"></span><div>${esc(x)}</div></div>`).join('')}`:'')+(unknown.length?`<h3>Noch unklar</h3>${unknown.map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('')}`:'');
+  $('#sketchUnknown').innerHTML=(assumptions.length?`<div class="readBlock"><h3>Vermutet</h3>${assumptions.map(x=>`<div class="status"><span class="dot mid"></span><div>${esc(x)}</div></div>`).join('')}</div>`:'')+(unknown.length?`<div class="readBlock"><h3>Noch offen</h3>${unknown.map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('')}</div>`:'');
   const qs=a.confirmation_questions||[];
   $('#sketchConfirmBox').innerHTML=qs.length?`<h3>Bitte kurz bestätigen</h3>${qs.map((q,i)=>`<div class="sketchConfirmRow"><label>${esc(q.question)}</label><input data-q="${i}" value="${esc(q.suggested_answer||'')}" placeholder="Deine Antwort …"></div>`).join('')}`:'';
   $('#refineSketch').classList.toggle('hidden',!qs.length);
-  $('#sketchDrawing').innerHTML=renderTechnicalDrawing(a.drawing||{},a);
   show('sketchReview');
 }
 async function startSketch(file,returnScreen='record'){
@@ -411,29 +449,24 @@ async function startSketch(file,returnScreen='record'){
   pendingSketch={id:newId(),name:file.name||'Handskizze',dataUrl,addedAt:new Date().toISOString(),analysis:null};
   show('sketchWorking');$('#sketchBar').style.width='35%';setTimeout(()=>$('#sketchBar').style.width='72%',350);
   try{
-    const r=await fetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()
-    })});
+    const r=await fetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()})});
     if(!r.ok)throw Error(await r.text());
-    pendingSketch.analysis=await r.json();pendingSketch.drawing=pendingSketch.analysis?.drawing||{};
+    pendingSketch.analysis=await r.json();pendingSketch.drawing=null;
     $('#sketchBar').style.width='100%';setTimeout(renderSketchReview,180);
   }catch(e){alert('Skizze konnte nicht ausgewertet werden: '+e.message);show(returnScreen)}
 }
 function mergeSketchIntoAnalysis(s){
   const a=s.analysis||{},existing=current.analysis||{object:current.title||a.title||'Projekt',summary:a.summary||'',recognized:[],assumptions:[],unknown:[],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};
-  const add=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
+  const add=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.role_label||DIM_ROLE_LABELS[d.role]||d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
   const uniq=arr=>[...new Set(arr.filter(Boolean))];
-  current.analysis={...existing,
-    recognized:uniq([...(existing.recognized||[]),...add]),
-    assumptions:uniq([...(existing.assumptions||[]),...(a.assumptions||[])]),
-    unknown:uniq([...(existing.unknown||[]),...(a.unknown||[])]).slice(0,3)
-  };
+  current.analysis={...existing,recognized:uniq([...(existing.recognized||[]),...add]),assumptions:uniq([...(existing.assumptions||[]),...(a.assumptions||[])]),unknown:uniq([...(existing.unknown||[]),...(a.unknown||[])]).slice(0,3)};
 }
 function renderSketches(){
   const box=$('#sketchList');if(!box)return;
   const ss=current.sketches||[];
-  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div class="drawingWrap">${renderTechnicalDrawing(s.drawing||s.analysis?.drawing||{},s.analysis||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
+  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div><h3 style="margin-top:0">Übernommene Angaben</h3>${sketchDataSummary(s.analysis||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
 }
+$('#applySketchDimensions').onclick=()=>{applyDimensionEdits();renderSketchReview();};
 
 $('#refineSketch').onclick=async()=>{
   if(!pendingSketch)return;
@@ -444,28 +477,30 @@ $('#refineSketch').onclick=async()=>{
     answer:(el.value||'').trim()
   })).filter(x=>x.answer);
   if(!answers.length)return alert('Bitte mindestens eine Angabe bestätigen oder korrigieren.');
-  btn.disabled=true;btn.textContent='Zeichnung wird aktualisiert …';
+  applyDimensionEdits();btn.disabled=true;btn.textContent='Angaben werden geprüft …';
   try{
     const r=await fetch(API+'/sketch/refine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       image:pendingSketch.dataUrl,
       previous:pendingSketch.analysis||{},
       confirmations:answers,
+      editedDimensions:pendingSketch.analysis?.dimensions||[],
       knowledge:current.knowledge||'',
       analysis:current.analysis||{},
       profile:profilePayload()
     })});
     if(!r.ok)throw Error(await r.text());
     pendingSketch.analysis=await r.json();
-    pendingSketch.drawing=pendingSketch.analysis?.drawing||{};
+    pendingSketch.drawing=null;
     renderSketchReview();
   }catch(e){alert('Skizze konnte nicht aktualisiert werden: '+e.message)}
-  finally{btn.disabled=false;btn.textContent='Angaben bestätigen & Zeichnung aktualisieren'}
+  finally{btn.disabled=false;btn.textContent='Unsichere Angaben prüfen'}
 };
 
 $('#confirmSketch').onclick=async()=>{
   if(!pendingSketch)return;
+  applyDimensionEdits();
   if((pendingSketch.analysis?.confirmation_questions||[]).length){
-    return alert('Bitte bestätige zuerst die noch unklaren Maße und aktualisiere die Zeichnung.');
+    return alert('Bitte bestätige zuerst die noch unklaren Angaben.');
   }
   pendingSketch.confirmedAt=new Date().toISOString();
   current.sketches=current.sketches||[];current.sketches.push(pendingSketch);

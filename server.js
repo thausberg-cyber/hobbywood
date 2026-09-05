@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.6",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.6"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.7",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.7"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -87,49 +87,31 @@ function runCalculation(spec){
 app.post("/sketch",async(req,res)=>{try{
   const {image="",knowledge="",analysis={},profile={}}=req.body||{};
   if(!image) return res.status(400).json({error:"sketch_image_required"});
-  let content=[{type:"input_text",text:`Du liest eine handgezeichnete Werkstattskizze. Ziel ist keine hübsche Illustration, sondern eine klare, einfache Werkstattskizze als Planungshilfe. ${workshopLanguage} ${profileText(profile)}
+  let content=[{type:"input_text",text:`Du liest eine handgezeichnete Werkstattskizze als schnelle Eingabehilfe für ein DIY-Projekt. Ziel ist NICHT, die Skizze neu zu zeichnen. Ziel ist, Maße, Bauteile und konstruktive Hinweise zuverlässig zu erfassen. ${workshopLanguage} ${profileText(profile)}
 Regeln:
-- Lies nur Maße, Bauteile, Bohrungen, Linien und Beziehungen, die aus Skizze oder Nutzerwissen plausibel hervorgehen.
-- Erfinde keine Maße.
-- Unsichere Lesarten kommen nach assumptions oder unknown.
-- facts enthält sichere konstruktive Aussagen als kurze Sätze.
-- dimensions enthält nur gelesene Maße und zusätzlich ihre Bedeutung.
+- Lies nur Angaben, die tatsächlich in der Skizze oder im Nutzerwissen erkennbar sind.
+- Erfinde keine Maße, Bauteile, Verbindungen oder Materialstärken.
+- facts enthält sichere konstruktive Aussagen als kurze, werkstattnahe Sätze.
+- dimensions enthält jedes lesbare Maß möglichst genau einmal.
 - Jedes Maß bekommt role aus: width_total, height_total, depth_top, depth_bottom, depth_general, thickness, spacing_horizontal, spacing_vertical, offset_horizontal, offset_vertical, diameter, radius, other.
-- role_label ist eine kurze handwerkliche Bezeichnung, z. B. "Gesamtbreite", "Höhe", "obere Tiefe", "untere Tiefe".
+- role_label ist eine kurze handwerkliche Bezeichnung, z. B. "Gesamtbreite", "Gesamthöhe", "Tiefe", "Materialstärke".
 - confidence ist "certain", "likely" oder "uncertain".
-- Bei likely/uncertain MUSST du eine konkrete confirmation_question erzeugen, statt die Richtung stillschweigend festzulegen.
-- Beispiel: Eine seitlich an einer Bodenkante notierte "60" ist bei einem Kasten eher eine Tiefe als eine Breite; wenn die Zuordnung nicht zweifelsfrei ist, frage: "Sind die 60 cm die Tiefe des unteren Bodens?".
-- Beispiel: Eine oben eingetragene "20" an einem kurzen oberen Brett ist bei einem Wandkasten meist die Tiefe des oberen Bodens; wenn das nicht glasklar ist, frage: "Sind die 20 cm die Tiefe des oberen Bodens?".
-- drawing darf nur Maße als endgültig bemaßen, deren confidence "certain" ist. Unsichere Maße dürfen höchstens mit "?" gekennzeichnet werden.
-- drawing ist eine vereinfachte technische Darstellung in einem festen Koordinatensystem 1000 x 700. Zeichne nur Geometrie, die du aus der Handskizze nachvollziehen kannst.
-- drawing ist KEIN CAD und muss keine exakte Perspektive wiedergeben. Es soll Aufbau, Maße, Lochreihen und wichtige Details verständlich zeigen.
-- Wichtig bei Kasten-, Regal- und Wandkastenskizzen: Alle plattenförmigen Bauteile werden als GESCHLOSSENE FLÄCHEN (Polygone) gezeichnet, nicht nur als einzelne Linien. Das betrifft mindestens oberen Boden, unteren Boden, linke Seitenwand, rechte Seitenwand und Rückwand, soweit diese vorhanden sind.
-- Die linke Seitenwand MUSS ebenso als sichtbare Fläche dargestellt werden wie die rechte Seitenwand. Nicht nur ihre Vorderkante zeichnen.
-- Wenn ein oberer Boden vorhanden ist, MUSS er als eigenes Bauteil sichtbar sein, aber konstruktiv AM KASTEN ANLIEGEN: nicht abgehoben, nicht schwebend, keine Lücke zwischen oberem Boden, Seitenwänden und Rückwand. Vorder- und Rückkante des oberen Bodens müssen mit den angrenzenden Bauteilen verbunden sein.
-- Wenn sowohl depth_top als auch depth_bottom vorhanden oder naheliegend sind, zeige oben und unten zwei getrennte Böden mit unterschiedlicher Tiefe. Nutze handwerkliche Beschriftungen wie "oberer Boden", "unterer Boden", "Rückwand", "linke Seitenwand", "rechte Seitenwand".
-- Für einen offenen Wandkasten in Perspektive sollen die fünf vorhandenen Bauteilflächen räumlich konsistent sein: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Keine dieser Flächen darf versehentlich nur als Kante erscheinen.
-- Zeichne solche Wandkästen bevorzugt in einer ruhigen Werkstattperspektive: obere und untere Bodenfläche klar sichtbar, beide Seitenwände als geschlossene Flächen, Rückwand mittig, keine explodierte Darstellung und keine schwebenden Bauteile. Maßlinien liegen außerhalb des Werkstücks und dürfen sich nicht überschneiden.
-- Bemaßungen dürfen nicht doppelt vorkommen. Ein Maß wie 20 cm oder 60 cm genau EINMAL eintragen. Maßtexte und Maßlinien dürfen einander und andere Maßtexte nicht überlagern. Die Höhenbemaßung rechts und die untere Tiefenbemaßung müssen räumlich getrennt bleiben.
-- Koordinaten müssen zwischen 40 und 960 (x) bzw. 40 und 660 (y) liegen.
-- Für eine Kasten-/Möbelskizze nutze bevorzugt wenige Polygone/Linien; für Bohrungen circles.
-- Maximal 20 Linien, 8 Polygone, 24 Kreise, 12 Bemaßungen und 12 Beschriftungen.
+- Bei likely/uncertain stelle eine konkrete confirmation_question. Keine stillschweigende Zuordnung.
+- Wenn eine Zahl lesbar ist, ihre Bedeutung aber unklar ist, behalte den Wert und frage nur nach der Bedeutung.
+- unknown enthält konstruktiv wichtige Angaben, die für die weitere Planung fehlen; maximal 5 Punkte.
+- assumptions nur für plausible, aber nicht sichere Beobachtungen.
+- Nutze mm oder cm so, wie es in der Skizze steht. Nicht ungefragt umrechnen.
+- Gib KEINE Zeichen- oder SVG-Geometrie aus.
 
 Gib ausschließlich JSON:
 {
  "title":"kurzer Name",
  "summary":"kurze Beschreibung",
  "facts":["..."],
- "dimensions":[{"label":"100","value":100,"unit":"cm","role":"width_total","role_label":"Gesamtbreite","confidence":"certain","meaning":"volle Breite des Kastens"}],
- "confirmation_questions":[{"dimension_role":"depth_bottom","question":"Sind die 60 cm die Tiefe des unteren Bodens?","suggested_answer":"Ja, 60 cm untere Tiefe."}],
+ "dimensions":[{"label":"90","value":90,"unit":"cm","role":"width_total","role_label":"Gesamtbreite","confidence":"certain","meaning":"volle Breite des Werkstücks"}],
+ "confirmation_questions":[{"dimension_role":"depth_general","question":"Sind die 90 cm rechts die Gesamttiefe?","suggested_answer":"Ja, 90 cm Gesamttiefe."}],
  "assumptions":["..."],
- "unknown":["..."],
- "drawing":{
-   "polygons":[{"component":"linke Seitenwand","points":[[x,y],[x,y],[x,y],[x,y]],"fill":"#f7f7f5","width":3}],
-   "lines":[{"x1":0,"y1":0,"x2":0,"y2":0,"width":3}],
-   "circles":[{"cx":0,"cy":0,"r":7}],
-   "dimensions":[{"x1":0,"y1":0,"x2":0,"y2":0,"label":"100 cm"}],
-   "labels":[{"x":0,"y":0,"text":"Rückwand","size":22}]
- }
+ "unknown":["..."]
 }
 Nutzerwissen:${knowledge}
 Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
@@ -137,26 +119,17 @@ Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
   res.json(await createJsonResponse(content,"sketch"));
 }catch(e){console.error(e);res.status(500).json({error:"sketch_failed",detail:e.message})}});
 
-
 app.post("/sketch/refine",async(req,res)=>{try{
-  const {image="",previous={},confirmations=[],knowledge="",analysis={},profile={}}=req.body||{};
+  const {image="",previous={},confirmations=[],editedDimensions=[],knowledge="",analysis={},profile={}}=req.body||{};
   if(!image) return res.status(400).json({error:"sketch_image_required"});
-  let content=[{type:"input_text",text:`Du überarbeitest eine bereits gelesene Werkstattskizze anhand ausdrücklicher Nutzerbestätigungen. ${workshopLanguage} ${profileText(profile)}
+  let content=[{type:"input_text",text:`Du prüfst eine bereits gelesene Werkstattskizze anhand ausdrücklicher Nutzerkorrekturen und -bestätigungen. Ziel bleibt die Datenerfassung, NICHT das Nachzeichnen. ${workshopLanguage} ${profileText(profile)}
 Wichtig:
-- Nutzerbestätigungen haben Vorrang vor deiner bisherigen Interpretation.
-- Ordne Maße fachlich korrekt als Breite, Höhe, obere/untere Tiefe, Abstand, Durchmesser usw. zu.
+- Nutzerkorrekturen und Nutzerbestätigungen haben Vorrang.
+- Übernimm korrigierte Werte und Rollen exakt, sofern sie nicht widersprüchlich sind.
 - Erfinde keine neuen Maße.
-- Wenn nach den Bestätigungen noch etwas für die Maßrichtung unklar ist, stelle höchstens 2 confirmation_questions.
-- Wenn ein Maß bestätigt wurde, setze confidence auf "certain".
-- Aktualisiere die Werkstattskizze so, dass Bemaßung und Geometrie zur bestätigten Bedeutung passen.
-- Für einen Wandkasten gilt typischerweise: Breite horizontal von links nach rechts, Höhe vertikal, Tiefe in der perspektivisch nach hinten laufenden Richtung.
-- Die Beschriftung soll handwerklich klar sein: "oberer Boden" statt "Oberteil", "unterer Boden" statt nur "Boden", sofern dies aus den Angaben folgt.
-- Wenn depth_top bestätigt ist, MUSS die Zeichnung oben einen eigenen oberen Boden mit erkennbarer Tiefe und sichtbarer Vorder- und Rückkante zeigen. Der obere Boden liegt konstruktiv auf/an den Seitenwänden und der Rückwand an; er darf NICHT abgehoben oder schwebend gezeichnet werden.
-- Wenn depth_bottom bestätigt ist, MUSS die Zeichnung unten einen eigenen unteren Boden mit erkennbarer Tiefe als geschlossene Fläche zeigen.
-- Wenn beide Tiefen bestätigt sind, soll die Darstellung klar zwischen oberem Boden, unterem Boden und Rückwand unterscheiden.
-- Bei Kasten-/Regalformen MUSS jede vorhandene Platte als geschlossene Fläche erscheinen: oberer Boden, unterer Boden, linke Seitenwand, rechte Seitenwand und Rückwand. Besonders die linke Seitenwand darf nicht auf eine einzelne Konturlinie reduziert werden.
-- Verwende eine ruhige, zusammenhängende Werkstattperspektive wie bei einer sauberen Handskizzen-Reinzeichnung: keine explodierten Bauteile, keine schwebenden Böden, Maßlinien außerhalb des Werkstücks und mit ausreichend Abstand zueinander.
-- Bemaßungen nie doppelt eintragen. 20 cm und 60 cm jeweils nur einmal. Maßtexte nicht überlagern; 60-cm-Tiefenmaß mit Abstand zur 80-cm-Höhenbemaßung platzieren.
+- Bestätigte oder direkt korrigierte Maße bekommen confidence "certain".
+- Wenn noch etwas wesentlich unklar bleibt, stelle höchstens 2 confirmation_questions.
+- Gib keine drawing-/SVG-Daten aus.
 
 Gib ausschließlich JSON im gleichen Schema zurück:
 {
@@ -166,10 +139,10 @@ Gib ausschließlich JSON im gleichen Schema zurück:
  "dimensions":[{"label":"60","value":60,"unit":"cm","role":"depth_bottom","role_label":"untere Tiefe","confidence":"certain","meaning":"Tiefe des unteren Bodens"}],
  "confirmation_questions":[],
  "assumptions":["..."],
- "unknown":["..."],
- "drawing":{"polygons":[],"lines":[],"circles":[],"dimensions":[],"labels":[]}
+ "unknown":["..."]
 }
 Bisherige Skizzenauswertung:${JSON.stringify(previous)}
+Direkt korrigierte Maße:${JSON.stringify(editedDimensions)}
 Nutzerbestätigungen:${JSON.stringify(confirmations)}
 Projektwissen:${knowledge}
 Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
@@ -224,4 +197,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.6 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.7 listening on port ${port}`));
