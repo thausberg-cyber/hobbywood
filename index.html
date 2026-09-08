@@ -151,6 +151,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 </section>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
+<button id="speechFloatBtn" class="secondary speechFloat" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -625,7 +626,7 @@ async function startSpeech(){
   }
 }
 $('#speechBtn').addEventListener('pointerdown',()=>rememberSpeechTarget());$('#speechBtn').onclick=startSpeech;
-$('#speechFloatBtn').addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});$('#speechFloatBtn').onclick=startSpeech;
+$('#speechFloatBtn')?.addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});if($('#speechFloatBtn'))$('#speechFloatBtn').onclick=startSpeech;
 let busy=false;
 function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn'),speechFloat=$('#speechFloatBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;if(speechFloat)speechFloat.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
 async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
@@ -639,6 +640,5 @@ $('#saveProject').onclick=async()=>await saveCurrent();$('#backToProjects').oncl
 document.addEventListener('click',async e=>{if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}});
 loadProfile();(async()=>{await migrateLegacyProjects();await updateSaved()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
-<button id="speechFloatBtn" class="secondary speechFloat" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
 </body>
 </html>
