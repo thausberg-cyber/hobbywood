@@ -27,7 +27,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;background:#5e906c;margin-top:5px;flex:none}.dot.mid{background:#d2a340}.dot.unknown{background:#9b9f9b}
 .chatmsg{border-left:3px solid #bdc8c0;padding:9px 12px;margin:10px 0;background:#fafafa;border-radius:0 12px 12px 0}.chatmsg.ai{border-left-color:var(--accent);background:var(--ok)}.chatname{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}.calc{font-variant-numeric:tabular-nums;background:#f5f7f5;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px}
 .talkComposer{position:sticky;bottom:8px;background:rgba(247,246,241,.96);backdrop-filter:blur(14px);padding:10px;border:1px solid var(--line);border-radius:16px;margin-top:16px}.composerActions{display:flex;gap:8px;flex-wrap:wrap}.composerActions .button,.composerActions button{width:auto;margin:3px 0}.pending{font-size:13px;color:var(--muted)}
-.talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}.speechFloat{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px}.speechFloat.recording{background:var(--accent);color:#fff}.speechFloat.hiddenSpeech{display:none}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
@@ -146,7 +146,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.9 · Robuste Audioaufnahme im Werkstatt-Talk</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.10 · Robuste Audioaufnahme im Werkstatt-Talk</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -532,11 +532,44 @@ function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div cl
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 
 let mediaRecorder=null,speechRecording=false,speechChunks=[],speechStream=null,speechTimer=null,speechStartedAt=0;
+let speechTarget=null,speechSelStart=null,speechSelEnd=null,lastEditableTarget=null;
 function audioRecordingSupported(){return !!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder)}
+function isSpeechEditable(el){
+  if(!el||el.disabled||el.readOnly)return false;
+  if(el.tagName==='TEXTAREA')return true;
+  if(el.tagName==='INPUT'){const t=(el.type||'text').toLowerCase();return ['text','search','url','email','tel','number'].includes(t)}
+  return !!el.isContentEditable;
+}
+document.addEventListener('focusin',e=>{if(isSpeechEditable(e.target))lastEditableTarget=e.target});
+function rememberSpeechTarget(){
+  const el=isSpeechEditable(document.activeElement)?document.activeElement:lastEditableTarget;
+  speechTarget=el||$('#chatInput');
+  if(speechTarget&&'selectionStart' in speechTarget){speechSelStart=speechTarget.selectionStart;speechSelEnd=speechTarget.selectionEnd}else{speechSelStart=speechSelEnd=null}
+}
+function insertTranscriptAtTarget(transcript){
+  const box=speechTarget&&document.contains(speechTarget)?speechTarget:($('#chatInput')||lastEditableTarget);
+  if(!box)return false;
+  if(box.isContentEditable){
+    box.focus();document.execCommand('insertText',false,transcript);box.dispatchEvent(new Event('input',{bubbles:true}));return true
+  }
+  const value=String(box.value||'');
+  const start=Number.isInteger(speechSelStart)?speechSelStart:value.length;
+  const end=Number.isInteger(speechSelEnd)?speechSelEnd:start;
+  const before=value.slice(0,start),after=value.slice(end);
+  const needSpaceBefore=before&&!/\s$/.test(before)&&transcript&&!/^\s/.test(transcript);
+  const needSpaceAfter=after&&!/^\s/.test(after)&&transcript&&!/\s$/.test(transcript);
+  const inserted=(needSpaceBefore?' ':'')+transcript+(needSpaceAfter?' ':'');
+  box.value=before+inserted+after;
+  const pos=before.length+inserted.length;
+  try{box.setSelectionRange(pos,pos)}catch{}
+  box.dispatchEvent(new Event('input',{bubbles:true}));box.dispatchEvent(new Event('change',{bubbles:true}));box.focus();
+  lastEditableTarget=box;speechTarget=box;speechSelStart=speechSelEnd=pos;return true
+}
 function setSpeechUi(on,msg=''){
   speechRecording=on;
-  const btn=$('#speechBtn'),status=$('#speechStatus'),txt=$('#speechStatusText');
+  const btn=$('#speechBtn'),float=$('#speechFloatBtn'),status=$('#speechStatus'),txt=$('#speechStatusText');
   if(btn){btn.textContent=on?'■ Aufnahme stoppen':'🎙 Sprechen';btn.classList.toggle('primary',on);btn.classList.toggle('secondary',!on)}
+  if(float){float.textContent=on?'■':'🎙';float.classList.toggle('recording',on)}
   if(status)status.classList.toggle('on',!!msg);
   if(txt)txt.textContent=msg||'';
 }
@@ -551,10 +584,8 @@ async function transcribeSpeech(blob){
   const d=await r.json();
   const transcript=String(d.text||'').trim();
   if(!transcript)throw Error('Es wurde kein gesprochener Text erkannt.');
-  const box=$('#chatInput'),base=box.value.trim();
-  box.value=[base,transcript].filter(Boolean).join(base?' ':'');
-  box.focus();
-  setSpeechUi(false,'Text erkannt – bitte prüfen und dann senden.');
+  if(!insertTranscriptAtTarget(transcript))throw Error('Kein Eingabefeld für die Spracheingabe gefunden.');
+  setSpeechUi(false,'Text erkannt – bitte prüfen.');
   setTimeout(()=>setSpeechUi(false,''),2600);
 }
 function stopSpeech(){
@@ -564,6 +595,7 @@ function stopSpeech(){
 }
 async function startSpeech(){
   if(speechRecording){stopSpeech();return}
+  rememberSpeechTarget();
   if(!audioRecordingSupported())return alert('Audioaufnahme wird von diesem Browser nicht unterstützt. Du kannst weiterhin die Diktierfunktion der Tastatur verwenden.');
   try{
     speechChunks=[];
@@ -592,9 +624,10 @@ async function startSpeech(){
     alert(denied?'Mikrofonzugriff wurde nicht erlaubt. Bitte den Mikrofonzugriff für die App/Safari freigeben.':'Mikrofon konnte nicht gestartet werden: '+(e?.message||e));
   }
 }
-$('#speechBtn').onclick=startSpeech;
+$('#speechBtn').addEventListener('pointerdown',()=>rememberSpeechTarget());$('#speechBtn').onclick=startSpeech;
+$('#speechFloatBtn').addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});$('#speechFloatBtn').onclick=startSpeech;
 let busy=false;
-function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
+function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn'),speechFloat=$('#speechFloatBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;if(speechFloat)speechFloat.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
 async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
 $('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 
@@ -606,5 +639,6 @@ $('#saveProject').onclick=async()=>await saveCurrent();$('#backToProjects').oncl
 document.addEventListener('click',async e=>{if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}});
 loadProfile();(async()=>{await migrateLegacyProjects();await updateSaved()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
+<button id="speechFloatBtn" class="secondary speechFloat" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
 </body>
 </html>
