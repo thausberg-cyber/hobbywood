@@ -146,7 +146,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.8 · Spracheingabe im Werkstatt-Talk</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.9 · Robuste Audioaufnahme im Werkstatt-Talk</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -531,43 +531,70 @@ function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 
-let speechRecognition=null,speechListening=false,speechBaseText='',speechFinal='';
-function speechSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
-function setSpeechUi(on,msg='Ich höre zu …'){
-  speechListening=on;
+let mediaRecorder=null,speechRecording=false,speechChunks=[],speechStream=null,speechTimer=null,speechStartedAt=0;
+function audioRecordingSupported(){return !!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder)}
+function setSpeechUi(on,msg=''){
+  speechRecording=on;
   const btn=$('#speechBtn'),status=$('#speechStatus'),txt=$('#speechStatusText');
-  if(btn){btn.textContent=on?'■ Stoppen':'🎙 Sprechen';btn.classList.toggle('primary',on);btn.classList.toggle('secondary',!on)}
-  if(status)status.classList.toggle('on',on||!!msg&&msg!=='');
+  if(btn){btn.textContent=on?'■ Aufnahme stoppen':'🎙 Sprechen';btn.classList.toggle('primary',on);btn.classList.toggle('secondary',!on)}
+  if(status)status.classList.toggle('on',!!msg);
   if(txt)txt.textContent=msg||'';
 }
-function stopSpeech(){try{speechRecognition?.stop()}catch{}speechListening=false;setSpeechUi(false,'')}
-function startSpeech(){
-  if(!speechSupported())return alert('Spracheingabe wird von diesem Browser nicht unterstützt. Du kannst weiterhin die Diktierfunktion der Tastatur verwenden.');
-  if(speechListening){stopSpeech();return}
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  speechRecognition=new SR();
-  speechRecognition.lang='de-DE';
-  speechRecognition.interimResults=true;
-  speechRecognition.continuous=false;
-  speechRecognition.maxAlternatives=1;
-  speechBaseText=$('#chatInput').value.trim();speechFinal='';
-  speechRecognition.onstart=()=>setSpeechUi(true,'Ich höre zu …');
-  speechRecognition.onresult=e=>{
-    let interim='';
-    for(let i=0;i<e.results.length;i++){const t=(e.results[i][0]?.transcript||'').trim();if(e.results[i].isFinal)speechFinal=(speechFinal+' '+t).trim();else interim=(interim+' '+t).trim()}
-    const parts=[speechBaseText,speechFinal,interim].filter(Boolean);$('#chatInput').value=parts.join(speechBaseText?' ':'');
-  };
-  speechRecognition.onerror=e=>{
-    const map={not_allowed:'Mikrofonzugriff wurde nicht erlaubt.',audio_capture:'Kein Mikrofon gefunden.',no_speech:'Keine Sprache erkannt. Bitte noch einmal versuchen.',network:'Spracherkennung konnte nicht erreicht werden.'};
-    setSpeechUi(false,'');speechListening=false;
-    if(e.error!=='aborted')alert(map[e.error]||('Spracheingabe fehlgeschlagen: '+e.error));
-  };
-  speechRecognition.onend=()=>{speechListening=false;setSpeechUi(false,'')};
-  try{speechRecognition.start()}catch(e){speechListening=false;setSpeechUi(false,'');alert('Spracheingabe konnte nicht gestartet werden: '+e.message)}
+function stopTracks(){try{speechStream?.getTracks().forEach(t=>t.stop())}catch{}speechStream=null}
+function clearSpeechTimer(){if(speechTimer){clearTimeout(speechTimer);speechTimer=null}}
+function blobToDataUrlSimple(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Audio konnte nicht gelesen werden.'));r.readAsDataURL(blob)})}
+async function transcribeSpeech(blob){
+  setSpeechUi(false,'Sprache wird in Text umgewandelt …');
+  const dataUrl=await blobToDataUrlSimple(blob);
+  const r=await fetch(API+'/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:dataUrl,language:'de'})});
+  if(!r.ok){let detail='';try{detail=(await r.json())?.detail||''}catch{}throw Error(detail||'Transkription fehlgeschlagen.')}
+  const d=await r.json();
+  const transcript=String(d.text||'').trim();
+  if(!transcript)throw Error('Es wurde kein gesprochener Text erkannt.');
+  const box=$('#chatInput'),base=box.value.trim();
+  box.value=[base,transcript].filter(Boolean).join(base?' ':'');
+  box.focus();
+  setSpeechUi(false,'Text erkannt – bitte prüfen und dann senden.');
+  setTimeout(()=>setSpeechUi(false,''),2600);
+}
+function stopSpeech(){
+  clearSpeechTimer();
+  if(mediaRecorder&&mediaRecorder.state!=='inactive'){try{mediaRecorder.stop()}catch{}}
+  else{stopTracks();setSpeechUi(false,'')}
+}
+async function startSpeech(){
+  if(speechRecording){stopSpeech();return}
+  if(!audioRecordingSupported())return alert('Audioaufnahme wird von diesem Browser nicht unterstützt. Du kannst weiterhin die Diktierfunktion der Tastatur verwenden.');
+  try{
+    speechChunks=[];
+    speechStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const types=['audio/mp4','audio/webm;codecs=opus','audio/webm'];
+    const mimeType=types.find(t=>MediaRecorder.isTypeSupported?.(t))||'';
+    mediaRecorder=new MediaRecorder(speechStream,mimeType?{mimeType}:undefined);
+    speechStartedAt=Date.now();
+    mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)speechChunks.push(e.data)};
+    mediaRecorder.onerror=e=>{clearSpeechTimer();stopTracks();setSpeechUi(false,'');alert('Audioaufnahme fehlgeschlagen'+(e?.error?.message?': '+e.error.message:'.'))};
+    mediaRecorder.onstop=async()=>{
+      clearSpeechTimer();
+      stopTracks();
+      const type=mediaRecorder?.mimeType||speechChunks[0]?.type||'audio/mp4';
+      const blob=new Blob(speechChunks,{type});
+      mediaRecorder=null;speechChunks=[];speechRecording=false;
+      if(Date.now()-speechStartedAt<500||blob.size<1000){setSpeechUi(false,'');return alert('Die Aufnahme war zu kurz. Bitte noch einmal sprechen.')}
+      try{await transcribeSpeech(blob)}catch(e){setSpeechUi(false,'');alert('Spracheingabe fehlgeschlagen: '+e.message)}
+    };
+    mediaRecorder.start(250);
+    setSpeechUi(true,'Aufnahme läuft …');
+    speechTimer=setTimeout(()=>{if(speechRecording)stopSpeech()},60000);
+  }catch(e){
+    clearSpeechTimer();stopTracks();setSpeechUi(false,'');
+    const denied=e?.name==='NotAllowedError'||e?.name==='SecurityError';
+    alert(denied?'Mikrofonzugriff wurde nicht erlaubt. Bitte den Mikrofonzugriff für die App/Safari freigeben.':'Mikrofon konnte nicht gestartet werden: '+(e?.message||e));
+  }
 }
 $('#speechBtn').onclick=startSpeech;
 let busy=false;
-function setTalkBusy(on){busy=on;if(on&&speechListening)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
+function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
 async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
 $('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 

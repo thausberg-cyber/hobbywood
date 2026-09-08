@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.8",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.8"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.9",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.9"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -119,6 +119,36 @@ Bisheriger Projektstand:${JSON.stringify(analysis)}`}];
   res.json(await createJsonResponse(content,"sketch"));
 }catch(e){console.error(e);res.status(500).json({error:"sketch_failed",detail:e.message})}});
 
+
+function decodeAudioDataUrl(value){
+  if(typeof value!=="string") throw new Error("Audiodaten fehlen");
+  const m=value.match(/^data:([^;,]+);base64,(.+)$/s);
+  if(!m) throw new Error("Ungültige Audio-Data-URL");
+  const mime=m[1].toLowerCase();
+  const allowed=["audio/mp4","audio/m4a","audio/x-m4a","audio/webm","audio/wav","audio/mpeg","audio/mp3","audio/ogg"];
+  if(!allowed.some(x=>mime===x||mime.startsWith(x+";"))) throw new Error(`Nicht unterstütztes Audioformat: ${mime}`);
+  const buf=Buffer.from(m[2].replace(/\s/g,""),"base64");
+  if(buf.length<500) throw new Error("Audioaufnahme ist leer oder zu kurz");
+  if(buf.length>20*1024*1024) throw new Error("Audioaufnahme ist zu groß");
+  const ext=mime.includes("webm")?"webm":mime.includes("wav")?"wav":mime.includes("mpeg")||mime.includes("mp3")?"mp3":mime.includes("ogg")?"ogg":"m4a";
+  return {buf,mime,ext};
+}
+
+app.post("/transcribe",async(req,res)=>{try{
+  const {audio="",language="de"}=req.body||{};
+  const {buf,mime,ext}=decodeAudioDataUrl(audio);
+  const form=new FormData();
+  form.append("model",process.env.OPENAI_TRANSCRIBE_MODEL||"gpt-4o-mini-transcribe");
+  form.append("language",String(language||"de").slice(0,8));
+  form.append("prompt","Deutsch. Werkstatt- und Tischlerbegriffe sowie Maße, Millimeter, Zentimeter, Durchmesser, Breite, Höhe, Tiefe möglichst wörtlich erfassen.");
+  form.append("file",new Blob([buf],{type:mime}),`aufnahme.${ext}`);
+  const rr=await fetch("https://api.openai.com/v1/audio/transcriptions",{method:"POST",headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`},body:form});
+  const raw=await rr.text();
+  if(!rr.ok) throw new Error(`Transkription ${rr.status}: ${raw.slice(0,400)}`);
+  const data=JSON.parse(raw);
+  res.json({text:String(data.text||"").trim()});
+}catch(e){console.error(e);res.status(500).json({error:"transcription_failed",detail:e.message})}});
+
 app.post("/sketch/refine",async(req,res)=>{try{
   const {image="",previous={},confirmations=[],editedDimensions=[],knowledge="",analysis={},profile={}}=req.body||{};
   if(!image) return res.status(400).json({error:"sketch_image_required"});
@@ -197,4 +227,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.8 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.9 listening on port ${port}`));
