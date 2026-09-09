@@ -30,7 +30,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}.speechFloat{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px}.speechFloat.recording{background:var(--accent);color:#fff}.speechFloat.hiddenSpeech{display:none}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
-.toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
+.toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}.projectBadges{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0}.projectBadge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:var(--accent2);color:var(--ink)}.projectBadge.imported{background:#fff0c9}.filterRow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 16px}.filterBtn{width:auto;margin:0;padding:8px 12px;border-radius:999px;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--ink)}.filterBtn.on{background:var(--accent);color:#fff}.metaEditor textarea{min-height:90px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
 .sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchConfirm{display:grid;gap:10px;margin-top:14px}.sketchConfirmRow{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.sketchConfirmRow label{display:block;font-weight:800;margin-bottom:6px}.sketchConfirmRow input{width:100%;box-sizing:border-box}.dimRole{font-size:12px;color:var(--muted);font-weight:700}.dimEdit{display:grid;grid-template-columns:minmax(140px,1fr) minmax(90px,.7fr) 82px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.dimEdit:last-child{border-bottom:0}.dimEdit label{font-size:13px;font-weight:800}.dimEdit input,.dimEdit select{padding:9px 10px;font-size:14px}.readBlock{margin-top:14px}.readBlock h3{margin-bottom:7px}@media(max-width:620px){.dimEdit{grid-template-columns:1fr 90px}.dimEdit label{grid-column:1/-1}}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
@@ -104,6 +104,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
     <p class="hint">Beim Import wird immer ein neues Projekt angelegt. Vorhandene Projekte werden nicht überschrieben.</p>
     <div id="importPreview" class="hidden"></div>
   </div>
+  <div class="filterRow" aria-label="Projektfilter"><button class="filterBtn on" data-project-filter="all">Alle</button><button class="filterBtn" data-project-filter="own">Eigene</button><button class="filterBtn" data-project-filter="imported">Importierte</button></div>
   <div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
 </section>
 
@@ -146,6 +147,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
   <div class="workspace">
     <aside class="side">
       <div class="eyebrow">Mein Projekt</div><h1 id="recordTitle">Projekt</h1><p id="recordSummary"></p>
+      <div class="card metaEditor"><strong>Projekt bearbeiten</strong><label class="field" for="projectTitleEdit">Titel</label><input id="projectTitleEdit" placeholder="z. B. Würzkiste"><label class="field" for="projectDescriptionEdit">Beschreibung</label><textarea id="projectDescriptionEdit" placeholder="Kurze Projektbeschreibung …"></textarea><button class="secondary" id="applyProjectMeta">Titel & Beschreibung übernehmen</button><div id="projectOrigin" class="hint"></div></div>
       <div id="sidePhotos" class="photos"></div>
       <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
     </aside>
@@ -159,7 +161,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.11 · Projekt-Import und -Export</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.12 · Projektkennzeichnung und editierbare Metadaten</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -168,7 +170,8 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.11';
+const APP_VERSION='0.9.12';
+let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
 let current={id:null,title:'',mode:'copy',photos:[],sketches:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
@@ -219,21 +222,24 @@ async function projectPreview(p){
 }
 async function renderProjects(){
   try{
-    const arr=await dbGetProjects();
+    let arr=await dbGetProjects();
+    if(projectFilter==='own')arr=arr.filter(p=>!p.transferMeta?.imported);
+    if(projectFilter==='imported')arr=arr.filter(p=>p.transferMeta?.imported);
     const rows=await Promise.all(arr.map(async p=>{
       const preview=await projectPreview(p);
-      const title=esc(p.title||p.analysis?.object||'Unbenanntes Projekt');
+      const displayTitle=p.customTitle||p.title||p.analysis?.object||'Unbenanntes Projekt';
+      const title=esc(displayTitle);
       const transfer=p.transferMeta||{};
       const sourceBits=[];
       if(transfer.testerId)sourceBits.push(`Tester ${esc(transfer.testerId)}`);
       if(transfer.sourceAppVersion)sourceBits.push(`Quelle ${esc(transfer.sourceAppVersion)}`);
-      if(transfer.sourceProfile?.skill)sourceBits.push(`Profil ${esc(transfer.sourceProfile.skill)}`);
-      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}${sourceBits.length?' · '+sourceBits.join(' · '):''}`;
-      const summary=esc(p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
+      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}`;
+      const summary=esc(p.customDescription||p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
       const thumb=preview?`<img class="projectThumb" src="${preview}" alt="Projektvorschau">`:`<div class="projectThumb placeholder">Noch kein Foto</div>`;
-      return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong><div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small exportP" data-id="${p.id}">Exportieren</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
+      const badges=transfer.imported?`<div class="projectBadges"><span class="projectBadge imported">Importiert</span>${transfer.testerId?`<span class="projectBadge">${esc(transfer.testerId)}</span>`:''}${transfer.sourceAppVersion?`<span class="projectBadge">App ${esc(transfer.sourceAppVersion)}</span>`:''}</div>`:'';
+      return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong>${badges}<div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small exportP" data-id="${p.id}">Exportieren</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
     }));
-    $('#projectList').innerHTML=rows.length?rows.join(''):'<div class="card"><p>Noch keine Projekte gespeichert.</p></div>';
+    $('#projectList').innerHTML=rows.length?rows.join(''):'<div class="card"><p>In diesem Filter sind keine Projekte vorhanden.</p></div>';
   }catch(e){
     $('#projectList').innerHTML='<div class="danger notice">Projektablage konnte nicht geöffnet werden.</div>';
   }
@@ -303,7 +309,7 @@ async function importPendingProject(){
   if(!pendingImport)return;
   const {payload,file}=pendingImport,p=JSON.parse(JSON.stringify(payload.project)),now=new Date().toISOString();
   p.id=newId();p.createdAt=p.createdAt||now;p.updatedAt=now;p.round=Number(p.round)||0;p.photos=p.photos||[];p.sketches=p.sketches||[];p.chat=p.chat||[];
-  p.transferMeta={imported:true,testerId:payload.testerId||'',sourceAppVersion:payload.appVersion||'',exportedAt:payload.exportedAt||'',importedAt:now,sourceProjectId:payload.project.id||'',sourceFile:file?.name||'',sourceProfile:payload.workshopProfile||{}};
+  p.transferMeta={...(p.transferMeta||{}),imported:true,testerId:payload.testerId||p.transferMeta?.testerId||'',sourceAppVersion:payload.appVersion||p.transferMeta?.sourceAppVersion||'',exportedAt:payload.exportedAt||'',importedAt:now,sourceProjectId:payload.project.id||'',sourceFile:file?.name||'',sourceProfile:payload.workshopProfile||p.transferMeta?.sourceProfile||{},previousTransferMeta:p.transferMeta||null};
   try{
     await dbPutProject(p);pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value='';await updateSaved();await renderProjects();alert('Projekt wurde als neues Projekt importiert.');
   }catch(e){console.error(e);alert('Projekt konnte nicht importiert werden: '+e.message)}
@@ -322,6 +328,7 @@ $$('.backHome').forEach(b=>b.onclick=goStart);
 $('#homeTop').onclick=goStart;
 $$('.dockHome').forEach(b=>b.onclick=goStart);$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{const ti=$('#testerId');if(ti)ti.value=localStorage.getItem(TESTER_ID)||'';await renderProjects();show('projects')};
 if($('#testerId'))$('#testerId').addEventListener('input',e=>rememberTesterId(e.target.value));
+document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-project-filter]');if(!b)return;projectFilter=b.dataset.projectFilter;$$('.filterBtn').forEach(x=>x.classList.toggle('on',x===b));await renderProjects()});
 if($('#importProjectInput'))$('#importProjectInput').onchange=async e=>{
   const file=e.target.files?.[0];if(!file)return;
   if(file.size>120*1024*1024&&!confirm('Die Projektdatei ist größer als 120 MB. Trotzdem versuchen?')){e.target.value='';return}
@@ -622,7 +629,25 @@ $('#acceptAnalysis').onclick=()=>show('ready');$('#talkFirst').onclick=()=>{curr
 async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
 $('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
 function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
-function renderRecord(){const r=current.reconstruction||{};$('#recordTitle').textContent=r.title||current.analysis?.object||current.title||'Projekt';$('#recordSummary').textContent=r.summary||current.analysis?.summary||'';$('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;renderAllPhotos();renderSketches();renderTalk();$('#materialBox').innerHTML=renderTable(r.materials||[]);$('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';$('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';$('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';$('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`}
+function renderRecord(){
+  const r=current.reconstruction||{};
+  const generatedTitle=r.title||current.analysis?.object||current.title||'Projekt';
+  const generatedSummary=r.summary||current.analysis?.summary||'';
+  $('#recordTitle').textContent=current.customTitle||generatedTitle;
+  $('#recordSummary').textContent=current.customDescription||generatedSummary;
+  const titleEdit=$('#projectTitleEdit'),descEdit=$('#projectDescriptionEdit');
+  if(titleEdit)titleEdit.value=current.customTitle||generatedTitle;
+  if(descEdit)descEdit.value=current.customDescription||generatedSummary;
+  const tr=current.transferMeta||{};
+  if($('#projectOrigin'))$('#projectOrigin').innerHTML=tr.imported?`<strong>Importiert</strong>${tr.testerId?` · Tester-ID: ${esc(tr.testerId)}`:''}${tr.importedAt?` · Import: ${new Date(tr.importedAt).toLocaleString('de-DE')}`:''}${tr.sourceAppVersion?` · Quellversion ${esc(tr.sourceAppVersion)}`:''}`:'Eigenes Projekt';
+  $('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;
+  renderAllPhotos();renderSketches();renderTalk();
+  $('#materialBox').innerHTML=renderTable(r.materials||[]);
+  $('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';
+  $('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';
+  $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
+  $('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`;
+}
 function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));if(id!=='talkPane')window.scrollTo({top:Math.max(0,$('#record').offsetTop-70),behavior:'smooth'})}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
@@ -731,7 +756,21 @@ $('#findIdeas').onclick=async()=>{const brief={who:$('#ideaWho').value,occasion:
 document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
 
 $('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile()};$('#saveProfile').onclick=()=>{profile.skill=$('#skill').value;$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));alert('Werkstattprofil gespeichert.');show('start')};
-$('#saveProject').onclick=async()=>await saveCurrent();$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#backToProjects').onclick=async()=>{await saveCurrent(true);await renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
+function isGenericProjectTitle(v=''){return /^(mein projekt|projekt|unbenanntes projekt)$/i.test(String(v).trim())}
+$('#applyProjectMeta').onclick=async()=>{
+  const t=$('#projectTitleEdit').value.trim(),d=$('#projectDescriptionEdit').value.trim();
+  current.customTitle=t;current.customDescription=d;
+  renderRecord();await saveCurrent(true);alert('Titel und Beschreibung gespeichert.');
+};
+$('#saveProject').onclick=async()=>{
+  const visibleTitle=($('#projectTitleEdit')?.value||current.customTitle||current.title||'').trim();
+  if(isGenericProjectTitle(visibleTitle)){
+    const better=prompt('Der Projekttitel ist noch sehr allgemein. Möchtest du ihn jetzt genauer benennen?',visibleTitle);
+    if(better!==null&&better.trim()){current.customTitle=better.trim();if($('#projectTitleEdit'))$('#projectTitleEdit').value=current.customTitle;}
+  }
+  if($('#projectDescriptionEdit'))current.customDescription=$('#projectDescriptionEdit').value.trim();
+  await saveCurrent();renderRecord();
+};$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#backToProjects').onclick=async()=>{await saveCurrent(true);await renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
 document.addEventListener('click',async e=>{
   if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);
   if(e.target?.classList.contains('exportP')){const p=await dbGetProject(e.target.dataset.id);if(p)await exportProject(p)}
