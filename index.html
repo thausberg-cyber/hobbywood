@@ -92,6 +92,8 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 
 <section id="projects" class="screen">
   <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1>
+  <div class="filterRow" aria-label="Projektfilter"><button class="filterBtn on" data-project-filter="all">Alle</button><button class="filterBtn" data-project-filter="own">Eigene</button><button class="filterBtn" data-project-filter="imported">Importierte</button></div>
+  <div id="projectList"></div>
   <div class="card">
     <h3 style="margin-top:0">Projekt übertragen</h3>
     <p>Projekte lassen sich als einzelne <strong>.ltnb-Datei</strong> zwischen Mac, iPad, iPhone, Windows und Android übertragen oder zur Testauswertung weitergeben.</p>
@@ -104,8 +106,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
     <p class="hint">Beim Import wird immer ein neues Projekt angelegt. Vorhandene Projekte werden nicht überschrieben.</p>
     <div id="importPreview" class="hidden"></div>
   </div>
-  <div class="filterRow" aria-label="Projektfilter"><button class="filterBtn on" data-project-filter="all">Alle</button><button class="filterBtn" data-project-filter="own">Eigene</button><button class="filterBtn" data-project-filter="imported">Importierte</button></div>
-  <div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
+  <button class="ghost backHome">Zur Startseite</button>
 </section>
 
 
@@ -161,7 +162,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.12 · Projektkennzeichnung und editierbare Metadaten</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.12a · Projekttransfer unter der Projektliste</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -170,7 +171,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.12';
+const APP_VERSION='0.9.12a';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
