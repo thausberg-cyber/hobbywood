@@ -91,7 +91,20 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 </section>
 
 <section id="projects" class="screen">
-  <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1><div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
+  <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1>
+  <div class="card">
+    <h3 style="margin-top:0">Projekt übertragen</h3>
+    <p>Projekte lassen sich als einzelne <strong>.ltnb-Datei</strong> zwischen Mac, iPad, iPhone, Windows und Android übertragen oder zur Testauswertung weitergeben.</p>
+    <label class="field" for="testerId">Tester-ID für Exporte <span class="hint">(optional)</span></label>
+    <input id="testerId" placeholder="z. B. TEST-03">
+    <div class="composerActions" style="margin-top:10px">
+      <label class="button secondary small" for="importProjectInput">Projekt importieren</label>
+      <input class="hidden" id="importProjectInput" type="file" accept=".ltnb,application/json,application/octet-stream">
+    </div>
+    <p class="hint">Beim Import wird immer ein neues Projekt angelegt. Vorhandene Projekte werden nicht überschrieben.</p>
+    <div id="importPreview" class="hidden"></div>
+  </div>
+  <div id="projectList"></div><button class="ghost backHome">Zur Startseite</button>
 </section>
 
 
@@ -134,7 +147,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
     <aside class="side">
       <div class="eyebrow">Mein Projekt</div><h1 id="recordTitle">Projekt</h1><p id="recordSummary"></p>
       <div id="sidePhotos" class="photos"></div>
-      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button></div>
+      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
     </aside>
     <div>
       <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
@@ -146,7 +159,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.10 · Robuste Audioaufnahme im Werkstatt-Talk</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.11 · Projekt-Import und -Export</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 </main>
@@ -155,11 +168,13 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8';
+const APP_VERSION='0.9.11';
+const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
 let current={id:null,title:'',mode:'copy',photos:[],sketches:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
 let pendingTalkPhotos=[];
 let pendingSketch=null, sketchReturnScreen='record';
+let pendingImport=null;
 let profile={skill:'Fortgeschritten',tools:{}};
 const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
 const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
@@ -208,10 +223,15 @@ async function renderProjects(){
     const rows=await Promise.all(arr.map(async p=>{
       const preview=await projectPreview(p);
       const title=esc(p.title||p.analysis?.object||'Unbenanntes Projekt');
-      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}`;
+      const transfer=p.transferMeta||{};
+      const sourceBits=[];
+      if(transfer.testerId)sourceBits.push(`Tester ${esc(transfer.testerId)}`);
+      if(transfer.sourceAppVersion)sourceBits.push(`Quelle ${esc(transfer.sourceAppVersion)}`);
+      if(transfer.sourceProfile?.skill)sourceBits.push(`Profil ${esc(transfer.sourceProfile.skill)}`);
+      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}${sourceBits.length?' · '+sourceBits.join(' · '):''}`;
       const summary=esc(p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
       const thumb=preview?`<img class="projectThumb" src="${preview}" alt="Projektvorschau">`:`<div class="projectThumb placeholder">Noch kein Foto</div>`;
-      return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong><div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
+      return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong><div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small exportP" data-id="${p.id}">Exportieren</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
     }));
     $('#projectList').innerHTML=rows.length?rows.join(''):'<div class="card"><p>Noch keine Projekte gespeichert.</p></div>';
   }catch(e){
@@ -219,6 +239,75 @@ async function renderProjects(){
   }
 }
 async function loadProject(id){try{const p=await dbGetProject(id);if(!p)return;current=p;current.sketches=current.sketches||[];pendingTalkPhotos=[];renderRecord();show('record');switchTab('talkPane')}catch(e){alert('Projekt konnte nicht geöffnet werden: '+e.message)}}
+
+function getTesterId(){return ($('#testerId')?.value||localStorage.getItem(TESTER_ID)||'').trim()}
+function rememberTesterId(v){try{localStorage.setItem(TESTER_ID,String(v||'').trim())}catch{}}
+function safeProjectFilename(title='Projekt'){
+  const base=String(title||'Projekt').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||'Projekt';
+  const d=new Date(), date=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `${base}_${date}.ltnb`;
+}
+async function projectToPortable(project){
+  const copy=typeof structuredClone==='function'?structuredClone(project):JSON.parse(JSON.stringify(project));
+  copy.photos=await Promise.all((project.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,dataUrl:p.dataUrl||(p.blob instanceof Blob?await blobToDataUrl(p.blob):'')})));
+  copy.sketches=await Promise.all((project.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,dataUrl:s.dataUrl||(s.blob instanceof Blob?await blobToDataUrl(s.blob):'')})));
+  return JSON.parse(JSON.stringify(copy));
+}
+function validatePortableMedia(project){
+  for(const item of [...(project.photos||[]),...(project.sketches||[])]){
+    if(!item?.dataUrl)throw Error('Die Projektdatei enthält ein unvollständiges Foto oder eine unvollständige Skizze.');
+    if(!/^data:image\/(jpeg|jpg|png|gif|webp);base64,/i.test(item.dataUrl))throw Error('Die Datei enthält ein nicht unterstütztes Bildformat.');
+  }
+}
+async function exportProject(project){
+  if(!project?.id)return alert('Kein Projekt zum Exportieren geöffnet.');
+  const portable=await projectToPortable(project);
+  const testerId=getTesterId();rememberTesterId(testerId);
+  const payload={
+    format:'look-talk-n-build-project',schemaVersion:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),testerId,workshopProfile:JSON.parse(JSON.stringify(profilePayload()||{})),project:portable
+  };
+  const json=JSON.stringify(payload);
+  const filename=safeProjectFilename(portable.title||portable.analysis?.object||'Projekt');
+  const blob=new Blob([json],{type:'application/json'});
+  try{
+    const file=typeof File==='function'?new File([blob],filename,{type:'application/json'}):null;
+    const isiPadIPhone=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    if(isiPadIPhone&&file&&navigator.share&&navigator.canShare?.({files:[file]})){
+      await navigator.share({files:[file],title:portable.title||'look, talk ’n build Projekt',text:'Projektdatei aus look, talk ’n build'});
+      return;
+    }
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }catch(e){
+    if(e?.name!=='AbortError'){console.error(e);alert('Projekt konnte nicht exportiert werden: '+e.message)}
+  }
+}
+function parseImportPayload(text){
+  let payload;try{payload=JSON.parse(text)}catch{throw Error('Die Datei ist keine gültige look, talk ’n build Projektdatei.')}
+  if(payload?.format!=='look-talk-n-build-project'||!payload.project||typeof payload.project!=='object')throw Error('Dieses Dateiformat wird nicht erkannt.');
+  if(Number(payload.schemaVersion||0)!==1)throw Error('Diese Projektdatei verwendet eine nicht unterstützte Formatversion.');
+  payload.project.photos=Array.isArray(payload.project.photos)?payload.project.photos:[];
+  payload.project.sketches=Array.isArray(payload.project.sketches)?payload.project.sketches:[];
+  payload.project.chat=Array.isArray(payload.project.chat)?payload.project.chat:[];
+  validatePortableMedia(payload.project);
+  return payload;
+}
+function showImportPreview(payload,file){
+  const p=payload.project||{},box=$('#importPreview');
+  const exported=payload.exportedAt?new Date(payload.exportedAt).toLocaleString('de-DE'):'nicht angegeben';
+  const tester=payload.testerId?esc(payload.testerId):'nicht angegeben';
+  const skill=payload.workshopProfile?.skill?esc(payload.workshopProfile.skill):'nicht angegeben';
+  box.innerHTML=`<div class="notice ok"><strong>${esc(p.title||p.analysis?.object||'Unbenanntes Projekt')}</strong><br><span class="hint">Datei: ${esc(file.name)} · Export: ${esc(exported)} · App ${esc(payload.appVersion||'?')}</span><br><span class="hint">Tester-ID: ${tester} · Werkstattprofil: ${skill}</span><br><span class="hint">${(p.photos||[]).length} Fotos · ${(p.sketches||[]).length} Skizzen · ${(p.chat||[]).length} Talk-Beiträge</span></div><div class="composerActions"><button class="primary small" id="confirmImportProject">Als neues Projekt importieren</button><button class="ghost small" id="cancelImportProject">Abbrechen</button></div>`;
+  box.classList.remove('hidden');
+}
+async function importPendingProject(){
+  if(!pendingImport)return;
+  const {payload,file}=pendingImport,p=JSON.parse(JSON.stringify(payload.project)),now=new Date().toISOString();
+  p.id=newId();p.createdAt=p.createdAt||now;p.updatedAt=now;p.round=Number(p.round)||0;p.photos=p.photos||[];p.sketches=p.sketches||[];p.chat=p.chat||[];
+  p.transferMeta={imported:true,testerId:payload.testerId||'',sourceAppVersion:payload.appVersion||'',exportedAt:payload.exportedAt||'',importedAt:now,sourceProjectId:payload.project.id||'',sourceFile:file?.name||'',sourceProfile:payload.workshopProfile||{}};
+  try{
+    await dbPutProject(p);pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value='';await updateSaved();await renderProjects();alert('Projekt wurde als neues Projekt importiert.');
+  }catch(e){console.error(e);alert('Projekt konnte nicht importiert werden: '+e.message)}
+}
 function loadProfile(){try{profile=JSON.parse(localStorage.getItem(PROFILE)||'null')||profile}catch{};$('#skill').value=profile.skill||'Fortgeschritten';renderToolsProfile()}
 function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
 function profilePayload(){return profile}
@@ -231,7 +320,13 @@ async function goStart(){
 }
 $$('.backHome').forEach(b=>b.onclick=goStart);
 $('#homeTop').onclick=goStart;
-$$('.dockHome').forEach(b=>b.onclick=goStart);$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{await renderProjects();show('projects')};
+$$('.dockHome').forEach(b=>b.onclick=goStart);$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{const ti=$('#testerId');if(ti)ti.value=localStorage.getItem(TESTER_ID)||'';await renderProjects();show('projects')};
+if($('#testerId'))$('#testerId').addEventListener('input',e=>rememberTesterId(e.target.value));
+if($('#importProjectInput'))$('#importProjectInput').onchange=async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  if(file.size>120*1024*1024&&!confirm('Die Projektdatei ist größer als 120 MB. Trotzdem versuchen?')){e.target.value='';return}
+  try{const payload=parseImportPayload(await file.text());pendingImport={payload,file};showImportPreview(payload,file)}catch(err){pendingImport=null;$('#importPreview').classList.add('hidden');e.target.value='';alert(err.message)}
+};
 $('#cameraInput').onchange=$('#libraryInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};$('#developInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};
 ['detailCameraInput','detailLibraryInput'].forEach(id=>$('#'+id).onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await analyze(true)});
 $('#recordPhotoInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await saveCurrent(true)};
@@ -636,8 +731,14 @@ $('#findIdeas').onclick=async()=>{const brief={who:$('#ideaWho').value,occasion:
 document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
 
 $('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile()};$('#saveProfile').onclick=()=>{profile.skill=$('#skill').value;$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));alert('Werkstattprofil gespeichert.');show('start')};
-$('#saveProject').onclick=async()=>await saveCurrent();$('#backToProjects').onclick=async()=>{await saveCurrent(true);await renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
-document.addEventListener('click',async e=>{if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}});
+$('#saveProject').onclick=async()=>await saveCurrent();$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#backToProjects').onclick=async()=>{await saveCurrent(true);await renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
+document.addEventListener('click',async e=>{
+  if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);
+  if(e.target?.classList.contains('exportP')){const p=await dbGetProject(e.target.dataset.id);if(p)await exportProject(p)}
+  if(e.target?.id==='confirmImportProject')await importPendingProject();
+  if(e.target?.id==='cancelImportProject'){pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value=''}
+  if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}
+});
 loadProfile();(async()=>{await migrateLegacyProjects();await updateSaved()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
