@@ -13,7 +13,7 @@
 <style>
 :root{--bg:#f7f6f1;--card:#fff;--ink:#182019;--muted:#6e746f;--accent:#183327;--accent2:#e9eeea;--line:#dcdedb;--warm:#f2eee4;--warn:#fff4d8;--danger:#f9e7e2;--ok:#e7f2ea;--shadow:0 8px 30px rgba(24,32,25,.055)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;position:relative}body::before{content:"";position:fixed;z-index:-1;pointer-events:none;right:-18vw;top:16vh;width:min(78vw,980px);height:min(78vw,980px);background:url("./tree-ring-bg.jpg") center/contain no-repeat;opacity:.065;filter:grayscale(1) contrast(.82);transform:rotate(-2deg)}
-header{position:sticky;top:0;z-index:20;background:rgba(247,246,241,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(11px + env(safe-area-inset-top)) 18px 11px}.headerRow{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.homeTop{width:auto;margin:2px 0 0;padding:4px 2px;border-radius:0;font-size:13px;font-weight:700;white-space:nowrap;background:transparent;color:var(--muted);border:0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.homeTop:hover{color:var(--ink)}.homeTop.hidden{display:none}
+header{position:sticky;top:0;z-index:20;background:rgba(247,246,241,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(11px + env(safe-area-inset-top)) 18px 11px}.headerRow{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.homeTop{width:auto;margin:0;padding:7px 10px;border-radius:10px;font-size:14px;font-weight:800;white-space:nowrap;background:var(--accent2);color:var(--accent);border:1px solid #cfd8d1;text-decoration:none}.homeTop:hover{background:#dfe8e1;color:var(--ink)}.homeTop.hidden{display:none}
 .brand{font-size:30px;font-weight:800;letter-spacing:.015em;line-height:1.05}.claim{font-size:12px;color:var(--muted);margin-top:3px}.by{opacity:.72}
 main{max-width:1180px;margin:0 auto;padding:24px 16px calc(90px + env(safe-area-inset-bottom))}.screen{display:none}.screen.active{display:block}
 h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:14px 0 10px;letter-spacing:-.03em}h2{font-size:25px;margin:20px 0 10px}h3{font-size:17px;margin:17px 0 8px}p{line-height:1.48;color:#3e4740}.lead{font-size:18px;max-width:760px}.eyebrow{text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-size:11px;font-weight:800}
@@ -27,7 +27,7 @@ input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px
 .status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;background:#5e906c;margin-top:5px;flex:none}.dot.mid{background:#d2a340}.dot.unknown{background:#9b9f9b}
 .chatmsg{border-left:3px solid #bdc8c0;padding:9px 12px;margin:10px 0;background:#fafafa;border-radius:0 12px 12px 0}.chatmsg.ai{border-left-color:var(--accent);background:var(--ok)}.chatname{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}.calc{font-variant-numeric:tabular-nums;background:#f5f7f5;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px}
 .talkComposer{position:sticky;bottom:8px;background:rgba(247,246,241,.96);backdrop-filter:blur(14px);padding:10px;border:1px solid var(--line);border-radius:16px;margin-top:16px}.composerActions{display:flex;gap:8px;flex-wrap:wrap}.composerActions .button,.composerActions button{width:auto;margin:3px 0}.pending{font-size:13px;color:var(--muted)}
-.talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}#chatInput{overflow-y:hidden;resize:none;min-height:110px;height:auto;touch-action:manipulation;-webkit-overflow-scrolling:auto;overscroll-behavior:none}.speechFloat{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px}.speechFloat.recording{background:var(--accent);color:#fff}.speechFloat.hiddenSpeech{display:none}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}#chatInput{overflow:hidden!important;resize:none;min-height:110px;height:auto;max-height:none!important;touch-action:none;-webkit-overflow-scrolling:auto;overscroll-behavior:none;scrollbar-width:none}#chatInput::-webkit-scrollbar{display:none}.speechFloat{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px}.speechFloat.recording{background:var(--accent);color:#fff}.speechFloat.hiddenSpeech{display:none}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .recordDock{position:fixed;z-index:35;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom));width:min(calc(100% - 22px),900px);display:flex;gap:5px;overflow-x:auto;padding:7px;background:rgba(247,246,241,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 34px rgba(24,32,25,.12)}.recordDock .tab{flex:0 0 auto;margin:0}.recordDock.hiddenDock{display:none}body.record-open main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .toolrow{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}.projectBadges{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0}.projectBadge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:var(--accent2);color:var(--ink)}.projectBadge.imported{background:#fff0c9}.filterRow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 16px}.filterBtn{width:auto;margin:0;padding:8px 12px;border-radius:999px;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--ink)}.filterBtn.on{background:var(--accent);color:#fff}.metaEditor textarea{min-height:90px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
@@ -167,8 +167,8 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15b · iPad-Scrollfix im Werkstatt-Talk</p>
-  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15c · Navigation und iPad-Scrollfix</p>
+  <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 <button id="talkTopButton" class="talkTopBtn" type="button">↑ Nach oben</button>
 </main>
@@ -760,23 +760,32 @@ async function startSpeech(){
 $('#speechBtn').addEventListener('pointerdown',()=>rememberSpeechTarget());$('#speechBtn').onclick=startSpeech;
 function autoGrowChatInput(){const el=$('#chatInput');if(!el)return;el.style.height='auto';el.style.height=Math.max(110,el.scrollHeight)+'px'}
 $('#chatInput')?.addEventListener('input',autoGrowChatInput);
-// iPad/iPhone Safari behandelt ein fokussiertes textarea sonst als eigenen Scrollbereich.
-// Vertikale Wischbewegungen über dem Talk-Feld werden deshalb bewusst an die Seite weitergereicht.
+// iPad/iPhone Safari kann ein fokussiertes textarea trotz auto-grow intern scrollen.
+// Deshalb wird jede vertikale Wischbewegung über dem Talk-Feld auf Dokument-Ebene abgefangen
+// und direkt an die Seitenscrollposition weitergegeben.
 (function enableTalkTextareaPageScroll(){
   const el=$('#chatInput');if(!el)return;
-  let lastY=null,moved=false;
-  el.addEventListener('touchstart',e=>{
-    if(e.touches?.length===1){lastY=e.touches[0].clientY;moved=false}
-  },{passive:true});
-  el.addEventListener('touchmove',e=>{
-    if(lastY==null||e.touches?.length!==1)return;
+  let lastY=null;
+  const scroller=()=>document.scrollingElement||document.documentElement;
+  const resetInternalScroll=()=>{try{el.scrollTop=0;el.style.overflow='hidden'}catch{}};
+  resetInternalScroll();
+  el.addEventListener('focus',resetInternalScroll);
+  el.addEventListener('input',()=>{autoGrowChatInput();resetInternalScroll()});
+  document.addEventListener('touchstart',e=>{
+    if(e.touches?.length!==1||!e.target?.closest?.('#chatInput'))return;
+    lastY=e.touches[0].clientY;resetInternalScroll();
+  },{passive:true,capture:true});
+  document.addEventListener('touchmove',e=>{
+    if(lastY==null||e.touches?.length!==1||!e.target?.closest?.('#chatInput'))return;
     const y=e.touches[0].clientY,dy=lastY-y;
-    if(Math.abs(dy)<2)return;
-    moved=true;lastY=y;
+    if(Math.abs(dy)<1)return;
+    lastY=y;
     e.preventDefault();
-    window.scrollBy(0,dy);
-  },{passive:false});
-  el.addEventListener('touchend',()=>{lastY=null;setTimeout(()=>{moved=false},0)},{passive:true});
+    resetInternalScroll();
+    scroller().scrollTop+=dy;
+  },{passive:false,capture:true});
+  document.addEventListener('touchend',()=>{lastY=null},{passive:true,capture:true});
+  document.addEventListener('touchcancel',()=>{lastY=null},{passive:true,capture:true});
 })();
 document.addEventListener('focusin',e=>{if(e.target?.matches?.('textarea,input')){rememberSpeechTarget(e.target);updateSpeechFloatVisibility()}});
 $('#speechFloatBtn')?.addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});if($('#speechFloatBtn'))$('#speechFloatBtn').onclick=startSpeech;
