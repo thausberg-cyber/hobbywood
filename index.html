@@ -36,6 +36,9 @@ button:disabled,.button.disabled{opacity:.55;cursor:wait}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
 @media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:grid;grid-template-columns:minmax(280px,38%) minmax(0,62%);gap:18px}.workspace .side{position:sticky;top:92px;align-self:start}.talkComposer{bottom:14px}}
+
+.talkTopBtn{position:fixed;right:18px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:34;width:auto;margin:0;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid var(--line);box-shadow:0 6px 20px rgba(24,32,25,.12);color:var(--ink);font-size:13px;font-weight:780;display:none}.talkTopBtn.on{display:block}
+.ideaMoreBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.ideaMoreBox .composerActions{margin-top:8px}
 </style>
 </head>
 <body>
@@ -79,7 +82,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
     <label class="field">Materialbudget</label><input id="ideaBudget" placeholder="z. B. bis 80 €">
     <label class="field">Wirkung</label><select id="ideaStyle"><option>persönlich</option><option>praktisch</option><option>dekorativ</option><option>ungewöhnlich</option><option>hochwertig</option></select>
   </div>
-  <button class="primary" id="findIdeas">Projektideen finden</button><div id="ideaResults"></div><button class="ghost backHome">Zur Startseite</button>
+  <button class="primary" id="findIdeas">Projektideen finden</button><div id="ideaResults"></div><div id="ideaMoreBox" class="ideaMoreBox hidden"><strong>Noch nichts dabei?</strong><p class="hint">Ich kann bewusst andere Richtungen vorschlagen oder deine Wünsche genauer eingrenzen.</p><label class="field" for="ideaFeedback">Was passt an den bisherigen Vorschlägen nicht?</label><input id="ideaFeedback" placeholder="z. B. zu dekorativ, zu aufwendig, lieber etwas Praktisches"><div class="composerActions"><button class="secondary small" id="moreIdeas">Weitere Vorschläge</button><button class="ghost small" id="refineIdeas">Vorschläge eingrenzen</button></div></div><button class="ghost backHome">Zur Startseite</button>
 </section>
 
 <section id="profile" class="screen">
@@ -150,7 +153,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div class="eyebrow">Mein Projekt</div><h1 id="recordTitle">Projekt</h1><p id="recordSummary"></p>
       <div class="card metaEditor"><strong>Projekt bearbeiten</strong><label class="field" for="projectTitleEdit">Titel</label><input id="projectTitleEdit" placeholder="z. B. Würzkiste"><label class="field" for="projectDescriptionEdit">Beschreibung</label><textarea id="projectDescriptionEdit" placeholder="Kurze Projektbeschreibung …"></textarea><button class="secondary" id="applyProjectMeta">Titel & Beschreibung übernehmen</button><div id="projectOrigin" class="hint"></div></div>
       <div id="sidePhotos" class="photos"></div>
-      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
+      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="secondary" id="printWorkshopSheet">Werkstattbogen drucken</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
     </aside>
     <div>
       <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
@@ -162,16 +165,17 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.12a · Projekttransfer unter der Projektliste</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.13 · Werkstattbogen, Ideen-Nachschlag & Profil-Autosave</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab dockHome" type="button">⌂ Start</button><button class="tab on" data-pane="talkPane">Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
+<button id="talkTopButton" class="talkTopBtn" type="button">↑ Nach oben</button>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
 <button id="speechFloatBtn" class="secondary speechFloat" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.12a';
+const APP_VERSION='0.9.13';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
@@ -649,7 +653,7 @@ function renderRecord(){
   $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
   $('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`;
 }
-function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));if(id!=='talkPane')window.scrollTo({top:Math.max(0,$('#record').offsetTop-70),behavior:'smooth'})}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));if(id!=='talkPane')window.scrollTo({top:Math.max(0,$('#record').offsetTop-70),behavior:'smooth'});setTimeout(updateTalkTopButton,20)}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 
@@ -753,10 +757,51 @@ function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('
 async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
 $('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 
-$('#findIdeas').onclick=async()=>{const brief={who:$('#ideaWho').value,occasion:$('#ideaOccasion').value,interests:$('#ideaInterests').value,time:$('#ideaTime').value,budget:$('#ideaBudget').value,style:$('#ideaStyle').value};$('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';try{const r=await fetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload()})});if(!r.ok)throw Error(await r.text());const d=await r.json();$('#ideaResults').innerHTML=(d.ideas||[]).map((x,i)=>`<div class="idea"><h3>${esc(x.title)}</h3><p>${esc(x.why)}</p><div class="chips"><span class="chip">${esc(x.difficulty)}</span><span class="chip">${esc(x.time)}</span><span class="chip">${esc(x.budget)}</span></div><p>${esc(x.concept)}</p><button class="primary chooseIdea" data-i="${i}">Diese Idee weiterentwickeln</button></div>`).join('');$('#ideaResults').dataset.ideas=JSON.stringify(d.ideas||[])}catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}};
+let rejectedIdeas=[];
+function currentIdeaBrief(){return {who:$('#ideaWho').value,occasion:$('#ideaOccasion').value,interests:$('#ideaInterests').value,time:$('#ideaTime').value,budget:$('#ideaBudget').value,style:$('#ideaStyle').value}}
+function renderIdeaResults(ideas=[]){
+  $('#ideaResults').innerHTML=ideas.map((x,i)=>`<div class="idea"><h3>${esc(x.title)}</h3><p>${esc(x.why)}</p><div class="chips"><span class="chip">${esc(x.difficulty)}</span><span class="chip">${esc(x.time)}</span><span class="chip">${esc(x.budget)}</span></div><p>${esc(x.concept)}</p><button class="primary chooseIdea" data-i="${i}">Diese Idee weiterentwickeln</button></div>`).join('');
+  $('#ideaResults').dataset.ideas=JSON.stringify(ideas);$('#ideaMoreBox').classList.toggle('hidden',!ideas.length);
+}
+async function requestIdeas({refine=false}={}){
+  const brief=currentIdeaBrief(),feedback=$('#ideaFeedback')?.value.trim()||'';
+  $('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';
+  try{
+    const r=await fetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload(),rejectedIdeas,feedback,refine})});
+    if(!r.ok)throw Error(await r.text());const d=await r.json();renderIdeaResults(d.ideas||[]);
+  }catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}
+}
+$('#findIdeas').onclick=()=>{rejectedIdeas=[];if($('#ideaFeedback'))$('#ideaFeedback').value='';requestIdeas()};
+$('#moreIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ideas||'[]');rejectedIdeas.push(...prev.map(x=>({title:x.title,concept:x.concept})));requestIdeas()};
+$('#refineIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ideas||'[]');rejectedIdeas.push(...prev.map(x=>({title:x.title,concept:x.concept})));requestIdeas({refine:true})};
 document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
 
-$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile()};$('#saveProfile').onclick=()=>{profile.skill=$('#skill').value;$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));alert('Werkstattprofil gespeichert.');show('start')};
+function persistProfile(){try{profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));return true}catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}}
+$('#skill').addEventListener('change',()=>persistProfile());
+document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools[e.target.dataset.tool]=e.target.value;persistProfile()}});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
+$('#saveProfile').onclick=()=>{if(persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
+function workshopSheetHtml(){
+  const r=current.reconstruction||{},a=current.analysis||{};
+  const title=esc(current.customTitle||r.title||a.object||current.title||'Projekt');
+  const desc=esc(current.customDescription||r.summary||a.summary||current.knowledge||'');
+  const image=(current.photos||[])[0]?.dataUrl||'';
+  const dimLines=[];
+  for(const sk of (current.sketches||[]))for(const d of (sk.analysis?.dimensions||[]))dimLines.push(`${esc(d.role_label||d.label||d.role||'Maß')}: ${esc(d.value)} ${esc(d.unit||'')}`);
+  for(const x of (a.recognized||[]))if(/\d/.test(String(x))&&/(mm|cm|m\b|ø|durchmesser|breite|höhe|tiefe|stärke)/i.test(String(x)))dimLines.push(esc(x));
+  const dims=[...new Set(dimLines)].slice(0,12);
+  let cut='';
+  if(Array.isArray(r.cutlist)&&r.cutlist.length){cut=`<table><thead><tr><th>Bauteil</th><th>Anz.</th><th>L</th><th>B</th><th>S</th><th>Material</th><th>Bemerkung</th></tr></thead><tbody>${r.cutlist.map(x=>`<tr><td>${esc(x.part||'')}</td><td>${esc(x.qty||'')}</td><td>${esc(x.length_mm??'')}</td><td>${esc(x.width_mm??'')}</td><td>${esc(x.thickness_mm??'')}</td><td>${esc(x.material||'')}</td><td>${esc(x.note||'')}</td></tr>`).join('')}</tbody></table>`}
+  else cut=`<table><thead><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr></thead><tbody>${(r.materials||[]).map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</tbody></table>`;
+  const steps=(r.steps||[]).map((x,i)=>`<li><span>${i+1}</span><div>${esc(x)}</div></li>`).join('')||'<li><div>Noch keine Arbeitsschritte vorhanden.</div></li>';
+  const notes=(r.safety_notes||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>${title} – Werkstattbogen</title><style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#182019;font-size:11pt;margin:0}h1{font-size:22pt;margin:0 0 4mm}h2{font-size:15pt;border-bottom:1px solid #bbb;padding-bottom:2mm;margin:8mm 0 4mm}p{line-height:1.4}.top{display:grid;grid-template-columns:1fr 52mm;gap:8mm;align-items:start}.top img{width:52mm;height:40mm;object-fit:cover;border:1px solid #ccc}.meta{font-size:9pt;color:#666}.dims{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 6mm}.dim{padding:2mm 0;border-bottom:1px solid #ddd}table{width:100%;border-collapse:collapse;font-size:9.5pt}th,td{border-bottom:1px solid #ccc;padding:2.2mm;text-align:left;vertical-align:top}th{background:#f0f2f0}ol{list-style:none;padding:0;margin:0}ol li{display:grid;grid-template-columns:9mm 1fr;gap:3mm;margin:0 0 4mm;page-break-inside:avoid}ol li span{width:8mm;height:8mm;border-radius:50%;background:#183327;color:#fff;display:grid;place-items:center;font-weight:bold;font-size:9pt}.section{page-break-inside:auto}@media print{button{display:none}}</style></head><body><div class="top"><div><div class="meta">look, talk ’n build · Werkstattbogen · ${esc(APP_VERSION)}</div><h1>${title}</h1><p>${desc}</p>${dims.length?`<h2>Hauptmaße</h2><div class="dims">${dims.map(x=>`<div class="dim">${x}</div>`).join('')}</div>`:''}</div>${image?`<img src="${image}" alt="Projektfoto">`:''}</div><section class="section"><h2>Zuschnitt- / Materialliste</h2>${cut}</section><section class="section"><h2>Step by Step</h2><ol>${steps}</ol></section>${notes?`<section class="section"><h2>Wichtige Hinweise</h2><ul>${notes}</ul></section>`:''}<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),250))<\/script></body></html>`;
+}
+function printWorkshopSheet(){const w=window.open('','_blank');if(!w)return alert('Der Werkstattbogen konnte nicht geöffnet werden. Bitte Pop-ups für diese Seite erlauben.');w.document.open();w.document.write(workshopSheetHtml());w.document.close()}
+$('#printWorkshopSheet').onclick=printWorkshopSheet;
+function updateTalkTopButton(){const btn=$('#talkTopButton'),record=$('#record'),talk=$('#talkPane');if(!btn||!record)return;const active=record.classList.contains('active')&&talk?.classList.contains('on');const threshold=Math.max(350,record.offsetTop+320);btn.classList.toggle('on',active&&window.scrollY>threshold)}
+window.addEventListener('scroll',updateTalkTopButton,{passive:true});
+$('#talkTopButton').onclick=()=>window.scrollTo({top:Math.max(0,$('#record').offsetTop-72),behavior:'smooth'});
 function isGenericProjectTitle(v=''){return /^(mein projekt|projekt|unbenanntes projekt)$/i.test(String(v).trim())}
 $('#applyProjectMeta').onclick=async()=>{
   const t=$('#projectTitleEdit').value.trim(),d=$('#projectDescriptionEdit').value.trim();

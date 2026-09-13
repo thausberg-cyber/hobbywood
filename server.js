@@ -215,16 +215,17 @@ app.post("/talk",async(req,res)=>{try{
 }catch(e){console.error(e);res.status(500).json({error:"talk_failed",detail:e.message})}});
 
 app.post("/ideas",async(req,res)=>{try{
-  const {brief={},profile={}}=req.body||{};
-  const content=[{type:"input_text",text:`Entwickle 4 konkrete, realistisch baubare Geschenk- oder DIY-Projektideen. ${workshopLanguage} Keine belanglosen Listen; jede Idee soll erkennbar aus Empfänger, Anlass, Interessen, Zeit, Budget und Werkstattprofil abgeleitet sein. ${profileText(profile)}\nJSON:{"ideas":[{"title":"...","why":"...","difficulty":"Anfänger|Fortgeschritten|Erfahren|Profi","time":"...","budget":"...","main_tools":["..."],"concept":"..."}]}\nBrief:${JSON.stringify(brief)}`}];
+  const {brief={},profile={},rejectedIdeas=[],feedback="",refine=false}=req.body||{};
+  const rejected=(Array.isArray(rejectedIdeas)?rejectedIdeas:[]).slice(-12);
+  const content=[{type:"input_text",text:`Entwickle 4 konkrete, realistisch baubare Geschenk- oder DIY-Projektideen. ${workshopLanguage} Keine belanglosen Listen; jede Idee soll erkennbar aus Empfänger, Anlass, Interessen, Zeit, Budget und Werkstattprofil abgeleitet sein. ${profileText(profile)}\nFrühere Vorschläge wurden abgelehnt. Wiederhole weder deren Titel noch im Kern dasselbe Konzept. Wähle bewusst andere Projektarten, Materialien oder Nutzungen. ${refine?"Nutze das Nutzerfeedback besonders stark, um die Richtung einzugrenzen.":"Sorge für deutlich neue Richtungen."}\nNutzerfeedback zu bisherigen Vorschlägen:${feedback||"kein zusätzliches Feedback"}\nAbgelehnte Vorschläge:${JSON.stringify(rejected)}\nJSON:{"ideas":[{"title":"...","why":"...","difficulty":"Anfänger|Fortgeschritten|Erfahren|Profi","time":"...","budget":"...","main_tools":["..."],"concept":"..."}]}\nBrief:${JSON.stringify(brief)}`}];
   res.json(await createJsonResponse(content,"ideas"));
 }catch(e){console.error(e);res.status(500).json({error:"ideas_failed",detail:e.message})}});
 
 app.post("/reconstruct",async(req,res)=>{try{
   const {analysis={},knowledge="",chat=[],images=[],profile={},sketches=[]}=req.body||{};
-  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. ${workshopLanguage} Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"tools":["..."],"steps":["..."],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}\nBestätigte Werkstattskizzen:${JSON.stringify(sketches)}`}];
+  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. ${workshopLanguage} Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"cutlist":[{"part":"...","qty":"...","length_mm":null,"width_mm":null,"thickness_mm":null,"material":"...","note":"..."}],"tools":["..."],"steps":["..."],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}\nBestätigte Werkstattskizzen:${JSON.stringify(sketches)}`}];
   addImages(content,images);
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.12a listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.13 listening on port ${port}`));
