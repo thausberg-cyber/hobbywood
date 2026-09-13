@@ -7,8 +7,8 @@ const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
 app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.14",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.14"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.15",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.15"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -223,9 +223,9 @@ app.post("/ideas",async(req,res)=>{try{
 
 app.post("/reconstruct",async(req,res)=>{try{
   const {analysis={},knowledge="",chat=[],images=[],profile={},sketches=[],purchasedParts=[]}=req.body||{};
-  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. ${workshopLanguage} Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"cutlist":[{"part":"...","qty":"...","length_mm":null,"width_mm":null,"thickness_mm":null,"material":"...","note":"..."}],"purchased_parts":[{"item":"...","supplier":"...","product":"...","quantity":"...","dimensions":"...","use":"...","link":"..."}],"tools":["..."],"steps":["..."],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}\nBestätigte Werkstattskizzen:${JSON.stringify(sketches)}\nBereits bestätigte Zukaufteile:${JSON.stringify(purchasedParts)}\nZukaufteile sind fertige Produkte, die in das Projekt eingehen. Übernimm bestätigte Zukaufteile exakt und erfinde keine Hersteller, Händler oder Links.`}];
+  let content=[{type:"input_text",text:`Erstelle "Mein Projekt" als praktikablen Bauentwurf aus dem gemeinsam erarbeiteten Projektstand. ${workshopLanguage} Nutzerangaben und Entscheidungen haben Vorrang vor früheren Vermutungen. Keine erfundenen Maße; unbekannte Maße "vor Ort bestimmen". ${profileText(profile)}\nJSON:{"title":"...","summary":"...","construction":"...","materials":[{"item":"...","quantity":"...","spec":"..."}],"cutlist":[{"part":"...","qty":"...","length_mm":null,"width_mm":null,"thickness_mm":null,"material":"...","note":"..."}],"purchased_parts":[{"item":"...","supplier":"...","product":"...","quantity":"...","dimensions":"...","use":"...","link":"..."}],"tools":["..."],"steps":["reine Werkstattschritte bis zur Fertigstellung"],"application_steps":["spätere Nutzung, Befüllen, Servieren, Aufstellen, Pflege oder Anwendung"],"open_points":["..."],"safety_notes":["..."]}\nAnalyse:${JSON.stringify(analysis)}\nNutzerwissen:${knowledge}\nWerkstattgespräch:${JSON.stringify(chat)}\nBestätigte Werkstattskizzen:${JSON.stringify(sketches)}\nBereits bestätigte Zukaufteile:${JSON.stringify(purchasedParts)}\nZukaufteile sind fertige Produkte, die in das Projekt eingehen. Übernimm bestätigte Zukaufteile exakt und erfinde keine Hersteller, Händler oder Links. WICHTIG: steps enthält ausschließlich Arbeiten in der Werkstatt bis das Werkstück fertig gebaut ist. Spätere Nutzung, Befüllen, Aufstellen, Servieren, Dekorieren, Pflege oder Anwendung gehört ausschließlich in application_steps und niemals in steps.`}];
   addImages(content,images);
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.14 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.15 listening on port ${port}`));
