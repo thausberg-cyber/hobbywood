@@ -35,7 +35,7 @@ button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
-@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:grid;grid-template-columns:minmax(280px,38%) minmax(0,62%);gap:18px}.workspace .side{position:static;align-self:start}.talkComposer{bottom:14px}}@media(min-width:1180px) and (hover:hover) and (pointer:fine){.workspace .side{position:sticky;top:92px}}
+@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:grid;grid-template-columns:minmax(280px,38%) minmax(0,62%);gap:18px;align-items:start}.workspace .side,.workspace .workWindow{position:relative;align-self:start;max-height:calc(100dvh - 190px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.72);box-shadow:var(--shadow);padding:14px}.workspace .workWindow .tabs{position:sticky;top:-14px;z-index:8;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);padding:14px 0 8px;margin-top:-14px}.workspace .workWindow .talkComposer{position:sticky;bottom:-14px;z-index:7;margin-bottom:-14px}.workspace .side::-webkit-scrollbar,.workspace .workWindow::-webkit-scrollbar{width:7px}.workspace .side::-webkit-scrollbar-thumb,.workspace .workWindow::-webkit-scrollbar-thumb{background:#c9ceca;border-radius:99px}}
 
 .talkTopBtn{position:fixed;right:92px;bottom:calc(150px + env(safe-area-inset-bottom));z-index:34;width:auto;margin:0;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid var(--line);box-shadow:0 6px 20px rgba(24,32,25,.12);color:var(--ink);font-size:13px;font-weight:780;display:none}.talkTopBtn.on{display:block}
 .ideaMoreBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.ideaMoreBox .composerActions{margin-top:8px}
@@ -157,7 +157,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="sidePhotos" class="photos"></div>
       <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="secondary" id="printWorkshopSheet">Werkstattbogen öffnen</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
     </aside>
-    <div>
+    <div class="workWindow" id="workWindow">
       <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
       <div id="talkPane" class="pane on"><div class="card"><div id="chatLog"></div><h3>Noch offen</h3><div id="editableOpen"></div></div>
         <div class="talkComposer"><textarea id="chatInput" placeholder="Frag mich etwas, lass etwas berechnen, korrigiere Maße oder diskutiere eine andere Lösung …"></textarea><div id="pendingTalkPhotos" class="photoStrip"></div><div class="composerActions"><button class="secondary small" id="speechBtn" type="button">🎙 Sprechen</button><label class="button secondary small" for="talkCameraInput">Foto aufnehmen</label><input class="hidden" id="talkCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="talkLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="talkLibraryInput" type="file" accept="image/*" multiple><label class="button ghost small" for="talkSketchInput">Skizze ergänzen</label><input class="hidden" id="talkSketchInput" type="file" accept="image/*"><button class="primary small" id="sendChat">Beitrag senden</button></div><div id="speechStatus" class="speechStatus"><span class="speechDot" aria-hidden="true"></span><span id="speechStatusText">Ich höre zu …</span></div><div id="talkWorking" class="talkWorking"><span class="spinner" aria-hidden="true"></span><span>Ich schaue mir das an …</span></div><div class="hint">Sprechen, tippen, Foto oder Skizze – vor dem Senden bleibt alles editierbar.</div></div>
@@ -167,7 +167,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15d · Gemeinsames Seitenscrollen auf Tablets</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15e · App-Seite und Werkstattfenster unabhängig scrollbar</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 <button id="talkTopButton" class="talkTopBtn" type="button">↑ Nach oben</button>
@@ -177,7 +177,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.15d';
+const APP_VERSION='0.9.15e';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
@@ -660,7 +660,7 @@ function renderRecord(){
   $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
   $('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`;
 }
-function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));if(id!=='talkPane')window.scrollTo({top:Math.max(0,$('#record').offsetTop-70),behavior:'smooth'});setTimeout(updateTalkTopButton,20)}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));const ww=$('#workWindow');if(ww)ww.scrollTo({top:0,behavior:'smooth'});setTimeout(updateTalkTopButton,20)}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 
@@ -760,33 +760,8 @@ async function startSpeech(){
 $('#speechBtn').addEventListener('pointerdown',()=>rememberSpeechTarget());$('#speechBtn').onclick=startSpeech;
 function autoGrowChatInput(){const el=$('#chatInput');if(!el)return;el.style.height='auto';el.style.height=Math.max(110,el.scrollHeight)+'px'}
 $('#chatInput')?.addEventListener('input',autoGrowChatInput);
-// iPad/iPhone Safari kann ein fokussiertes textarea trotz auto-grow intern scrollen.
-// Deshalb wird jede vertikale Wischbewegung über dem Talk-Feld auf Dokument-Ebene abgefangen
-// und direkt an die Seitenscrollposition weitergegeben.
-(function enableTalkTextareaPageScroll(){
-  const el=$('#chatInput');if(!el)return;
-  let lastY=null;
-  const scroller=()=>document.scrollingElement||document.documentElement;
-  const resetInternalScroll=()=>{try{el.scrollTop=0;el.style.overflow='hidden'}catch{}};
-  resetInternalScroll();
-  el.addEventListener('focus',resetInternalScroll);
-  el.addEventListener('input',()=>{autoGrowChatInput();resetInternalScroll()});
-  document.addEventListener('touchstart',e=>{
-    if(e.touches?.length!==1||!e.target?.closest?.('#chatInput'))return;
-    lastY=e.touches[0].clientY;resetInternalScroll();
-  },{passive:true,capture:true});
-  document.addEventListener('touchmove',e=>{
-    if(lastY==null||e.touches?.length!==1||!e.target?.closest?.('#chatInput'))return;
-    const y=e.touches[0].clientY,dy=lastY-y;
-    if(Math.abs(dy)<1)return;
-    lastY=y;
-    e.preventDefault();
-    resetInternalScroll();
-    scroller().scrollTop+=dy;
-  },{passive:false,capture:true});
-  document.addEventListener('touchend',()=>{lastY=null},{passive:true,capture:true});
-  document.addEventListener('touchcancel',()=>{lastY=null},{passive:true,capture:true});
-})();
+// Der Werkstatt-Talk scrollt als eigenes Fenster. Das Textfeld selbst wächst mit dem Inhalt;
+// Wischbewegungen innerhalb des rechten Werkstattfensters bleiben dort, außerhalb scrollt die App-Seite.
 document.addEventListener('focusin',e=>{if(e.target?.matches?.('textarea,input')){rememberSpeechTarget(e.target);updateSpeechFloatVisibility()}});
 $('#speechFloatBtn')?.addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});if($('#speechFloatBtn'))$('#speechFloatBtn').onclick=startSpeech;
 let busy=false;
@@ -841,9 +816,10 @@ function workshopSheetHtml(){
 }
 function printWorkshopSheet(){const w=window.open('','_blank');if(!w)return alert('Der Werkstattbogen konnte nicht geöffnet werden. Bitte Pop-ups für diese Seite erlauben.');w.document.open();w.document.write(workshopSheetHtml());w.document.close()}
 $('#printWorkshopSheet').onclick=printWorkshopSheet;
-function updateTalkTopButton(){const btn=$('#talkTopButton'),record=$('#record'),talk=$('#talkPane');if(!btn||!record)return;const active=record.classList.contains('active')&&talk?.classList.contains('on');const threshold=Math.max(350,record.offsetTop+320);btn.classList.toggle('on',active&&window.scrollY>threshold)}
+function updateTalkTopButton(){const btn=$('#talkTopButton'),record=$('#record'),talk=$('#talkPane'),ww=$('#workWindow');if(!btn||!record)return;const active=record.classList.contains('active')&&talk?.classList.contains('on');const pos=ww?ww.scrollTop:window.scrollY;btn.classList.toggle('on',active&&pos>320)}
 window.addEventListener('scroll',updateTalkTopButton,{passive:true});
-$('#talkTopButton').onclick=()=>window.scrollTo({top:Math.max(0,$('#record').offsetTop-72),behavior:'smooth'});
+$('#workWindow')?.addEventListener('scroll',updateTalkTopButton,{passive:true});
+$('#talkTopButton').onclick=()=>{const ww=$('#workWindow');if(ww)ww.scrollTo({top:0,behavior:'smooth'});else window.scrollTo({top:Math.max(0,$('#record').offsetTop-72),behavior:'smooth'})};
 function isGenericProjectTitle(v=''){return /^(mein projekt|projekt|unbenanntes projekt)$/i.test(String(v).trim())}
 $('#applyProjectMeta').onclick=async()=>{
   const t=$('#projectTitleEdit').value.trim(),d=$('#projectDescriptionEdit').value.trim();
