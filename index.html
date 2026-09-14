@@ -35,7 +35,7 @@ button:disabled,.button.disabled{opacity:.55;cursor:wait}
 .progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
-@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:grid;grid-template-columns:minmax(280px,38%) minmax(0,62%);gap:18px;align-items:start}.workspace .side,.workspace .workWindow{position:relative;align-self:start;max-height:calc(100dvh - 190px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.72);box-shadow:var(--shadow);padding:14px}.workspace .workWindow .tabs{position:sticky;top:-14px;z-index:8;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);padding:14px 0 8px;margin-top:-14px}.workspace .workWindow .talkComposer{position:sticky;bottom:-14px;z-index:7;margin-bottom:-14px}.workspace .side::-webkit-scrollbar,.workspace .workWindow::-webkit-scrollbar{width:7px}.workspace .side::-webkit-scrollbar-thumb,.workspace .workWindow::-webkit-scrollbar-thumb{background:#c9ceca;border-radius:99px}}
+@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:flex;gap:18px;align-items:stretch;width:100%;max-width:100%;overflow:hidden}.workspace .side,.workspace .workWindow{position:relative;box-sizing:border-box;height:calc(100dvh - 190px);max-height:calc(100dvh - 190px);min-width:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;overscroll-behavior-x:none;-webkit-overflow-scrolling:touch;touch-action:pan-y;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:var(--shadow);padding:14px}.workspace .side{flex:0 0 calc(38% - 9px)}.workspace .workWindow{flex:1 1 0;width:0}.workspace .side>*,.workspace .workWindow>*{max-width:100%;min-width:0}.workspace .workWindow .tabs{position:sticky;top:-14px;z-index:3;background:#fff;padding:14px 0 8px;margin-top:-14px}.workspace .workWindow .talkComposer{position:sticky;bottom:-14px;z-index:2;margin-bottom:-14px;background:#fff}.workspace .side::-webkit-scrollbar,.workspace .workWindow::-webkit-scrollbar{width:7px}.workspace .side::-webkit-scrollbar-thumb,.workspace .workWindow::-webkit-scrollbar-thumb{background:#c9ceca;border-radius:99px}}
 
 .talkTopBtn{position:fixed;right:92px;bottom:calc(150px + env(safe-area-inset-bottom));z-index:34;width:auto;margin:0;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid var(--line);box-shadow:0 6px 20px rgba(24,32,25,.12);color:var(--ink);font-size:13px;font-weight:780;display:none}.talkTopBtn.on{display:block}
 .ideaMoreBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.ideaMoreBox .composerActions{margin-top:8px}
@@ -167,7 +167,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15e · App-Seite und Werkstattfenster unabhängig scrollbar</p>
+  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.15h · Getrennte Fenster ohne Überlagerung</p>
   <nav id="recordDock" class="recordDock" aria-label="Projektbereiche"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></nav>
 </section>
 <button id="talkTopButton" class="talkTopBtn" type="button">↑ Nach oben</button>
@@ -177,7 +177,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.15g';
+const APP_VERSION='0.9.15f';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
@@ -185,7 +185,7 @@ let current={id:null,title:'',mode:'copy',photos:[],sketches:[],purchasedParts:[
 let pendingTalkPhotos=[];
 let pendingSketch=null, sketchReturnScreen='record';
 let pendingImport=null;
-let profile={skill:'Fortgeschritten',tools:{},removedTools:[]};
+let profile={skill:'Fortgeschritten',tools:{}};
 const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
 const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
 function screenHasSpeechTarget(screen){if(!screen)return false;return [...screen.querySelectorAll('textarea,input')].some(el=>{const type=(el.getAttribute('type')||'text').toLowerCase();return !el.disabled&&!el.classList.contains('hidden')&&!['file','button','submit','checkbox','radio','range','color','date','time'].includes(type)})}
@@ -330,19 +330,13 @@ async function loadProfile(){
   let saved=null;
   try{saved=await dbGetSetting('workshopProfile')}catch(e){console.warn('Werkstattprofil aus IndexedDB konnte nicht geladen werden',e)}
   if(!saved){try{saved=JSON.parse(localStorage.getItem(PROFILE)||'null')}catch{}}
-  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})},removedTools:[...(saved.removedTools||[])]};
-  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})},removedTools:[...(profile.removedTools||[])]};
+  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})}};
+  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})}};
   const skill=$('#skill');if(skill)skill.value=profile.skill||'Fortgeschritten';
   renderToolsProfile();
   try{await dbPutSetting('workshopProfile',profile)}catch(e){console.warn('Werkstattprofil konnte nicht migriert werden',e)}
 }
-function renderToolsProfile(){
-  profile.removedTools=profile.removedTools||[];
-  const removed=new Set(profile.removedTools);
-  const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])].filter(n=>!removed.has(n));
-  $('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}" data-prev="${esc(profile.tools?.[n]||'none')}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option><option value="remove">Entfernen</option></select></div>`).join('');
-  $$('.toolStatus').forEach(el=>el.value=profile.tools?.[el.dataset.tool]||'none');
-}
+function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
 function profilePayload(){return profile}
 
 $('#startCopy').onclick=()=>{resetProject('copy');$('#knowledge').value='';renderAllPhotos();show('photos')};
@@ -811,7 +805,6 @@ document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIde
 async function persistProfile(){
   try{
     profile.tools=profile.tools||{};
-    profile.removedTools=profile.removedTools||[];
     profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';
     $$('.toolStatus').forEach(el=>profile.tools[el.dataset.tool]=el.value);
     localStorage.setItem(PROFILE,JSON.stringify(profile));
@@ -820,22 +813,8 @@ async function persistProfile(){
   }catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}
 }
 $('#skill').addEventListener('change',()=>persistProfile());
-document.addEventListener('change',async e=>{
-  if(e.target?.classList.contains('toolStatus')){
-    const el=e.target, name=el.dataset.tool, previous=el.dataset.prev||profile.tools?.[name]||'none';
-    profile.tools=profile.tools||{};profile.removedTools=profile.removedTools||[];
-    if(el.value==='remove'){
-      if(!confirm(`„${name}“ aus deiner Werkstatt entfernen?`)){el.value=previous;return}
-      delete profile.tools[name];
-      if(!profile.removedTools.includes(name))profile.removedTools.push(name);
-      await persistProfile();renderToolsProfile();return;
-    }
-    profile.removedTools=profile.removedTools.filter(n=>n!==name);
-    profile.tools[name]=el.value;el.dataset.prev=el.value;await persistProfile();
-  }
-  if(e.target?.id==='skill')persistProfile();
-});
-$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.removedTools=profile.removedTools||[];profile.removedTools=profile.removedTools.filter(x=>x!==n);profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
+document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools=profile.tools||{};profile.tools[e.target.dataset.tool]=e.target.value;persistProfile()}if(e.target?.id==='skill')persistProfile()});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
 $('#saveProfile').onclick=async()=>{if(await persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
 function workshopSheetHtml(){
   const r=current.reconstruction||{},a=current.analysis||{};
