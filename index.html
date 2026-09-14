@@ -177,7 +177,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.15f';
+const APP_VERSION='0.9.15g';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
@@ -185,7 +185,7 @@ let current={id:null,title:'',mode:'copy',photos:[],sketches:[],purchasedParts:[
 let pendingTalkPhotos=[];
 let pendingSketch=null, sketchReturnScreen='record';
 let pendingImport=null;
-let profile={skill:'Fortgeschritten',tools:{}};
+let profile={skill:'Fortgeschritten',tools:{},removedTools:[]};
 const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
 const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
 function screenHasSpeechTarget(screen){if(!screen)return false;return [...screen.querySelectorAll('textarea,input')].some(el=>{const type=(el.getAttribute('type')||'text').toLowerCase();return !el.disabled&&!el.classList.contains('hidden')&&!['file','button','submit','checkbox','radio','range','color','date','time'].includes(type)})}
@@ -330,13 +330,19 @@ async function loadProfile(){
   let saved=null;
   try{saved=await dbGetSetting('workshopProfile')}catch(e){console.warn('Werkstattprofil aus IndexedDB konnte nicht geladen werden',e)}
   if(!saved){try{saved=JSON.parse(localStorage.getItem(PROFILE)||'null')}catch{}}
-  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})}};
-  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})}};
+  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})},removedTools:[...(saved.removedTools||[])]};
+  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})},removedTools:[...(profile.removedTools||[])]};
   const skill=$('#skill');if(skill)skill.value=profile.skill||'Fortgeschritten';
   renderToolsProfile();
   try{await dbPutSetting('workshopProfile',profile)}catch(e){console.warn('Werkstattprofil konnte nicht migriert werden',e)}
 }
-function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
+function renderToolsProfile(){
+  profile.removedTools=profile.removedTools||[];
+  const removed=new Set(profile.removedTools);
+  const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])].filter(n=>!removed.has(n));
+  $('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}" data-prev="${esc(profile.tools?.[n]||'none')}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option><option value="remove">Entfernen</option></select></div>`).join('');
+  $$('.toolStatus').forEach(el=>el.value=profile.tools?.[el.dataset.tool]||'none');
+}
 function profilePayload(){return profile}
 
 $('#startCopy').onclick=()=>{resetProject('copy');$('#knowledge').value='';renderAllPhotos();show('photos')};
@@ -805,6 +811,7 @@ document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIde
 async function persistProfile(){
   try{
     profile.tools=profile.tools||{};
+    profile.removedTools=profile.removedTools||[];
     profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';
     $$('.toolStatus').forEach(el=>profile.tools[el.dataset.tool]=el.value);
     localStorage.setItem(PROFILE,JSON.stringify(profile));
@@ -813,8 +820,22 @@ async function persistProfile(){
   }catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}
 }
 $('#skill').addEventListener('change',()=>persistProfile());
-document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools=profile.tools||{};profile.tools[e.target.dataset.tool]=e.target.value;persistProfile()}if(e.target?.id==='skill')persistProfile()});
-$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
+document.addEventListener('change',async e=>{
+  if(e.target?.classList.contains('toolStatus')){
+    const el=e.target, name=el.dataset.tool, previous=el.dataset.prev||profile.tools?.[name]||'none';
+    profile.tools=profile.tools||{};profile.removedTools=profile.removedTools||[];
+    if(el.value==='remove'){
+      if(!confirm(`„${name}“ aus deiner Werkstatt entfernen?`)){el.value=previous;return}
+      delete profile.tools[name];
+      if(!profile.removedTools.includes(name))profile.removedTools.push(name);
+      await persistProfile();renderToolsProfile();return;
+    }
+    profile.removedTools=profile.removedTools.filter(n=>n!==name);
+    profile.tools[name]=el.value;el.dataset.prev=el.value;await persistProfile();
+  }
+  if(e.target?.id==='skill')persistProfile();
+});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.removedTools=profile.removedTools||[];profile.removedTools=profile.removedTools.filter(x=>x!==n);profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
 $('#saveProfile').onclick=async()=>{if(await persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
 function workshopSheetHtml(){
   const r=current.reconstruction||{},a=current.analysis||{};
