@@ -177,10 +177,10 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.15e';
+const APP_VERSION='0.9.15f';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
-const DB_NAME='look_talk_n_build_db', DB_VERSION=1, PROJECT_STORE='projects';
+const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
 let current={id:null,title:'',mode:'copy',photos:[],sketches:[],purchasedParts:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
 let pendingTalkPhotos=[];
 let pendingSketch=null, sketchReturnScreen='record';
@@ -198,7 +198,7 @@ async function addFiles(files,target=current.photos){for(const f of [...files])t
 function gallery(el,arr){if(!el)return;el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[+img.dataset.i].dataUrl))}
 function renderAllPhotos(){gallery($('#photoGrid'),current.photos);gallery($('#developPhotos'),current.photos);gallery($('#recordPhotos'),current.photos);gallery($('#sidePhotos'),current.photos);$('#photoCount').textContent=current.photos.length}
 function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()} $('#closeDialog').onclick=()=>$('#photoDialog').close();$('#photoDialog').onclick=e=>{if(e.target===$('#photoDialog'))$('#photoDialog').close()}
-function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(PROJECT_STORE))db.createObjectStore(PROJECT_STORE,{keyPath:'id'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB konnte nicht geöffnet werden.'))})}
+function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(PROJECT_STORE))db.createObjectStore(PROJECT_STORE,{keyPath:'id'});if(!db.objectStoreNames.contains(SETTINGS_STORE))db.createObjectStore(SETTINGS_STORE,{keyPath:'key'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB konnte nicht geöffnet werden.'))})}
 function dataUrlToBlob(dataUrl){const [meta,b64]=String(dataUrl||'').split(',');const mime=(meta.match(/^data:([^;]+)/)||[])[1]||'image/jpeg';const bin=atob(b64||''),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new Blob([bytes],{type:mime})}
 function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Foto konnte nicht geladen werden.'));r.readAsDataURL(blob)})}
 async function projectForStorage(project){
@@ -217,6 +217,9 @@ async function dbPutProject(project){const db=await openDb(),stored=await projec
 async function dbGetProject(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).get(id);req.onsuccess=async()=>{db.close();try{resolve(req.result?await projectForUi(req.result):null)}catch(e){reject(e)}};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
 async function dbGetProjects(){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).getAll();req.onsuccess=()=>{const arr=req.result||[];db.close();arr.sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));resolve(arr)};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
 async function dbDeleteProject(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readwrite');tx.objectStore(PROJECT_STORE).delete(id);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
+async function dbPutSetting(key,value){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(SETTINGS_STORE,'readwrite');tx.objectStore(SETTINGS_STORE).put({key,value,updatedAt:new Date().toISOString()});tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
+async function dbGetSetting(key){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(SETTINGS_STORE,'readonly'),req=tx.objectStore(SETTINGS_STORE).get(key);req.onsuccess=()=>{db.close();resolve(req.result?.value??null)};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
+
 async function migrateLegacyProjects(){let legacy=[];try{legacy=JSON.parse(localStorage.getItem(LEGACY_STORAGE)||'[]')}catch{}if(!legacy.length)return;for(const p of legacy){try{await dbPutProject(p)}catch(e){console.warn('Legacy-Projekt konnte nicht migriert werden',e)}}try{localStorage.removeItem(LEGACY_STORAGE)}catch{}}
 async function updateSaved(){try{const n=(await dbGetProjects()).length;$('#savedCount').textContent=n?`${n} Projekt${n===1?'':'e'} auf diesem Gerät gespeichert.`:'Noch keine Projekte gespeichert.'}catch(e){$('#savedCount').textContent='Lokale Projektablage nicht verfügbar.'}}
 async function saveCurrent(silent=false){current.updatedAt=new Date().toISOString();current.title=current.reconstruction?.title||current.analysis?.object||current.title||'Unbenanntes Projekt';try{await dbPutProject(current);await updateSaved();if(!silent)alert('Projekt gespeichert.')}catch(e){console.error(e);alert('Projekt konnte nicht gespeichert werden. Bitte prüfe den freien Gerätespeicher und versuche es erneut.')}}
@@ -323,7 +326,16 @@ async function importPendingProject(){
     await dbPutProject(p);pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value='';await updateSaved();await renderProjects();alert('Projekt wurde als neues Projekt importiert.');
   }catch(e){console.error(e);alert('Projekt konnte nicht importiert werden: '+e.message)}
 }
-function loadProfile(){try{profile=JSON.parse(localStorage.getItem(PROFILE)||'null')||profile}catch{};$('#skill').value=profile.skill||'Fortgeschritten';renderToolsProfile()}
+async function loadProfile(){
+  let saved=null;
+  try{saved=await dbGetSetting('workshopProfile')}catch(e){console.warn('Werkstattprofil aus IndexedDB konnte nicht geladen werden',e)}
+  if(!saved){try{saved=JSON.parse(localStorage.getItem(PROFILE)||'null')}catch{}}
+  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})}};
+  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})}};
+  const skill=$('#skill');if(skill)skill.value=profile.skill||'Fortgeschritten';
+  renderToolsProfile();
+  try{await dbPutSetting('workshopProfile',profile)}catch(e){console.warn('Werkstattprofil konnte nicht migriert werden',e)}
+}
 function renderToolsProfile(){const names=[...new Set([...baseTools,...Object.keys(profile.tools||{})])];$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
 function profilePayload(){return profile}
 
@@ -334,7 +346,7 @@ async function goStart(){
   show('start');
 }
 $('#homeTop').onclick=goStart;
-$('#openProfile').onclick=()=>{loadProfile();show('profile')};$('#openProjects').onclick=async()=>{const ti=$('#testerId');if(ti)ti.value=localStorage.getItem(TESTER_ID)||'';await renderProjects();show('projects')};
+$('#openProfile').onclick=async()=>{await loadProfile();show('profile')};$('#openProjects').onclick=async()=>{const ti=$('#testerId');if(ti)ti.value=localStorage.getItem(TESTER_ID)||'';await renderProjects();show('projects')};
 if($('#testerId'))$('#testerId').addEventListener('input',e=>rememberTesterId(e.target.value));
 document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-project-filter]');if(!b)return;projectFilter=b.dataset.projectFilter;$$('.filterBtn').forEach(x=>x.classList.toggle('on',x===b));await renderProjects()});
 if($('#importProjectInput'))$('#importProjectInput').onchange=async e=>{
@@ -790,11 +802,20 @@ $('#moreIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ide
 $('#refineIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ideas||'[]');rejectedIdeas.push(...prev.map(x=>({title:x.title,concept:x.concept})));requestIdeas({refine:true})};
 document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
 
-function persistProfile(){try{profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';$$('.toolStatus').forEach(s=>profile.tools[s.dataset.tool]=s.value);localStorage.setItem(PROFILE,JSON.stringify(profile));return true}catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}}
+async function persistProfile(){
+  try{
+    profile.tools=profile.tools||{};
+    profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';
+    $$('.toolStatus').forEach(el=>profile.tools[el.dataset.tool]=el.value);
+    localStorage.setItem(PROFILE,JSON.stringify(profile));
+    await dbPutSetting('workshopProfile',profile);
+    return true;
+  }catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}
+}
 $('#skill').addEventListener('change',()=>persistProfile());
-document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools[e.target.dataset.tool]=e.target.value;persistProfile()}});
-$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
-$('#saveProfile').onclick=()=>{if(persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
+document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools=profile.tools||{};profile.tools[e.target.dataset.tool]=e.target.value;persistProfile()}if(e.target?.id==='skill')persistProfile()});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
+$('#saveProfile').onclick=async()=>{if(await persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
 function workshopSheetHtml(){
   const r=current.reconstruction||{},a=current.analysis||{};
   const title=esc(current.customTitle||r.title||a.object||current.title||'Projekt');
@@ -842,7 +863,7 @@ document.addEventListener('click',async e=>{
   if(e.target?.id==='cancelImportProject'){pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value=''}
   if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}
 });
-loadProfile();updateSpeechFloatVisibility();autoGrowChatInput();(async()=>{await migrateLegacyProjects();await updateSaved()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+(async()=>{await loadProfile();await migrateLegacyProjects();await updateSaved()})();updateSpeechFloatVisibility();autoGrowChatInput();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body>
 </html>
