@@ -166,7 +166,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.19 · Kontextabhängige Zurück-Navigation</p>
+  <button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.20 · Zukaufteile bereinigt & Werkstatt-Talk bleibt am aktuellen Ende</p>
 </section>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
@@ -175,7 +175,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.19';
+const APP_VERSION='0.9.20';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
@@ -700,8 +700,31 @@ async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%'
 $('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
 function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
 function normalizePurchasedPart(x={}){return {id:x.id||newId(),item:String(x.item||x.name||'').trim(),supplier:String(x.supplier||x.vendor||x.brand||'').trim(),product:String(x.product||x.article||'').trim(),quantity:String(x.quantity||x.qty||'').trim(),dimensions:String(x.dimensions||x.size||'').trim(),use:String(x.use||x.purpose||x.note||'').trim(),link:String(x.link||x.url||'').trim(),source:String(x.source||'manual').trim()}}
-function purchasedKey(x={}){return [x.item,x.supplier,x.product,x.dimensions].map(v=>String(v||'').trim().toLowerCase()).join('|')}
-function mergePurchasedParts(parts=[]){current.purchasedParts=current.purchasedParts||[];const map=new Map(current.purchasedParts.map(x=>[purchasedKey(x),normalizePurchasedPart(x)]));for(const raw of (parts||[])){const x=normalizePurchasedPart(raw);if(!x.item)continue;const k=purchasedKey(x);const prev=map.get(k)||{};map.set(k,{...prev,...Object.fromEntries(Object.entries(x).filter(([key,v])=>key==='id'||v))})}current.purchasedParts=[...map.values()]}
+function purchaseToken(v=''){return String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function purchasedKey(x={}){return [x.item,x.supplier,x.product,x.dimensions].map(purchaseToken).join('|')}
+function purchasedPartsMatch(a={},b={}){
+  const ai=purchaseToken(a.item),bi=purchaseToken(b.item);
+  if(!ai||ai!==bi)return false;
+  const compat=(x,y)=>!x||!y||x===y;
+  const as=purchaseToken(a.supplier),bs=purchaseToken(b.supplier);
+  const ap=purchaseToken(a.product),bp=purchaseToken(b.product);
+  const ad=purchaseToken(a.dimensions),bd=purchaseToken(b.dimensions);
+  return compat(as,bs)&&compat(ap,bp)&&compat(ad,bd);
+}
+function mergePurchasedParts(parts=[]){
+  const merged=[];
+  const absorb=raw=>{
+    const x=normalizePurchasedPart(raw);if(!x.item)return;
+    const idx=merged.findIndex(y=>purchasedPartsMatch(y,x));
+    if(idx<0){merged.push(x);return}
+    const prev=merged[idx];
+    merged[idx]={...prev,...Object.fromEntries(Object.entries(x).filter(([key,v])=>key==='id'||v))};
+    merged[idx].id=prev.id||x.id;
+  };
+  for(const x of (current.purchasedParts||[]))absorb(x);
+  for(const x of (parts||[]))absorb(x);
+  current.purchasedParts=merged;
+}
 function renderPurchasedParts(){const box=$('#purchasedPartsList');if(!box)return;const inferred=current.reconstruction?.purchased_parts||[];if(inferred.length)mergePurchasedParts(inferred);const parts=current.purchasedParts||[];box.innerHTML=parts.length?parts.map((x,i)=>`<div class="purchaseCard"><strong>${esc(x.item||'Zukaufteil')}</strong><div class="purchaseMeta">${x.supplier?`<div><b>Hersteller / Händler:</b> ${esc(x.supplier)}</div>`:''}${x.product?`<div><b>Produkt:</b> ${esc(x.product)}</div>`:''}${x.quantity?`<div><b>Menge:</b> ${esc(x.quantity)}</div>`:''}${x.dimensions?`<div><b>Maße:</b> ${esc(x.dimensions)}</div>`:''}${x.use?`<div><b>Verwendung:</b> ${esc(x.use)}</div>`:''}${x.link?`<div class="purchaseLink"><b>Link:</b> <a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a></div>`:''}</div><div class="purchaseActions"><button class="ghost small deletePurchasedPart" data-i="${i}" type="button">Entfernen</button></div></div>`).join(''):'<p>Noch keine Zukaufteile eingetragen.</p>'}
 function renderRecord(){
   const r=current.reconstruction||{};
@@ -722,7 +745,7 @@ function renderRecord(){
   $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
   $('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`;
 }
-function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));const ww=$('#workWindow');if(ww)ww.scrollTo({top:0,behavior:'smooth'})}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));const ww=$('#workWindow');if(!ww)return;if(id==='talkPane'){requestAnimationFrame(()=>{ww.scrollTop=ww.scrollHeight})}else{ww.scrollTo({top:0,behavior:'smooth'})}}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
 function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
 function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
 
