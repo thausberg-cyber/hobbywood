@@ -166,7 +166,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
       <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
     </div>
   </div>
-  <button class="ghost" id="backToProjects">Meine Projekte</button><button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.17 · Startseite mit letzten Projekten</p>
+  <button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.18 · Navigation ohne doppelte Seitenbuttons</p>
 </section>
 </main>
 <dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
@@ -174,7 +174,7 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <script>
 const API='https://look-n-build-backend.onrender.com';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.17';
+const APP_VERSION='0.9.18';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
@@ -882,7 +882,7 @@ $('#saveProject').onclick=async()=>{
   }
   if($('#projectDescriptionEdit'))current.customDescription=$('#projectDescriptionEdit').value.trim();
   await saveCurrent();renderRecord();
-};$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#backToProjects').onclick=async()=>{await saveCurrent(true);await renderProjects();show('projects')};$('#newProject').onclick=()=>show('start');
+};$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#newProject').onclick=()=>show('start');
 document.addEventListener('click',async e=>{
   if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);
   if(e.target?.classList.contains('exportP')){const p=await dbGetProject(e.target.dataset.id);if(p)await exportProject(p)}
