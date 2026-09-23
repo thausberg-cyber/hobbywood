@@ -1,1 +1,55 @@
-<!doctype html><html lang="de"><meta charset="utf-8"><title>Zugangstest 0.9.20c</title><body><h1>Zugangstest wird vorbereitet</h1></body></html>
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>look, talk ’n build – Zugangstest</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:8vh 16px;background:#eff3f6;color:#253744;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:490px;margin:auto;padding:32px;background:#fff;border-radius:22px;box-shadow:0 10px 40px #293e4c12}
+h1{font-size:35px;line-height:1.04;letter-spacing:-.03em}p{line-height:1.5;color:#52636f}
+label{display:block;font-weight:700;margin:24px 0 8px}
+input{display:block;width:100%;padding:14px;border:1.5px solid #a5b7c4;border-radius:10px;font:inherit}
+button{width:100%;background:#293e4e;color:#fff;border:0;border-radius:10px;padding:14px;font-size:17px;font-weight:700;margin-top:16px;cursor:pointer}
+button:disabled{opacity:.6}
+#status{margin-top:18px;padding:13px;border-radius:10px;display:none;line-height:1.4}
+#status.success{display:block;background:#e5f4e9;color:#1a5930}
+#status.error{display:block;background:#fff0e9;color:#963f29}
+#status.info{display:block;background:#ebf2f7;color:#314f64}
+small{display:block;margin-top:23px;color:#637984;line-height:1.45}
+</style></head>
+<body><main>
+<h1>look,<br>talk ’n<br>build</h1>
+<p><strong>Zugangstest 0.9.20c</strong><br>Hier kannst du deinen persönlichen Tester-Code prüfen. Es wird keine kostenpflichtige KI-Anfrage ausgelöst.</p>
+<form id="f" autocomplete="off">
+<label for="code">Persönlicher Tester-Code</label>
+<input id="code" type="password" minlength="24" maxlength="256" required autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Code eingeben oder einfügen">
+<button id="go" type="submit">Zugang prüfen</button>
+</form><div id="status" role="status" aria-live="polite"></div>
+<small>Dein Code wird nur für diese Prüfung an den neuen Testserver übermittelt, nicht im Browser gespeichert. Bitte niemals einen Screenshot mit sichtbarem Code verschicken.</small>
+</main>
+<script>
+const form=document.getElementById("f"),field=document.getElementById("code"),button=document.getElementById("go"),status=document.getElementById("status");
+function show(kind,message){status.className=kind;status.textContent=message;}
+form.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const secret=field.value.trim();
+ if(!secret)return;
+ field.value="";
+ button.disabled=true;
+ show("info","Verbindung wird geprüft. Der kostenlose Server kann nach einer Pause bis zu einer Minute zum Starten brauchen.");
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),95000);
+ try{
+ const r=await fetch("https://look-n-build-test-secure.onrender.com/__auth_probe",{
+ method:"POST",headers:{"Authorization":"Bearer "+secret,"Content-Type":"application/json"},
+ body:"{}",cache:"no-store",signal:controller.signal
+ });
+ if(r.status===404)show("success","Zugang bestätigt: Dein Code wurde vom Testserver akzeptiert.");
+ else if(r.status===401)show("error","Der Code wurde nicht erkannt. Bitte prüfe, ob du ihn vollständig und ohne zusätzliche Zeichen eingefügt hast.");
+ else if(r.status===429)show("error","Anfragebegrenzung erreicht. Bitte später erneut versuchen.");
+ else show("error","Unerwarteter Serverstatus: HTTP "+r.status+". Bitte nur diesen Status mitteilen.");
+ }catch(e){show("error",e.name==="AbortError"?"Zeitüberschreitung. Bitte später erneut versuchen.":"Keine Verbindung zum Testserver. Bitte Internetverbindung prüfen und erneut versuchen.");}
+ finally{clearTimeout(timer);button.disabled=false;}
+});
+</script>
+</body></html>
