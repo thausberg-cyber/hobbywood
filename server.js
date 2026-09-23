@@ -1,14 +1,57 @@
 import express from "express";
 import cors from "cors";
 import OpenAI from "openai";
+import { createHash, timingSafeEqual } from "node:crypto";
 
 const app=express(), port=process.env.PORT||10000;
 const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 const model=process.env.OPENAI_MODEL||"gpt-5.6-luna";
-app.use(cors({origin:["https://thausberg-cyber.github.io","http://localhost:3000","http://127.0.0.1:3000"]}));
+const origins=(process.env.ALLOWED_ORIGINS||"https://thausberg-cyber.github.io").split(",").map(x=>x.trim()).filter(Boolean);
+app.disable("x-powered-by");
+app.use(cors({origin(origin,cb){cb(null,!origin||origins.includes(origin));}}));
+const testerHashes=(()=>{
+  let p;try{p=JSON.parse(process.env.TESTER_KEY_HASHES_JSON||"{}");}catch{throw Error("Invalid TESTER_KEY_HASHES_JSON");}
+  const m=new Map();
+  for(const [name,hash] of Object.entries(p)){
+    if(!/^[A-Za-z0-9_-]{2,40}$/.test(name)||typeof hash!=="string"||!/^[a-f0-9]{64}$/i.test(hash))throw Error("Invalid tester entry");
+    m.set(name,Buffer.from(hash,"hex"));
+  }
+  if(!m.size)console.warn("No tester codes: protected endpoints disabled");
+  return m;
+})();
+const posInt=(key,fallback)=>{const n=Number(process.env[key]);return Number.isSafeInteger(n)&&n>0?n:fallback;};
+const limits={hourly:posInt("TESTER_HOURLY_LIMIT",20),daily:posInt("TESTER_DAILY_LIMIT",60),
+  globalDaily:posInt("GLOBAL_DAILY_LIMIT",200),concurrent:posInt("TESTER_CONCURRENT_LIMIT",2),
+  globalConcurrent:posInt("GLOBAL_CONCURRENT_LIMIT",8)};
+const usage=new Map();let globalDaily={day:"",count:0},globalInflight=0;
+function findTester(code){
+  if(typeof code!=="string"||code.length<24||code.length>256)return null;
+  const hash=createHash("sha256").update(code).digest();
+  let matched=null;
+  for(const [id,expected] of testerHashes){if(timingSafeEqual(hash,expected))matched=id;}
+  return matched;
+}
+app.use((req,res,next)=>{
+  if(req.method!=="POST")return next();
+  const bearer=/^Bearer ([A-Za-z0-9_-]{24,256})$/.exec(req.get("authorization")||"");
+  const tester=bearer?findTester(bearer[1]):null;
+  if(!tester)return res.status(401).json({error:"tester_access_required",message:"Tester-Zugangscode fehlt oder ist ungültig."});
+  const now=Date.now(),hour=Math.floor(now/3600000),day=new Date(now).toISOString().slice(0,10);
+  let u=usage.get(tester);if(!u){u={hour,hourCount:0,day,dayCount:0,inflight:0};usage.set(tester,u);}
+  if(u.hour!==hour){u.hour=hour;u.hourCount=0;}
+  if(u.day!==day){u.day=day;u.dayCount=0;}
+  if(globalDaily.day!==day)globalDaily={day,count:0};
+  if(u.hourCount>=limits.hourly||u.dayCount>=limits.daily||globalDaily.count>=limits.globalDaily)
+    return res.status(429).json({error:"usage_limit",message:"Anfragelimit erreicht. Bitte später erneut versuchen."});
+  if(u.inflight>=limits.concurrent||globalInflight>=limits.globalConcurrent)
+    return res.status(429).json({error:"busy",message:"Bitte warten: zu viele gleichzeitige Anfragen."});
+  u.hourCount++;u.dayCount++;globalDaily.count++;u.inflight++;globalInflight++;
+  let released=false;const release=()=>{if(released)return;released=true;u.inflight--;globalInflight--;};
+  res.once("finish",release);res.once("close",release);req.testerId=tester;next();
+});
 app.use(express.json({limit:"35mb"}));
-app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.20",status:"ok"}));
-app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.20"}));
+app.get("/",(_,res)=>res.json({service:"look, talk 'n build backend",version:"0.9.20c-staging",status:"ok"}));
+app.get("/health",(_,res)=>res.json({ok:true,version:"0.9.20c-staging"}));
 
 const cleanJson=t=>t.trim().replace(/^```json\s*/i,"").replace(/```$/," ").trim();
 const parse=t=>JSON.parse(cleanJson(t));
@@ -228,4 +271,4 @@ app.post("/reconstruct",async(req,res)=>{try{
   res.json(await createJsonResponse(content,"project"));
 }catch(e){console.error(e);res.status(500).json({error:"project_failed",detail:e.message})}});
 
-app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.20 listening on port ${port}`));
+app.listen(port,()=>console.log(`look, talk 'n build backend 0.9.20c-staging listening on port ${port}`));
