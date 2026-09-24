@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>look, talk ’n build – Sicherheitsprüfung</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f7;color:#293b49;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:34px 14px}main{max-width:660px;margin:auto;padding:clamp(20px,5vw,34px);background:white;border-radius:20px;box-shadow:0 10px 32px #273a4812}h1{font-size:30px;line-height:1.1;letter-spacing:-.02em}h2{font-size:19px;margin-top:26px}p{line-height:1.5;color:#465c69}button{border:0;border-radius:10px;background:#2c4657;color:white;font-size:16px;font-weight:700;padding:13px 16px;margin:9px 0;cursor:pointer}button:disabled{opacity:.55;cursor:wait}input{padding:13px;border:1px solid #9aaebc;border-radius:10px;width:100%;font-size:16px}label{display:block;font-weight:700;margin:12px 0 8px}.result{white-space:pre-wrap;background:#eef3f7;border-radius:10px;padding:12px;min-height:45px;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.note{background:#fff5e7;border-left:4px solid #d5a342;padding:13px;margin:20px 0}small{color:#576e7b;line-height:1.45}
+</style></head><body><main>
+<div style="text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:750;color:#688192">Sicherheitstest · 0.9.20c</div>
+<h1>look, talk ’n build</h1>
+<p>Hier prüfen wir die Zugangssperre und das Anfragelimit des neuen Testservers, ohne kostenpflichtige KI-Aufrufe auszulösen.</p>
+<h2>1. Ohne gültigen Code</h2><p>Diese Prüfung verwendet absichtlich einen falschen Testcode. Erwartet wird HTTP 401.</p>
+<button type="button" id="invalid">Ungültigen Zugang testen</button>
+<div class="result" id="badResult" role="status" aria-live="polite">Noch nicht geprüft.</div>
+<h2>2. Stundenlimit mit tester-16 prüfen</h2>
+<div class="note">Nur mit <strong>tester-16</strong> aus deiner vertraulichen Eigentümerliste durchführen. Dieser Test sendet maximal 21 harmlose Prüfanfragen und verbraucht damit bis zu 21 Plätze des gemeinsamen Tageskontingents von 200. Tester-16 ist anschließend voraussichtlich bis zur nächsten vollen UTC-Stunde gesperrt. Die anderen Tester-Codes werden nicht belastet.</div>
+<label for="code">Zugangscode tester-16</label><input type="password" id="code" autocomplete="off" autocapitalize="none" spellcheck="false" minlength="24" maxlength="256" placeholder="Code einfügen">
+<button type="button" id="limit">Stundenlimit prüfen</button>
+<div class="result" id="limitResult" role="status" aria-live="polite">Noch nicht geprüft.</div>
+<p><small>Der Code wird nicht gespeichert. Die Prüfung läuft ausschließlich gegen den separaten Testserver. Bitte keine Screenshots mit sichtbaren Codes anfertigen.</small></p>
+</main>
+<script>
+const API="https://look-n-build-test-secure.onrender.com/__auth_probe";
+const invalid=document.getElementById("invalid"),limit=document.getElementById("limit"),badResult=document.getElementById("badResult"),limitResult=document.getElementById("limitResult"),field=document.getElementById("code");
+async function probe(code){
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),95000);
+ try{return (await fetch(API,{method:"POST",headers:{Authorization:"Bearer "+code,"Content-Type":"application/json"},body:"{}",cache:"no-store",signal:controller.signal})).status;}
+ finally{clearTimeout(timeout)}
+}
+invalid.onclick=async()=>{
+ invalid.disabled=true;badResult.textContent="Prüfung läuft …";
+ try{const status=await probe("INVALID-TEST-CODE-NO-REAL-ACCESS-123456");badResult.textContent="HTTP "+status+(status===401?" – Sperre funktioniert.":" – bitte prüfen, erwartet 401.");}
+ catch(err){badResult.textContent="Netzwerkfehler: "+err.message;}
+ finally{invalid.disabled=false;}
+};
+limit.onclick=async()=>{
+ const code=field.value.trim();if(code.length<24){limitResult.textContent="Bitte vollständigen tester-16-Code einfügen.";return;}
+ field.value="";limit.disabled=true;invalid.disabled=true;
+ let seen404=0,seen429=0,first429=null;
+ try{
+  for(let i=1;i<=21;i++){
+   limitResult.textContent="Prüfung läuft: "+i+" / 21 …";
+   const status=await probe(code);
+   if(status===401){limitResult.textContent="HTTP 401 – Code nicht erkannt. Keine weitere Prüfung.";return;}
+   if(status===404)seen404++;
+   else if(status===429){seen429++;first429=i;break;}
+   else{limitResult.textContent="Unbekannte Antwort HTTP "+status+" bei Anfrage "+i+". Prüfung beendet.";return;}
+  }
+  limitResult.textContent="Ergebnis: "+seen404+" akzeptierte Prüfanfragen (HTTP 404), "+seen429+" begrenzte Anfragen (HTTP 429)."+(first429?" Limit greift ab Anfrage "+first429+".":" Kein HTTP 429 innerhalb der 21 Anfragen – bitte Ergebnis mitteilen.");
+ }catch(err){limitResult.textContent="Test unterbrochen: "+err.message+". Bis dahin "+seen404+" akzeptiert, "+seen429+" begrenzt.";}
+ finally{limit.disabled=false;invalid.disabled=false;}
+};
+</script></body></html>
