@@ -1,0 +1,23 @@
+{
+  "name": "look, talk ’n build – Tester 0.9.20c",
+  "short_name": "look, talk ’n build",
+  "description": "Geschützte Testerfassung von look, talk ’n build",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f7fb",
+  "theme_color": "#293e4e",
+  "icons": [
+    {
+      "src": "../icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
