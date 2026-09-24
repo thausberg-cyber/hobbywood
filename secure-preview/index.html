@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#f2f7fb" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="look, talk 'n build" />
+<link rel="manifest" href="../manifest.webmanifest" />
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../icon-180.png" />
+<title>look, talk 'n build</title>
+<style>
+:root{--bg:#f7f6f1;--card:#fff;--ink:#182019;--muted:#6e746f;--accent:#183327;--accent2:#e9eeea;--line:#dcdedb;--warm:#f2eee4;--warn:#fff4d8;--danger:#f9e7e2;--ok:#e7f2ea;--shadow:0 8px 30px rgba(24,32,25,.055)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;position:relative}body::before{content:"";position:fixed;z-index:-1;pointer-events:none;right:-18vw;top:16vh;width:min(78vw,980px);height:min(78vw,980px);background:url("../tree-ring-bg.jpg") center/contain no-repeat;opacity:.065;filter:grayscale(1) contrast(.82);transform:rotate(-2deg)}
+header{position:sticky;top:0;z-index:50;background:rgba(247,246,241,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 18px 9px}.headerRow{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:22px}.topNav{display:flex;align-items:center;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.topNav::-webkit-scrollbar{display:none}.navBtn{width:auto;margin:0;padding:9px 11px;border-radius:9px;background:transparent;color:var(--muted);border:0;font-size:14px;font-weight:760;white-space:nowrap}.navBtn:hover:not(:disabled){background:var(--accent2);color:var(--ink)}.navBtn.on{background:var(--accent);color:#fff}.navBtn:disabled{opacity:.38;cursor:default}.navBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media(max-width:720px){header{padding-left:12px;padding-right:12px}.headerRow{display:block}.topNav{margin-top:9px;padding-bottom:1px}.navBtn{padding:8px 10px;font-size:13px}}
+.brand{font-size:30px;font-weight:800;letter-spacing:.015em;line-height:1.05}.claim{font-size:12px;color:var(--muted);margin-top:3px}.by{opacity:.72}
+main{max-width:1180px;margin:0 auto;padding:24px 16px calc(90px + env(safe-area-inset-bottom))}.screen{display:none}.screen.active{display:block}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.02;margin:14px 0 10px;letter-spacing:-.03em}h2{font-size:25px;margin:20px 0 10px}h3{font-size:17px;margin:17px 0 8px}p{line-height:1.48;color:#3e4740}.lead{font-size:18px;max-width:760px}.eyebrow{text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-size:11px;font-weight:800}
+.grid3{display:grid;grid-template-columns:1fr;gap:12px;margin:22px 0}.choice{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer;box-shadow:var(--shadow);min-height:160px}.choice strong{font-size:20px;display:block;margin-bottom:8px}.choice p{margin:0}.choice:hover{border-color:#aeb9b1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+button,.button{appearance:none;border:0;border-radius:13px;padding:13px 15px;font-size:15px;font-weight:760;display:block;width:100%;margin:10px 0;text-align:center;text-decoration:none;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:var(--accent2);color:var(--ink)}.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}.small{width:auto;display:inline-block;padding:9px 12px;font-size:13px;margin:4px 4px 4px 0}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:16px;background:#fff;color:var(--ink)}textarea{min-height:110px;resize:vertical}label.field{display:block;margin:13px 0 6px;font-size:13px;font-weight:760}.hint{font-size:12px;color:var(--muted)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.photos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:pointer}.photoStrip{display:flex;gap:7px;overflow:auto;margin:8px 0}.photoStrip img{width:76px;height:76px;border-radius:10px;object-fit:cover;border:1px solid var(--line)}
+.notice{border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--warn);line-height:1.45}.ok{background:var(--ok)}.danger{background:var(--danger)}
+.tabs{display:flex;gap:6px;overflow:auto;padding:3px 0 7px}.tab{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:760}.tab.on{background:var(--accent);color:#fff}.pane{display:none}.pane.on{display:block}
+.status{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0ed}.status:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;background:#5e906c;margin-top:5px;flex:none}.dot.mid{background:#d2a340}.dot.unknown{background:#9b9f9b}
+.chatmsg{border-left:3px solid #bdc8c0;padding:9px 12px;margin:10px 0;background:#fafafa;border-radius:0 12px 12px 0}.chatmsg.ai{border-left-color:var(--accent);background:var(--ok)}.chatname{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}.calc{font-variant-numeric:tabular-nums;background:#f5f7f5;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px}
+.talkComposer{position:sticky;bottom:8px;background:rgba(247,246,241,.96);backdrop-filter:blur(14px);padding:10px;border:1px solid var(--line);border-radius:16px;margin-top:16px}.composerActions{display:flex;gap:8px;flex-wrap:wrap}.composerActions .button,.composerActions button{width:auto;margin:3px 0}.pending{font-size:13px;color:var(--muted)}
+.talkWorking{display:none;align-items:center;gap:9px;margin:8px 0 2px;font-size:13px;font-weight:720;color:var(--muted)}#chatInput{overflow:hidden!important;resize:none;min-height:72px;height:auto;max-height:none!important;touch-action:auto;-webkit-overflow-scrolling:auto;overscroll-behavior:contain;scrollbar-width:none}#chatInput::-webkit-scrollbar{display:none}.speechFloat{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px}.speechFloat.recording{background:var(--accent);color:#fff}.speechFloat.hiddenSpeech{display:none}.backFloat{position:fixed;left:18px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:40;width:auto;min-width:52px;margin:0;border-radius:999px;box-shadow:0 8px 24px rgba(24,32,25,.16);padding:12px 14px;background:rgba(255,255,255,.96);color:var(--ink);border:1px solid var(--line)}.backFloat.hiddenBack{display:none}.talkWorking.on{display:flex}.speechStatus{display:none;align-items:center;gap:7px;margin:7px 0 2px;font-size:13px;font-weight:720;color:var(--accent)}.speechStatus.on{display:flex}.speechDot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}}.spinner{width:18px;height:18px;border:2px solid #cfd6d0;border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+
+button:disabled,.button.disabled{opacity:.55;cursor:wait}
+.toolrow{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}@media(max-width:620px){.toolrow{grid-template-columns:minmax(0,1fr) 150px}}.projectCard{cursor:pointer}.projectMeta{font-size:12px;color:var(--muted)}.projectCardMain{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;align-items:start}.projectThumb{width:86px;height:86px;border-radius:12px;object-fit:cover;border:1px solid var(--line);background:var(--accent2)}.projectThumb.placeholder{display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px}.projectText p{margin:7px 0 10px}.startProjectsSection{margin-top:30px}.startProjectsSection .projectCard{cursor:default}.startProjectsSection .projectMeta{margin-top:4px}.startProjectsSection .projectText p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.startProjectsSection .projectCard:last-child{margin-bottom:0}.projectBadges{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0}.projectBadge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:var(--accent2);color:var(--ink)}.projectBadge.imported{background:#fff0c9}.filterRow{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 16px}.filterBtn{width:auto;margin:0;padding:8px 12px;border-radius:999px;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--ink)}.filterBtn.on{background:var(--accent);color:#fff}.metaEditor textarea{min-height:90px}@media(max-width:430px){.projectCardMain{grid-template-columns:72px minmax(0,1fr);gap:11px}.projectThumb{width:72px;height:72px}}
+.sketchGrid{display:grid;grid-template-columns:1fr;gap:14px}.sketchSource{width:100%;max-height:440px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff}.drawingWrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;overflow:auto}.drawingWrap svg{display:block;width:100%;height:auto;min-width:520px}.sketchFacts{display:grid;gap:7px}.sketchFact{padding:8px 10px;background:#f6f8f6;border-radius:10px}.sketchConfirm{display:grid;gap:10px;margin-top:14px}.sketchConfirmRow{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}.sketchConfirmRow label{display:block;font-weight:800;margin-bottom:6px}.sketchConfirmRow input{width:100%;box-sizing:border-box}.dimRole{font-size:12px;color:var(--muted);font-weight:700}.dimEdit{display:grid;grid-template-columns:minmax(140px,1fr) minmax(90px,.7fr) 82px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.dimEdit:last-child{border-bottom:0}.dimEdit label{font-size:13px;font-weight:800}.dimEdit input,.dimEdit select{padding:9px 10px;font-size:14px}.readBlock{margin-top:14px}.readBlock h3{margin-bottom:7px}@media(max-width:620px){.dimEdit{grid-template-columns:1fr 90px}.dimEdit label{grid-column:1/-1}}.sketchBadge{display:inline-block;background:var(--accent2);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800;margin-right:5px}.sketchCard{border-left:3px solid var(--accent)}@media(min-width:820px){.sketchGrid{grid-template-columns:minmax(280px,40%) minmax(0,60%)}}.idea{padding:16px;border:1px solid var(--line);border-radius:16px;margin:12px 0;background:#fff}.idea h3{margin-top:0}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{background:var(--accent2);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700}
+.progress{height:6px;background:#dfe4df;border-radius:99px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}.hidden{display:none!important}.footerline{font-size:12px;color:var(--muted);text-align:center;margin-top:26px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted)}.step{display:flex;gap:12px;margin:12px 0}.stepnum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);background:#111;box-shadow:0 16px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.75)}dialog img{display:block;max-width:92vw;max-height:82vh}.dialogbar{display:flex;justify-content:flex-end;padding:8px}.dialogbar button{width:auto;margin:0;background:#fff;color:#111;padding:9px 12px}
+@media(min-width:760px){.grid3{grid-template-columns:repeat(3,1fr)}.photos{grid-template-columns:repeat(5,1fr)}.workspace{display:flex;gap:18px;align-items:stretch;width:100%;max-width:100%;overflow:hidden}.workspace .side,.workspace .workWindow{position:relative;box-sizing:border-box;height:calc(100dvh - 190px);max-height:calc(100dvh - 190px);min-width:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;overscroll-behavior-x:none;-webkit-overflow-scrolling:touch;touch-action:pan-y;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:var(--shadow);padding:14px}.workspace .side{flex:0 0 calc(38% - 9px)}.workspace .workWindow{flex:1 1 0;width:0}.workspace .side>*,.workspace .workWindow>*{max-width:100%;min-width:0}.workspace .workWindow .tabs{position:sticky;top:-14px;z-index:3;background:#fff;padding:14px 0 8px;margin-top:-14px}.workspace .workWindow .talkComposer{position:sticky;bottom:-14px;z-index:2;margin-bottom:-14px;background:#fff}.workspace .side::-webkit-scrollbar,.workspace .workWindow::-webkit-scrollbar{width:7px}.workspace .side::-webkit-scrollbar-thumb,.workspace .workWindow::-webkit-scrollbar-thumb{background:#c9ceca;border-radius:99px}}
+
+.ideaMoreBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.ideaMoreBox .composerActions{margin-top:8px}
+
+.purchaseGrid{display:grid;grid-template-columns:1fr;gap:10px}.purchaseCard{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.purchaseCard strong{display:block;margin-bottom:5px}.purchaseMeta{font-size:12px;color:var(--muted);line-height:1.45}.purchaseForm{display:grid;grid-template-columns:1fr 1fr;gap:10px}.purchaseForm .wide{grid-column:1/-1}.purchaseActions{display:flex;gap:8px;flex-wrap:wrap}.purchaseActions button{width:auto}.purchaseLink{word-break:break-all}@media(max-width:620px){.purchaseForm{grid-template-columns:1fr}.purchaseForm .wide{grid-column:auto}}
+
+#secureGate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:#ecf2f6}#secureGate.hidden{display:none}#secureGate .cardGate{background:white;padding:32px;border-radius:22px;width:min(100%,520px);box-shadow:0 18px 60px #21354420}#secureGate h1{color:#293f50}#secureGate p{color:#4b626e}#secureGate label{display:block;font-weight:bold;margin-top:20px}#secureGate input{margin:8px 0}#secureGate .gateStatus{font-weight:650}#secureGate .gateError{color:#a43624}
+</style>
+</head>
+<body>
+<section id="secureGate" aria-label="Tester-Anmeldung"><div class="cardGate"><div class="eyebrow">Geschützter Testzugang · 0.9.20c</div><h1>look,<br>talk ’n<br>build</h1><p>Bitte deinen persönlichen Tester-Code eingeben. Er bleibt nur während dieser Sitzung im Arbeitsspeicher.</p><form id="secureLogin" autocomplete="off"><label for="secureCode">Tester-Zugangscode</label><input id="secureCode" type="password" minlength="24" maxlength="256" required autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Code eingeben oder einfügen"><button type="submit" class="primary" id="secureSubmit">Anmelden</button></form><p id="secureStatus" class="gateStatus" role="status" aria-live="polite"></p></div></section>
+
+<header><div class="headerRow"><div><div class="brand">look, talk ’n build</div><div class="claim">Sehen. Fachsimpeln. Bauen. <span class="by">· by HOBBYWOOD</span></div></div><nav class="topNav" aria-label="Hauptnavigation"><button id="navStart" class="navBtn on" type="button">Start</button><button id="navProjects" class="navBtn" type="button">Meine Projekte</button><button id="navProfile" class="navBtn" type="button">Meine Werkstatt</button><button id="navTalk" class="navBtn" type="button" disabled>Werkstatt-Talk</button></nav></div></header>
+<main>
+<section id="start" class="screen active">
+  <div class="eyebrow">Dein digitaler Werkstattpartner</div><h1>Was möchtest du heute bauen?</h1>
+  <p class="lead">Starte mit einem vorhandenen Objekt, entwickle eine eigene Idee oder lass dir passende Projekte vorschlagen.</p>
+  <div class="grid3">
+    <button class="choice" id="startCopy"><strong>Objekt nachbauen</strong><p>Fotos zeigen, Konstruktion verstehen, offene Details gemeinsam klären.</p></button>
+    <button class="choice" id="startDevelop"><strong>Eigenes Projekt entwickeln</strong><p>Mit einer groben Vorstellung beginnen und sie im Werkstatt-Talk ausarbeiten.</p></button>
+    <button class="choice" id="startIdeas"><strong>Idee finden</strong><p>Noch kein Projekt? Anlass, Person und Rahmen nennen – die App schlägt passende Ideen vor.</p></button>
+  </div>
+  <section class="startProjectsSection" aria-labelledby="recentProjectsTitle"><div style="display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap"><div><div class="eyebrow">Direkt weiterarbeiten</div><h2 id="recentProjectsTitle" style="margin-bottom:4px">Meine letzten Projekte</h2><p id="savedCount" class="hint" style="margin-top:0">Noch keine Projekte gespeichert.</p></div><button class="ghost small" id="showAllProjects">Alle Projekte anzeigen</button></div><div id="startProjectList"></div></section>
+</section>
+
+<section id="photos" class="screen">
+  <div class="eyebrow">Objekt nachbauen</div><h1>Zeig mir dein Objekt.</h1><p><span id="photoCount">0</span> Fotos hinzugefügt.</p>
+  <div id="photoGrid" class="photos"></div>
+  <label class="button primary" for="cameraInput">Fotografieren</label><input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment" multiple>
+  <label class="button secondary" for="libraryInput">Fotos auswählen</label><input class="hidden" id="libraryInput" type="file" accept="image/*" multiple><label class="button ghost" for="sketchInputPhotos">Skizze ergänzen</label><input class="hidden" id="sketchInputPhotos" type="file" accept="image/*">
+  <label class="field" for="knowledge">Was weißt du über das Objekt?</label><textarea id="knowledge" placeholder="Maße, Material, verdeckte Verbindungen oder eigene Beobachtungen …"></textarea>
+  <button class="primary" id="analyzeBtn">Analysieren & fachsimpeln</button>
+</section>
+
+<section id="develop" class="screen">
+  <div class="eyebrow">Eigenes Projekt entwickeln</div><h1>Womit möchtest du beginnen?</h1>
+  <label class="field">Beschreibe deine Vorstellung</label><textarea id="developText" placeholder="z. B. Ich möchte einen runden Reagenzglas-Halter aus Multiplex bauen …"></textarea>
+  <p class="hint">Fotos oder Skizzen sind optional und können auch später im Talk ergänzt werden.</p>
+  <div id="developPhotos" class="photos"></div><label class="button secondary" for="developInput">Projektfoto hinzufügen</label><input class="hidden" id="developInput" type="file" accept="image/*" multiple><label class="button ghost" for="sketchInputDevelop">Skizze ergänzen</label><input class="hidden" id="sketchInputDevelop" type="file" accept="image/*">
+  <button class="primary" id="developGo">Projekt starten</button>
+</section>
+
+<section id="ideas" class="screen">
+  <div class="eyebrow">Idee finden</div><h1>Für wen und wofür?</h1>
+  <div class="card">
+    <label class="field">Für wen?</label><input id="ideaWho" placeholder="z. B. guter Freund, 60 Jahre">
+    <label class="field">Anlass</label><input id="ideaOccasion" placeholder="Geburtstag, Einzug, Weihnachten …">
+    <label class="field">Interessen / Hobbys</label><input id="ideaInterests" placeholder="Kochen, Wein, Garten, Musik …">
+    <label class="field">Zeit</label><input id="ideaTime" placeholder="z. B. ein Wochenende">
+    <label class="field">Materialbudget</label><input id="ideaBudget" placeholder="z. B. bis 80 €">
+    <label class="field">Wirkung</label><select id="ideaStyle"><option>persönlich</option><option>praktisch</option><option>dekorativ</option><option>ungewöhnlich</option><option>hochwertig</option></select>
+  </div>
+  <button class="primary" id="findIdeas">Projektideen finden</button><div id="ideaResults"></div><div id="ideaMoreBox" class="ideaMoreBox hidden"><strong>Noch nichts dabei?</strong><p class="hint">Ich kann bewusst andere Richtungen vorschlagen oder deine Wünsche genauer eingrenzen.</p><label class="field" for="ideaFeedback">Was passt an den bisherigen Vorschlägen nicht?</label><input id="ideaFeedback" placeholder="z. B. zu dekorativ, zu aufwendig, lieber etwas Praktisches"><div class="composerActions"><button class="secondary small" id="moreIdeas">Weitere Vorschläge</button><button class="ghost small" id="refineIdeas">Vorschläge eingrenzen</button></div></div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="eyebrow">Personalisierung</div><h1>Meine Werkstatt</h1>
+  <p class="lead">Die App passt Erklärungstiefe und Fertigungsvorschläge an dein Können und deine tatsächliche Ausstattung an.</p>
+  <div class="card"><label class="field">Wie schätzt du dich ein?</label><select id="skill"><option value="Anfänger">Anfänger</option><option value="Fortgeschritten">Fortgeschritten</option><option value="Erfahren">Erfahren</option><option value="Profi">Profi</option></select></div>
+  <div class="card"><h3 style="margin-top:0">Werkzeuge & Maschinen</h3><p class="hint">Status: Habe ich / Will ich anschaffen / Habe ich nicht</p><div id="toolList"></div><label class="field">Eigenes Werkzeug ergänzen</label><div style="display:flex;gap:8px"><input id="customTool" placeholder="z. B. Langlochbohrmaschine"><button class="secondary small" id="addTool">Hinzufügen</button></div></div>
+  <button class="primary" id="saveProfile">Werkstattprofil speichern</button>
+</section>
+
+<section id="projects" class="screen">
+  <div class="eyebrow">Projektablage</div><h1>Meine Projekte</h1>
+  <div class="filterRow" aria-label="Projektfilter"><button class="filterBtn on" data-project-filter="all">Alle</button><button class="filterBtn" data-project-filter="own">Eigene</button><button class="filterBtn" data-project-filter="imported">Importierte</button></div>
+  <div id="projectList"></div>
+  <div class="card">
+    <h3 style="margin-top:0">Projekt übertragen</h3>
+    <p>Projekte lassen sich als einzelne <strong>.ltnb-Datei</strong> zwischen Mac, iPad, iPhone, Windows und Android übertragen oder zur Testauswertung weitergeben.</p>
+    <label class="field" for="testerId">Tester-ID für Exporte <span class="hint">(optional)</span></label>
+    <input id="testerId" placeholder="z. B. TEST-03">
+    <div class="composerActions" style="margin-top:10px">
+      <label class="button secondary small" for="importProjectInput">Projekt importieren</label>
+      <input class="hidden" id="importProjectInput" type="file" accept=".ltnb,application/json,application/octet-stream">
+    </div>
+    <p class="hint">Beim Import wird immer ein neues Projekt angelegt. Vorhandene Projekte werden nicht überschrieben.</p>
+    <div id="importPreview" class="hidden"></div>
+  </div>
+  
+</section>
+
+
+<section id="sketchWorking" class="screen">
+  <div class="eyebrow">Werkstattskizze</div><h1>Ich lese deine Skizze …</h1>
+  <p>Ich lese Maße, Bauteile und konstruktive Hinweise aus deiner Skizze. Unsichere Angaben markiere ich zum Bestätigen.</p>
+  <div class="progress"><i id="sketchBar"></i></div>
+</section>
+
+<section id="sketchReview" class="screen">
+  <div class="eyebrow">Skizze ergänzen</div><h1>Habe ich deine Skizze richtig gelesen?</h1>
+  <p class="lead">Die Handskizze bleibt im Projekt. Ich übernehme daraus Maße, Bauteile und Hinweise – ohne sie automatisch neu zu zeichnen.</p>
+  <div class="sketchGrid">
+    <div>
+      <div class="card"><h3 style="margin-top:0">Deine Handskizze</h3><img id="sketchSourcePreview" class="sketchSource" alt="Hochgeladene Handskizze"></div>
+    </div>
+    <div>
+      <div class="card sketchCard">
+        <h3 style="margin-top:0">Aus deiner Skizze gelesen</h3>
+        <div id="sketchFacts" class="sketchFacts"></div>
+        <div id="sketchDimensions"></div>
+        <button class="secondary hidden" id="applySketchDimensions">Korrigierte Maße übernehmen</button>
+        <div id="sketchUnknown"></div>
+        <div id="sketchConfirmBox" class="sketchConfirm"></div>
+        <button class="secondary hidden" id="refineSketch">Unsichere Angaben prüfen</button>
+      </div>
+    </div>
+  </div>
+  <button class="primary" id="confirmSketch">Angaben ins Projekt übernehmen</button>
+  <button class="secondary" id="retrySketch">Andere Skizze verwenden</button>
+  <button class="ghost" id="cancelSketch">Abbrechen</button>
+</section>
+<section id="analyzing" class="screen"><h1>Ich sehe mir das an …</h1><p>Fakten, Vermutungen und offene Punkte werden getrennt.</p><div class="progress"><i id="bar"></i></div></section>
+<section id="analysis" class="screen"><h1>Projektstand</h1><div id="analysisCard" class="card"></div><div id="nextRequest" class="notice hidden"></div><div id="detailPhotoActions" class="card hidden"><strong>Foto als Antwort hinzufügen</strong><div class="composerActions"><label class="button secondary small" for="detailCameraInput">Foto aufnehmen</label><input class="hidden" id="detailCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="detailLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="detailLibraryInput" type="file" accept="image/*" multiple></div></div><button id="acceptAnalysis" class="primary hidden">Projektstand übernehmen</button></section>
+<section id="ready" class="screen"><h1>Bereit für „Mein Projekt“</h1><div class="ok notice">Du kannst den Projektentwurf jetzt erstellen und anschließend jederzeit im Werkstatt-Talk weiterarbeiten.</div><button class="primary" id="reconstructBtn">Mein Projekt erstellen</button><button class="secondary" id="talkFirst">Erst weiter fachsimpeln</button></section>
+<section id="reconstructing" class="screen"><h1>Mein Projekt wird erstellt …</h1><div class="progress"><i id="bar2"></i></div></section>
+
+<section id="record" class="screen">
+  <div class="workspace">
+    <aside class="side">
+      <div class="eyebrow">Mein Projekt</div><h1 id="recordTitle">Projekt</h1><p id="recordSummary"></p>
+      <div class="card metaEditor"><strong>Projekt bearbeiten</strong><label class="field" for="projectTitleEdit">Titel</label><input id="projectTitleEdit" placeholder="z. B. Würzkiste"><label class="field" for="projectDescriptionEdit">Beschreibung</label><textarea id="projectDescriptionEdit" placeholder="Kurze Projektbeschreibung …"></textarea><button class="secondary" id="applyProjectMeta">Titel & Beschreibung übernehmen</button><div id="projectOrigin" class="hint"></div></div>
+      <div id="sidePhotos" class="photos"></div>
+      <div class="card"><strong>Projektstatus</strong><p id="projectStatus" class="hint"></p><button class="secondary" id="saveProject">Projekt speichern</button><button class="secondary" id="printWorkshopSheet">Werkstattbogen öffnen</button><button class="ghost" id="exportCurrentProject">Projekt exportieren (.ltnb)</button></div>
+    </aside>
+    <div class="workWindow" id="workWindow">
+      <div class="tabs"><button class="tab on" data-pane="talkPane">Werkstatt-Talk</button><button class="tab" data-pane="overview">Mein Projekt</button><button class="tab" data-pane="photosPane">Fotos</button><button class="tab" data-pane="sketchPane">Skizzen</button><button class="tab" data-pane="material">Material</button><button class="tab" data-pane="purchased">Zukaufteile</button><button class="tab" data-pane="tools">Werkzeug</button><button class="tab" data-pane="steps">Bauanleitung</button><button class="tab" data-pane="safety">Hinweise</button></div>
+      <div id="talkPane" class="pane on"><div class="card"><div id="chatLog"></div><h3>Noch offen</h3><div id="editableOpen"></div></div>
+        <div class="talkComposer"><textarea id="chatInput" placeholder="Frag mich etwas, lass etwas berechnen, korrigiere Maße oder diskutiere eine andere Lösung …"></textarea><div id="pendingTalkPhotos" class="photoStrip"></div><div class="composerActions"><button class="secondary small" id="speechBtn" type="button">🎙 Sprechen</button><label class="button secondary small" for="talkCameraInput">Foto aufnehmen</label><input class="hidden" id="talkCameraInput" type="file" accept="image/*" capture="environment" multiple><label class="button secondary small" for="talkLibraryInput">Aus Mediathek auswählen</label><input class="hidden" id="talkLibraryInput" type="file" accept="image/*" multiple><label class="button ghost small" for="talkSketchInput">Skizze ergänzen</label><input class="hidden" id="talkSketchInput" type="file" accept="image/*"><button class="primary small" id="sendChat">Beitrag senden</button></div><div id="speechStatus" class="speechStatus"><span class="speechDot" aria-hidden="true"></span><span id="speechStatusText">Ich höre zu …</span></div><div id="talkWorking" class="talkWorking"><span class="spinner" aria-hidden="true"></span><span>Ich schaue mir das an …</span></div><div class="hint">Sprechen, tippen, Foto oder Skizze – vor dem Senden bleibt alles editierbar.</div></div>
+      </div>
+      <div id="overview" class="pane"><div class="card" id="overviewBox"></div><button class="secondary" id="refreshProject">Mein Projekt neu erstellen</button></div>
+      <div id="photosPane" class="pane"><div class="card"><h3 style="margin-top:0">Projektfotos</h3><div id="recordPhotos" class="photos"></div><label class="button secondary" for="recordPhotoInput">Weitere Fotos hinzufügen</label><input class="hidden" id="recordPhotoInput" type="file" accept="image/*" multiple></div></div><div id="sketchPane" class="pane"><div class="card"><h3 style="margin-top:0">Werkstattskizzen</h3><p class="hint">Eine schnelle Handskizze kann Maße und Aufbau oft besser klären als ein weiteres Foto.</p><div id="sketchList"></div><div class="composerActions"><label class="button secondary small" for="recordSketchCamera">Skizze fotografieren</label><input class="hidden" id="recordSketchCamera" type="file" accept="image/*" capture="environment"><label class="button secondary small" for="recordSketchLibrary">Skizze auswählen</label><input class="hidden" id="recordSketchLibrary" type="file" accept="image/*"></div></div></div>
+      <div id="material" class="pane"><div class="card" id="materialBox"></div></div><div id="purchased" class="pane"><div class="card"><h3 style="margin-top:0">Zukaufteile</h3><p class="hint">Fertige Produkte, die Bestandteil des Projekts werden – z. B. Schüssel, Pflanztopf, Flasche oder Mühle. Sie bleiben getrennt von Holz, Beschlägen und Zuschnittteilen.</p><div id="purchasedPartsList" class="purchaseGrid"></div><h3>Teil ergänzen</h3><div class="purchaseForm"><div><label class="field" for="purchaseItem">Bezeichnung</label><input id="purchaseItem" placeholder="z. B. Metallschüssel"></div><div><label class="field" for="purchaseSupplier">Hersteller / Händler</label><input id="purchaseSupplier" placeholder="z. B. IKEA"></div><div><label class="field" for="purchaseProduct">Produkt / Artikel</label><input id="purchaseProduct" placeholder="optional"></div><div><label class="field" for="purchaseQty">Menge</label><input id="purchaseQty" placeholder="z. B. 1 Stück"></div><div><label class="field" for="purchaseDimensions">Wichtige Maße</label><input id="purchaseDimensions" placeholder="z. B. Ø 28 cm"></div><div><label class="field" for="purchaseUse">Verwendung</label><input id="purchaseUse" placeholder="z. B. Dach, umgedreht"></div><div class="wide"><label class="field" for="purchaseLink">Produktlink</label><input id="purchaseLink" type="url" placeholder="https://…"></div></div><button class="secondary" id="addPurchasedPart">Zukaufteil hinzufügen</button></div></div><div id="tools" class="pane"><div class="card" id="toolsBox"></div></div><div id="steps" class="pane"><div class="card" id="stepsBox"></div></div><div id="safety" class="pane"><div id="safetyBox"></div></div>
+    </div>
+  </div>
+  <button class="ghost" id="newProject">Neues Projekt</button><p class="footerline">Pilotversion 0.9.20a · Zukaufteile bereinigt & Werkstatt-Talk bleibt am aktuellen Ende</p>
+</section>
+</main>
+<dialog id="photoDialog"><div class="dialogbar"><button id="closeDialog">Schließen</button></div><img id="dialogImg" alt="Projektfoto"></dialog>
+<button id="backFloatBtn" class="backFloat hiddenBack" type="button" title="Zur vorherigen Ansicht" aria-label="Zur vorherigen Ansicht">‹ Zurück</button>
+<button id="speechFloatBtn" class="secondary speechFloat hiddenSpeech" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
+<script>
+const API='https://look-n-build-test-secure.onrender.com';
+let secureCode=null;
+const secureGate=document.getElementById('secureGate'),secureStatus=document.getElementById('secureStatus');
+function secureLogout(text='Bitte erneut anmelden.'){secureCode=null;secureGate.classList.remove('hidden');secureStatus.textContent=text;}
+document.getElementById('secureLogin').addEventListener('submit',async e=>{
+  e.preventDefault();const input=document.getElementById('secureCode'),btn=document.getElementById('secureSubmit');
+  const proposed=input.value.trim();input.value='';btn.disabled=true;secureStatus.classList.remove('gateError');
+  secureStatus.textContent='Prüfung läuft. Ein kostenloser Server kann bis zu einer Minute zum Starten benötigen.';
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),95000);
+  try{
+    const r=await fetch(API+'/__auth_probe',{method:'POST',headers:{Authorization:'Bearer '+proposed,'Content-Type':'application/json'},body:'{}',cache:'no-store',signal:controller.signal});
+    if(r.status===404){secureCode=proposed;secureGate.classList.add('hidden');secureStatus.textContent='';}
+    else if(r.status===401){secureStatus.classList.add('gateError');secureStatus.textContent='Code nicht erkannt. Bitte erneut eingeben.';}
+    else{secureStatus.classList.add('gateError');secureStatus.textContent='Serverantwort: HTTP '+r.status+'. Bitte später erneut versuchen.';}
+  }catch{secureStatus.classList.add('gateError');secureStatus.textContent='Server nicht erreichbar. Bitte später erneut versuchen.';}
+  finally{clearTimeout(timer);btn.disabled=false;}
+});
+async function secureFetch(url,options={}){
+  if(!secureCode){secureLogout('Bitte zuerst anmelden.');throw Error('Anmeldung erforderlich.');}
+  const r=await fetch(url,{...options,headers:{...(options.headers||{}),Authorization:'Bearer '+secureCode}});
+  if(r.status===401){secureLogout('Zugang nicht mehr gültig. Bitte erneut anmelden.');throw Error('Zugang abgelaufen.');}
+  return r;
+}
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const APP_VERSION='0.9.20c-secure';
+let projectFilter='all';
+const LEGACY_STORAGE='look_talk_n_build_projects_0_9_20c_preview', PROFILE='look_talk_n_build_profile_0_9_20c_preview', TESTER_ID='look_talk_n_build_tester_id_0_9_20c_preview';
+const DB_NAME='look_talk_n_build_db_0_9_20c_preview', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
+let current={id:null,title:'',mode:'copy',photos:[],sketches:[],purchasedParts:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:null,updatedAt:null};
+let pendingTalkPhotos=[];
+let pendingSketch=null, sketchReturnScreen='record';
+let pendingImport=null;
+let profile={skill:'Fortgeschritten',tools:{}};
+let viewHistory=[];
+const transientScreens=new Set(['analyzing','reconstructing','sketchWorking']);
+const baseTools=['Handkreissäge','Tischkreissäge','Kappsäge','Stichsäge','Bandsäge','Oberfräse','Domino-Fräse','Flachdübelfräse','Standbohrmaschine','Drechselbank','Abricht-/Dickenhobel','Exzenterschleifer'];
+const newId=()=>crypto.randomUUID?crypto.randomUUID():'p-'+Date.now()+'-'+Math.random().toString(16).slice(2);
+function screenHasSpeechTarget(screen){if(!screen)return false;return [...screen.querySelectorAll('textarea,input')].some(el=>{const type=(el.getAttribute('type')||'text').toLowerCase();return !el.disabled&&!el.classList.contains('hidden')&&!['file','button','submit','checkbox','radio','range','color','date','time'].includes(type)})}
+function updateSpeechFloatVisibility(){const btn=$('#speechFloatBtn'),screen=$('.screen.active');if(!btn)return;const useful=screenHasSpeechTarget(screen);btn.classList.toggle('hiddenSpeech',!useful)}
+function updateMainNav(id){
+  const items={navStart:id==='start',navProjects:id==='projects',navProfile:id==='profile',navTalk:id==='record'};
+  Object.entries(items).forEach(([key,on])=>{const el=$('#'+key);if(el)el.classList.toggle('on',on)});
+  const talk=$('#navTalk');if(talk)talk.disabled=!current?.id;
+}
+function updateBackFloatVisibility(){const btn=$('#backFloatBtn'),active=$('.screen.active')?.id;if(!btn)return;btn.classList.toggle('hiddenBack',active==='start'||viewHistory.length===0)}
+function show(id,{fromBack=false}={}){
+  const currentId=$('.screen.active')?.id;
+  if(!fromBack&&currentId&&currentId!==id&&!transientScreens.has(currentId)){
+    if(viewHistory[viewHistory.length-1]!==currentId)viewHistory.push(currentId);
+    if(viewHistory.length>30)viewHistory.shift();
+  }
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  $('#'+id).classList.add('active');
+  document.body.classList.toggle('record-open',id==='record');
+  updateMainNav(id);updateSpeechFloatVisibility();updateBackFloatVisibility();window.scrollTo(0,0)
+}
+function goBackView(){
+  while(viewHistory.length){
+    const id=viewHistory.pop();
+    if(id&&$('#'+id)&&id!==$('.screen.active')?.id){show(id,{fromBack:true});return}
+  }
+  show('start',{fromBack:true});
+}
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function resetProject(mode='copy'){current={id:newId(),title:'',mode,photos:[],sketches:[],purchasedParts:[],knowledge:'',analysis:null,reconstruction:null,chat:[],round:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};pendingTalkPhotos=[];pendingSketch=null;updateMainNav(document.querySelector('.screen.active')?.id||'start')}
+async function fileToDataUrl(file){const u=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(Error('Bild konnte nicht gelesen werden: '+file.name));img.src=u});const max=1800,s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.naturalWidth*s));c.height=Math.max(1,Math.round(img.naturalHeight*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88)}finally{URL.revokeObjectURL(u)}}
+async function addFiles(files,target=current.photos){for(const f of [...files])target.push({id:newId(),name:f.name,dataUrl:await fileToDataUrl(f),addedAt:new Date().toISOString()})}
+function gallery(el,arr){if(!el)return;el.innerHTML=arr.map((p,i)=>`<img src="${p.dataUrl}" data-i="${i}" alt="Projektfoto ${i+1}">`).join('');el.querySelectorAll('img').forEach(img=>img.onclick=()=>openPhoto(arr[+img.dataset.i].dataUrl))}
+function renderAllPhotos(){gallery($('#photoGrid'),current.photos);gallery($('#developPhotos'),current.photos);gallery($('#recordPhotos'),current.photos);gallery($('#sidePhotos'),current.photos);$('#photoCount').textContent=current.photos.length}
+function openPhoto(src){$('#dialogImg').src=src;$('#photoDialog').showModal()} $('#closeDialog').onclick=()=>$('#photoDialog').close();$('#photoDialog').onclick=e=>{if(e.target===$('#photoDialog'))$('#photoDialog').close()}
+function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(PROJECT_STORE))db.createObjectStore(PROJECT_STORE,{keyPath:'id'});if(!db.objectStoreNames.contains(SETTINGS_STORE))db.createObjectStore(SETTINGS_STORE,{keyPath:'key'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB konnte nicht geöffnet werden.'))})}
+function dataUrlToBlob(dataUrl){const [meta,b64]=String(dataUrl||'').split(',');const mime=(meta.match(/^data:([^;]+)/)||[])[1]||'image/jpeg';const bin=atob(b64||''),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new Blob([bytes],{type:mime})}
+function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Foto konnte nicht geladen werden.'));r.readAsDataURL(blob)})}
+async function projectForStorage(project){
+  const copy=typeof structuredClone==='function'?structuredClone(project):JSON.parse(JSON.stringify(project));
+  copy.photos=await Promise.all((project.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,blob:p.blob instanceof Blob?p.blob:dataUrlToBlob(p.dataUrl)})));
+  copy.sketches=await Promise.all((project.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,blob:s.blob instanceof Blob?s.blob:dataUrlToBlob(s.dataUrl)})));
+  return copy
+}
+async function projectForUi(project){
+  const copy=project;
+  copy.photos=await Promise.all((copy.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,dataUrl:p.dataUrl||await blobToDataUrl(p.blob)})));
+  copy.sketches=await Promise.all((copy.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,dataUrl:s.dataUrl||await blobToDataUrl(s.blob)})));
+  copy.chat=copy.chat||[];copy.round=copy.round||0;return copy
+}
+async function dbPutProject(project){const db=await openDb(),stored=await projectForStorage(project);return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readwrite');tx.objectStore(PROJECT_STORE).put(stored);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
+async function dbGetProject(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).get(id);req.onsuccess=async()=>{db.close();try{resolve(req.result?await projectForUi(req.result):null)}catch(e){reject(e)}};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
+async function dbGetProjects(){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readonly'),req=tx.objectStore(PROJECT_STORE).getAll();req.onsuccess=()=>{const arr=req.result||[];db.close();arr.sort((a,b)=>new Date(b.updatedAt||0)-new Date(a.updatedAt||0));resolve(arr)};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
+async function dbDeleteProject(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PROJECT_STORE,'readwrite');tx.objectStore(PROJECT_STORE).delete(id);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
+async function dbPutSetting(key,value){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(SETTINGS_STORE,'readwrite');tx.objectStore(SETTINGS_STORE).put({key,value,updatedAt:new Date().toISOString()});tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{const e=tx.error;db.close();reject(e)}})}
+async function dbGetSetting(key){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(SETTINGS_STORE,'readonly'),req=tx.objectStore(SETTINGS_STORE).get(key);req.onsuccess=()=>{db.close();resolve(req.result?.value??null)};req.onerror=()=>{const e=req.error;db.close();reject(e)}})}
+
+async function migrateLegacyProjects(){let legacy=[];try{legacy=JSON.parse(localStorage.getItem(LEGACY_STORAGE)||'[]')}catch{}if(!legacy.length)return;for(const p of legacy){try{await dbPutProject(p)}catch(e){console.warn('Legacy-Projekt konnte nicht migriert werden',e)}}try{localStorage.removeItem(LEGACY_STORAGE)}catch{}}
+async function updateSaved(){try{const n=(await dbGetProjects()).length;const s=$('#savedCount');if(s)s.textContent=n?`${n} Projekt${n===1?'':'e'} auf diesem Gerät gespeichert.`:'Noch keine Projekte gespeichert.';await renderStartProjects()}catch(e){const s=$('#savedCount');if(s)s.textContent='Lokale Projektablage nicht verfügbar.'}}
+async function saveCurrent(silent=false){current.updatedAt=new Date().toISOString();current.title=current.reconstruction?.title||current.analysis?.object||current.title||'Unbenanntes Projekt';try{await dbPutProject(current);await updateSaved();if(!silent)alert('Projekt gespeichert.')}catch(e){console.error(e);alert('Projekt konnte nicht gespeichert werden. Bitte prüfe den freien Gerätespeicher und versuche es erneut.')}}
+async function projectPreview(p){
+  const first=(p.photos||[])[0]||(p.sketches||[])[0];
+  if(!first)return '';
+  try{
+    if(first.dataUrl)return first.dataUrl;
+    if(first.blob instanceof Blob)return await blobToDataUrl(first.blob);
+  }catch(e){console.warn('Vorschaubild konnte nicht geladen werden',e)}
+  return '';
+}
+async function renderStartProjects(){
+  const box=$('#startProjectList');if(!box)return;
+  try{
+    const arr=(await dbGetProjects()).slice(0,6);
+    const rows=await Promise.all(arr.map(async p=>{
+      const preview=await projectPreview(p);
+      const displayTitle=p.customTitle||p.title||p.analysis?.object||'Unbenanntes Projekt';
+      const transfer=p.transferMeta||{};
+      const summary=esc(p.customDescription||p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
+      const meta=new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE');
+      const thumb=preview?`<img class="projectThumb" src="${preview}" alt="Projektvorschau">`:`<div class="projectThumb placeholder">Noch kein Foto</div>`;
+      const badges=transfer.imported?`<div class="projectBadges"><span class="projectBadge imported">Importiert</span>${transfer.testerId?`<span class="projectBadge">${esc(transfer.testerId)}</span>`:''}</div>`:'';
+      return `<div class="card projectCard"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${esc(displayTitle)}</strong>${badges}<div class="projectMeta">Zuletzt bearbeitet: ${meta}</div>${summary?`<p>${summary}</p>`:''}<button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button></div></div></div>`;
+    }));
+    box.innerHTML=rows.length?rows.join(''):'<div class="card"><p>Noch keine Projekte vorhanden. Starte oben dein erstes Projekt.</p></div>';
+    const all=$('#showAllProjects');if(all)all.classList.toggle('hidden',arr.length===0);
+  }catch(e){box.innerHTML='<div class="danger notice">Projektübersicht konnte nicht geladen werden.</div>'}
+}
+
+async function renderProjects(){
+  try{
+    let arr=await dbGetProjects();
+    if(projectFilter==='own')arr=arr.filter(p=>!p.transferMeta?.imported);
+    if(projectFilter==='imported')arr=arr.filter(p=>p.transferMeta?.imported);
+    const rows=await Promise.all(arr.map(async p=>{
+      const preview=await projectPreview(p);
+      const displayTitle=p.customTitle||p.title||p.analysis?.object||'Unbenanntes Projekt';
+      const title=esc(displayTitle);
+      const transfer=p.transferMeta||{};
+      const sourceBits=[];
+      if(transfer.testerId)sourceBits.push(`Tester ${esc(transfer.testerId)}`);
+      if(transfer.sourceAppVersion)sourceBits.push(`Quelle ${esc(transfer.sourceAppVersion)}`);
+      const meta=`${new Date(p.updatedAt||p.createdAt).toLocaleString('de-DE')} · ${esc(p.mode||'Projekt')} · ${(p.photos||[]).length} Foto${(p.photos||[]).length===1?'':'s'} · ${(p.sketches||[]).length} Skizze${(p.sketches||[]).length===1?'':'n'}`;
+      const summary=esc(p.customDescription||p.reconstruction?.summary||p.analysis?.summary||p.knowledge||'');
+      const thumb=preview?`<img class="projectThumb" src="${preview}" alt="Projektvorschau">`:`<div class="projectThumb placeholder">Noch kein Foto</div>`;
+      const badges=transfer.imported?`<div class="projectBadges"><span class="projectBadge imported">Importiert</span>${transfer.testerId?`<span class="projectBadge">${esc(transfer.testerId)}</span>`:''}${transfer.sourceAppVersion?`<span class="projectBadge">App ${esc(transfer.sourceAppVersion)}</span>`:''}</div>`:'';
+      return `<div class="card projectCard" data-id="${p.id}"><div class="projectCardMain">${thumb}<div class="projectText"><strong>${title}</strong>${badges}<div class="projectMeta">${meta}</div><p>${summary}</p><button class="secondary small openP" data-id="${p.id}">Öffnen & weiterarbeiten</button><button class="ghost small exportP" data-id="${p.id}">Exportieren</button><button class="ghost small delP" data-id="${p.id}">Löschen</button></div></div></div>`;
+    }));
+    $('#projectList').innerHTML=rows.length?rows.join(''):'<div class="card"><p>In diesem Filter sind keine Projekte vorhanden.</p></div>';
+  }catch(e){
+    $('#projectList').innerHTML='<div class="danger notice">Projektablage konnte nicht geöffnet werden.</div>';
+  }
+}
+async function loadProject(id){try{const p=await dbGetProject(id);if(!p)return;current=p;current.sketches=current.sketches||[];current.purchasedParts=current.purchasedParts||[];pendingTalkPhotos=[];renderRecord();show('record');switchTab('talkPane')}catch(e){alert('Projekt konnte nicht geöffnet werden: '+e.message)}}
+
+function getTesterId(){return ($('#testerId')?.value||localStorage.getItem(TESTER_ID)||'').trim()}
+function rememberTesterId(v){try{localStorage.setItem(TESTER_ID,String(v||'').trim())}catch{}}
+function safeProjectFilename(title='Projekt'){
+  const base=String(title||'Projekt').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||'Projekt';
+  const d=new Date(), date=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return `${base}_${date}.ltnb`;
+}
+async function projectToPortable(project){
+  const copy=typeof structuredClone==='function'?structuredClone(project):JSON.parse(JSON.stringify(project));
+  copy.photos=await Promise.all((project.photos||[]).map(async p=>({id:p.id,name:p.name,addedAt:p.addedAt,dataUrl:p.dataUrl||(p.blob instanceof Blob?await blobToDataUrl(p.blob):'')})));
+  copy.sketches=await Promise.all((project.sketches||[]).map(async s=>({id:s.id,name:s.name,addedAt:s.addedAt,confirmedAt:s.confirmedAt,analysis:s.analysis,drawing:s.drawing,dataUrl:s.dataUrl||(s.blob instanceof Blob?await blobToDataUrl(s.blob):'')})));
+  return JSON.parse(JSON.stringify(copy));
+}
+function validatePortableMedia(project){
+  for(const item of [...(project.photos||[]),...(project.sketches||[])]){
+    if(!item?.dataUrl)throw Error('Die Projektdatei enthält ein unvollständiges Foto oder eine unvollständige Skizze.');
+    if(!/^data:image\/(jpeg|jpg|png|gif|webp);base64,/i.test(item.dataUrl))throw Error('Die Datei enthält ein nicht unterstütztes Bildformat.');
+  }
+}
+async function exportProject(project){
+  if(!project?.id)return alert('Kein Projekt zum Exportieren geöffnet.');
+  const portable=await projectToPortable(project);
+  const testerId=getTesterId();rememberTesterId(testerId);
+  const payload={
+    format:'look-talk-n-build-project',schemaVersion:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),testerId,workshopProfile:JSON.parse(JSON.stringify(profilePayload()||{})),project:portable
+  };
+  const json=JSON.stringify(payload);
+  const filename=safeProjectFilename(portable.title||portable.analysis?.object||'Projekt');
+  const blob=new Blob([json],{type:'application/json'});
+  try{
+    const file=typeof File==='function'?new File([blob],filename,{type:'application/json'}):null;
+    const isiPadIPhone=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    if(isiPadIPhone&&file&&navigator.share&&navigator.canShare?.({files:[file]})){
+      await navigator.share({files:[file],title:portable.title||'look, talk ’n build Projekt',text:'Projektdatei aus look, talk ’n build'});
+      return;
+    }
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }catch(e){
+    if(e?.name!=='AbortError'){console.error(e);alert('Projekt konnte nicht exportiert werden: '+e.message)}
+  }
+}
+function parseImportPayload(text){
+  let payload;try{payload=JSON.parse(text)}catch{throw Error('Die Datei ist keine gültige look, talk ’n build Projektdatei.')}
+  if(payload?.format!=='look-talk-n-build-project'||!payload.project||typeof payload.project!=='object')throw Error('Dieses Dateiformat wird nicht erkannt.');
+  if(Number(payload.schemaVersion||0)!==1)throw Error('Diese Projektdatei verwendet eine nicht unterstützte Formatversion.');
+  payload.project.photos=Array.isArray(payload.project.photos)?payload.project.photos:[];
+  payload.project.sketches=Array.isArray(payload.project.sketches)?payload.project.sketches:[];
+  payload.project.chat=Array.isArray(payload.project.chat)?payload.project.chat:[];
+  validatePortableMedia(payload.project);
+  return payload;
+}
+function showImportPreview(payload,file){
+  const p=payload.project||{},box=$('#importPreview');
+  const exported=payload.exportedAt?new Date(payload.exportedAt).toLocaleString('de-DE'):'nicht angegeben';
+  const tester=payload.testerId?esc(payload.testerId):'nicht angegeben';
+  const skill=payload.workshopProfile?.skill?esc(payload.workshopProfile.skill):'nicht angegeben';
+  box.innerHTML=`<div class="notice ok"><strong>${esc(p.title||p.analysis?.object||'Unbenanntes Projekt')}</strong><br><span class="hint">Datei: ${esc(file.name)} · Export: ${esc(exported)} · App ${esc(payload.appVersion||'?')}</span><br><span class="hint">Tester-ID: ${tester} · Werkstattprofil: ${skill}</span><br><span class="hint">${(p.photos||[]).length} Fotos · ${(p.sketches||[]).length} Skizzen · ${(p.chat||[]).length} Talk-Beiträge</span></div><div class="composerActions"><button class="primary small" id="confirmImportProject">Als neues Projekt importieren</button><button class="ghost small" id="cancelImportProject">Abbrechen</button></div>`;
+  box.classList.remove('hidden');
+}
+async function importPendingProject(){
+  if(!pendingImport)return;
+  const {payload,file}=pendingImport,p=JSON.parse(JSON.stringify(payload.project)),now=new Date().toISOString();
+  p.id=newId();p.createdAt=p.createdAt||now;p.updatedAt=now;p.round=Number(p.round)||0;p.photos=p.photos||[];p.sketches=p.sketches||[];p.purchasedParts=p.purchasedParts||[];p.chat=p.chat||[];
+  p.transferMeta={...(p.transferMeta||{}),imported:true,testerId:payload.testerId||p.transferMeta?.testerId||'',sourceAppVersion:payload.appVersion||p.transferMeta?.sourceAppVersion||'',exportedAt:payload.exportedAt||'',importedAt:now,sourceProjectId:payload.project.id||'',sourceFile:file?.name||'',sourceProfile:payload.workshopProfile||p.transferMeta?.sourceProfile||{},previousTransferMeta:p.transferMeta||null};
+  try{
+    await dbPutProject(p);pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value='';await updateSaved();await renderProjects();alert('Projekt wurde als neues Projekt importiert.');
+  }catch(e){console.error(e);alert('Projekt konnte nicht importiert werden: '+e.message)}
+}
+async function loadProfile(){
+  let saved=null;
+  try{saved=await dbGetSetting('workshopProfile')}catch(e){console.warn('Werkstattprofil aus IndexedDB konnte nicht geladen werden',e)}
+  if(!saved){try{saved=JSON.parse(localStorage.getItem(PROFILE)||'null')}catch{}}
+  if(saved&&typeof saved==='object')profile={skill:saved.skill||'Fortgeschritten',tools:{...(saved.tools||{})}};
+  else profile={skill:profile.skill||'Fortgeschritten',tools:{...(profile.tools||{})}};
+  const skill=$('#skill');if(skill)skill.value=profile.skill||'Fortgeschritten';
+  renderToolsProfile();
+  try{await dbPutSetting('workshopProfile',profile)}catch(e){console.warn('Werkstattprofil konnte nicht migriert werden',e)}
+}
+function renderToolsProfile(){profile.tools=profile.tools||{};const names=[...new Set([...baseTools,...Object.keys(profile.tools)])].filter(n=>profile.tools[n]!=='removed');$('#toolList').innerHTML=names.map(n=>`<div class="toolrow"><div>${esc(n)}</div><select class="toolStatus" data-tool="${esc(n)}"><option value="none">Habe ich nicht</option><option value="have">Habe ich</option><option value="want">Will ich anschaffen</option><option value="removed">Entfernen</option></select></div>`).join('');$$('.toolStatus').forEach(s=>s.value=profile.tools?.[s.dataset.tool]||'none')}
+function profilePayload(){return profile}
+
+$('#startCopy').onclick=()=>{resetProject('copy');$('#knowledge').value='';renderAllPhotos();show('photos')};
+$('#startDevelop').onclick=()=>{resetProject('develop');$('#developText').value='';renderAllPhotos();show('develop')};$('#startIdeas').onclick=()=>show('ideas');
+async function goStart(){
+  // Projektzustand bleibt erhalten; gespeicherte Projekte bleiben ohnehin in IndexedDB.
+  await renderStartProjects();
+  show('start');
+}
+async function goProfile(){await loadProfile();show('profile')}
+async function goProjects(){const ti=$('#testerId');if(ti)ti.value=localStorage.getItem(TESTER_ID)||'';await renderProjects();show('projects')}
+function goTalk(){if(!current?.id)return;renderRecord();show('record');switchTab('talkPane')}
+$('#navStart').onclick=()=>{viewHistory=[];goStart()};
+$('#navProjects').onclick=goProjects;
+$('#navProfile').onclick=goProfile;
+$('#navTalk').onclick=goTalk;
+if($('#showAllProjects'))$('#showAllProjects').onclick=goProjects;
+if($('#testerId'))$('#testerId').addEventListener('input',e=>rememberTesterId(e.target.value));
+document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-project-filter]');if(!b)return;projectFilter=b.dataset.projectFilter;$$('.filterBtn').forEach(x=>x.classList.toggle('on',x===b));await renderProjects()});
+if($('#importProjectInput'))$('#importProjectInput').onchange=async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  if(file.size>120*1024*1024&&!confirm('Die Projektdatei ist größer als 120 MB. Trotzdem versuchen?')){e.target.value='';return}
+  try{const payload=parseImportPayload(await file.text());pendingImport={payload,file};showImportPreview(payload,file)}catch(err){pendingImport=null;$('#importPreview').classList.add('hidden');e.target.value='';alert(err.message)}
+};
+$('#cameraInput').onchange=$('#libraryInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};$('#developInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos()};
+['detailCameraInput','detailLibraryInput'].forEach(id=>$('#'+id).onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await analyze(true)});
+$('#recordPhotoInput').onchange=async e=>{await addFiles(e.target.files);renderAllPhotos();await saveCurrent(true)};
+['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).onchange=async e=>{await addFiles(e.target.files,pendingTalkPhotos);gallery($('#pendingTalkPhotos'),pendingTalkPhotos)});
+
+
+function sketchContext(){
+  return (current.sketches||[]).map(s=>({
+    title:s.analysis?.title||'Werkstattskizze',
+    summary:s.analysis?.summary||'',
+    facts:s.analysis?.facts||[],
+    dimensions:s.analysis?.dimensions||[],
+    assumptions:s.analysis?.assumptions||[],
+    unknown:s.analysis?.unknown||[]
+  }));
+}
+function svgEl(name,attrs={},text=''){
+  const a=Object.entries(attrs).map(([k,v])=>`${k}="${esc(v)}"`).join(' ');
+  return `<${name}${a?' '+a:''}>${text}</${name}>`;
+}
+function normalizeSketchText(v=''){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function drawingBounds(spec={}){
+  const pts=[];
+  for(const p of (spec.polygons||[])) for(const q of (p.points||[])) if(Array.isArray(q)&&q.length>=2) pts.push([Number(q[0])||0,Number(q[1])||0]);
+  for(const l of (spec.lines||[])) pts.push([Number(l.x1)||0,Number(l.y1)||0],[Number(l.x2)||0,Number(l.y2)||0]);
+  for(const c of (spec.circles||[])) pts.push([Number(c.cx)||0,Number(c.cy)||0]);
+  if(!pts.length) return {minX:140,maxX:860,minY:140,maxY:560};
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+}
+function pickSketchDims(analysis={}){
+  const dims=analysis?.dimensions||[];
+  const found={};
+  for(const d of dims){
+    const label=d.label||[d.value,d.unit].filter(Boolean).join(' ');
+    const blob=normalizeSketchText([d.label,d.role,d.role_label,d.meaning,d.context,d.name].filter(Boolean).join(' '));
+    if(!found.width && /(gesamtbreite|gesamtbreite des kastens|breite|gesamtbreite)/.test(blob)) found.width=label;
+    else if(!found.height && /(gesamt\s*hohe|gesamthohe|hohe|hoehe)/.test(blob)) found.height=label;
+    else if(!found.topDepth && /(ober(er|e)?\s*boden|deckplatte|obere\s*tiefe|tiefe\s*oben)/.test(blob)) found.topDepth=label;
+    else if(!found.bottomDepth && /(unter(er|e)?\s*boden|kastenboden|untere\s*tiefe|tiefe\s*unten|boden\s*uber\s*die\s*volle\s*untere\s*tiefe)/.test(blob)) found.bottomDepth=label;
+  }
+  return found;
+}
+function dimensionNumberKey(v=''){
+  const m=String(v||'').replace(',','.').match(/-?\d+(?:\.\d+)?/);
+  return m?String(Number(m[0])):'';
+}
+function ensureSketchDepthDimensions(spec={},analysis={}){
+  const out={...spec,dimensions:[...(spec.dimensions||[])]};
+  const existingLabels=new Set(out.dimensions.map(d=>normalizeSketchText(d.label)));
+  const existingNumbers=new Set(out.dimensions.map(d=>dimensionNumberKey(d.label)).filter(Boolean));
+  const dims=pickSketchDims(analysis);
+  const b=drawingBounds(spec);
+  const w=Math.max(160,b.maxX-b.minX), h=Math.max(120,b.maxY-b.minY);
+  const missing=label=>{
+    const lk=normalizeSketchText(label), nk=dimensionNumberKey(label);
+    return !existingLabels.has(lk) && (!nk || !existingNumbers.has(nk));
+  };
+  if(dims.topDepth && missing(dims.topDepth)){
+    out.dimensions.push({
+      label:/[a-z]/i.test(String(dims.topDepth))?dims.topDepth:`${dims.topDepth} cm`,
+      x1:b.minX-34, y1:b.minY+Math.round(h*0.17),
+      x2:b.minX+Math.round(w*0.10), y2:b.minY-20
+    });
+  }
+  if(dims.bottomDepth && missing(dims.bottomDepth)){
+    out.dimensions.push({
+      label:/[a-z]/i.test(String(dims.bottomDepth))?dims.bottomDepth:`${dims.bottomDepth} cm`,
+      x1:b.maxX+18, y1:b.maxY-8,
+      x2:b.maxX+70, y2:b.maxY-Math.round(h*0.15)
+    });
+  }
+  return out;
+}
+function formatDimLabel(d){
+  if(!d)return'';
+  const value=d.value??d.label??'';
+  const unit=d.unit||(/cm|mm|m\b/i.test(String(d.label||''))?'':'cm');
+  return `${value}${unit?` ${unit}`:''}`.trim();
+}
+function dimByRole(analysis={},role){return (analysis.dimensions||[]).find(d=>d.role===role)}
+function isOpenWallBoxAnalysis(analysis={}){
+  const blob=normalizeSketchText([
+    analysis.title,analysis.summary,...(analysis.facts||[]),...(analysis.assumptions||[])
+  ].filter(Boolean).join(' '));
+  const hasCore=['width_total','height_total','depth_top','depth_bottom'].every(r=>!!dimByRole(analysis,r));
+  const boxWords=/(kasten|wandkasten|regal|ruckwand|seitenwand|vorne offen|offen)/.test(blob);
+  return hasCore&&boxWords;
+}
+function canonicalOpenWallBoxDrawing(analysis={}){
+  if(!isOpenWallBoxAnalysis(analysis))return null;
+  const w=dimByRole(analysis,'width_total'),h=dimByRole(analysis,'height_total');
+  const dt=dimByRole(analysis,'depth_top'),db=dimByRole(analysis,'depth_bottom');
+
+  // 0.9.6: Bauteile werden als zusammenhängende Bretter dargestellt.
+  // Vorderkanten liegen links/unten näher am Betrachter, Rückwand hinten.
+  const TL=[220,245], TR=[735,245];           // vordere Oberkante
+  const RTL=[305,170], RTR=[820,170];         // hintere Oberkante an der Rückwand
+  const BL=[165,515], BR=[700,515];           // vordere Unterkante
+  const RBL=[305,430], RBR=[820,430];         // hintere Unterkante an der Rückwand
+  const t=11;                                 // rein grafische Brettstärke
+
+  return {
+    polygons:[
+      // Rückwand zuerst: sie liegt hinter allen übrigen Bauteilen.
+      {points:[RTL,RTR,RBR,RBL],fill:'#ecebe5',width:3},
+
+      // Unterer Boden: obere Fläche + sichtbare Vorderkante.
+      {points:[BL,RBL,RBR,BR],fill:'#e9e8e1',width:3},
+      {points:[BL,BR,[BR[0],BR[1]+t],[BL[0],BL[1]+t]],fill:'#d9d8d1',width:2},
+
+      // Linke und rechte Seitenwand als echte, geschlossene Brettflächen.
+      {points:[TL,RTL,RBL,BL],fill:'#efeee8',width:3},
+      {points:[TR,RTR,RBR,BR],fill:'#e5e4dd',width:3},
+
+      // Oberer Boden: eigene Brettfläche, bündig auf den Seitenwänden.
+      {points:[TL,RTL,RTR,TR],fill:'#f1f0ea',width:3},
+      {points:[TL,TR,[TR[0],TR[1]+t],[TL[0],TL[1]+t]],fill:'#dcdad3',width:2}
+    ],
+    lines:[
+      // Sichtbare Brettstärken an den vorderen Seitenkanten.
+      {x1:TL[0]+8,y1:TL[1]+3,x2:BL[0]+8,y2:BL[1]-3,width:2},
+      {x1:TR[0]-8,y1:TR[1]+3,x2:BR[0]-8,y2:BR[1]-3,width:2},
+      // Trennkante zwischen Rückwand und Böden klar sichtbar halten.
+      {x1:RBL[0],y1:RBL[1],x2:RBR[0],y2:RBR[1],width:2}
+    ],
+    circles:[],
+    dimensions:[
+      {label:formatDimLabel(w),x1:305,y1:115,x2:820,y2:115},
+      {label:formatDimLabel(h),x1:905,y1:170,x2:905,y2:515},
+      // Tiefenmaße parallel zu den tatsächlichen Tiefenkanten und außerhalb des Werkstücks.
+      {label:formatDimLabel(dt),x1:185,y1:220,x2:270,y2:145},
+      {label:formatDimLabel(db),x1:735,y1:555,x2:855,y2:468}
+    ],
+    labels:[
+      {text:'oberer Boden',x:455,y:218,size:22},
+      {text:'unterer Boden',x:455,y:492,size:22},
+      {text:'Rückwand',x:520,y:320,size:22},
+      {text:'linke Seitenwand',x:175,y:372,size:20},
+      {text:'rechte Seitenwand',x:735,y:372,size:20}
+    ]
+  };
+}
+function drawingForDisplay(spec={},analysis={}){
+  return canonicalOpenWallBoxDrawing(analysis)||ensureSketchDepthDimensions(spec,analysis);
+}
+function renderTechnicalDrawing(spec={},analysis={}){
+  spec=drawingForDisplay(spec,analysis);
+  const W=1000,H=700, stroke='#182019', dim='#5d665f';
+  let out=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Werkstattskizze" xmlns="http://www.w3.org/2000/svg"><rect width="1000" height="700" fill="#fff"/>`;
+  const safeNum=v=>Math.max(-100,Math.min(1100,Number(v)||0));
+  for(const p of (spec.polygons||[]).slice(0,20)){
+    const pts=(p.points||[]).slice(0,20).map(q=>`${safeNum(q[0])},${safeNum(q[1])}`).join(' ');
+    if(pts)out+=`<polygon points="${pts}" fill="${p.fill||'none'}" stroke="${stroke}" stroke-width="${Math.max(1,Math.min(8,Number(p.width)||3))}" stroke-linejoin="round"/>`
+  }
+  for(const l of (spec.lines||[]).slice(0,60))out+=`<line x1="${safeNum(l.x1)}" y1="${safeNum(l.y1)}" x2="${safeNum(l.x2)}" y2="${safeNum(l.y2)}" stroke="${stroke}" stroke-width="${Math.max(1,Math.min(8,Number(l.width)||3))}" stroke-linecap="round"/>`;
+  for(const c of (spec.circles||[]).slice(0,60))out+=`<circle cx="${safeNum(c.cx)}" cy="${safeNum(c.cy)}" r="${Math.max(2,Math.min(100,Number(c.r)||8))}" fill="none" stroke="${stroke}" stroke-width="3"/>`;
+  for(const d of (spec.dimensions||[]).slice(0,40)){
+    const x1=safeNum(d.x1),y1=safeNum(d.y1),x2=safeNum(d.x2),y2=safeNum(d.y2);
+    out+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${dim}" stroke-width="2"/>`;
+    out+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${dim}"/><circle cx="${x2}" cy="${y2}" r="3" fill="${dim}"/>`;
+    const mx=(x1+x2)/2,my=(y1+y2)/2-8;
+    out+=`<text x="${mx}" y="${my}" text-anchor="middle" font-family="-apple-system,Arial,sans-serif" font-size="24" font-weight="700" fill="${stroke}">${esc(d.label||'')}</text>`;
+  }
+  for(const t of (spec.labels||[]).slice(0,40))out+=`<text x="${safeNum(t.x)}" y="${safeNum(t.y)}" font-family="-apple-system,Arial,sans-serif" font-size="${Math.max(16,Math.min(34,Number(t.size)||22))}" fill="${stroke}">${esc(t.text||'')}</text>`;
+  out+='</svg>';return out
+}
+const DIM_ROLE_LABELS={width_total:'Gesamtbreite',height_total:'Gesamthöhe',depth_top:'obere Tiefe',depth_bottom:'untere Tiefe',depth_general:'Tiefe',thickness:'Materialstärke',spacing_horizontal:'waagerechter Abstand',spacing_vertical:'senkrechter Abstand',offset_horizontal:'waagerechter Randabstand',offset_vertical:'senkrechter Randabstand',diameter:'Durchmesser',radius:'Radius',other:'sonstiges Maß'};
+function dimensionEditor(a={}){
+  const dims=a.dimensions||[];
+  if(!dims.length)return '<div class="readBlock"><h3>Maße</h3><p>Noch keine eindeutigen Maße erkannt.</p></div>';
+  const roleOpts=Object.entries(DIM_ROLE_LABELS).map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('');
+  return `<div class="readBlock"><h3>Maße</h3><p class="hint">Du kannst erkannte Werte oder ihre Bedeutung direkt korrigieren.</p>${dims.map((d,i)=>`<div class="dimEdit"><label>${esc(d.role_label||DIM_ROLE_LABELS[d.role]||d.meaning||'Maß')}</label><input data-dim-value="${i}" value="${esc(d.value??d.label??'')}" inputmode="decimal" aria-label="Maßwert"><input data-dim-unit="${i}" value="${esc(d.unit||'')}" aria-label="Einheit"><select data-dim-role="${i}" aria-label="Bedeutung">${roleOpts}</select></div>`).join('')}</div>`;
+}
+function setDimensionRoleValues(){
+  if(!pendingSketch)return;
+  [...document.querySelectorAll('[data-dim-role]')].forEach(el=>{const d=pendingSketch.analysis?.dimensions?.[Number(el.dataset.dimRole)];if(d)el.value=d.role||'other'});
+}
+function applyDimensionEdits(){
+  if(!pendingSketch)return;
+  const dims=pendingSketch.analysis?.dimensions||[];
+  dims.forEach((d,i)=>{
+    const v=document.querySelector(`[data-dim-value="${i}"]`),u=document.querySelector(`[data-dim-unit="${i}"]`),r=document.querySelector(`[data-dim-role="${i}"]`);
+    if(v){const raw=v.value.trim().replace(',','.');const num=Number(raw);d.value=Number.isFinite(num)?num:v.value.trim();d.label=String(v.value.trim());}
+    if(u)d.unit=u.value.trim();
+    if(r){d.role=r.value;d.role_label=DIM_ROLE_LABELS[r.value]||d.role_label||'Maß';}
+    d.confidence='certain';
+  });
+  pendingSketch.analysis.confirmation_questions=(pendingSketch.analysis.confirmation_questions||[]).filter(q=>!dims.some(d=>d.role===q.dimension_role));
+}
+function sketchDataSummary(a={}){
+  const dims=(a.dimensions||[]).map(d=>`<div class="sketchFact"><strong>${esc(d.role_label||DIM_ROLE_LABELS[d.role]||'Maß')}:</strong> ${esc(d.value)} ${esc(d.unit||'')}</div>`).join('');
+  const facts=(a.facts||[]).map(x=>`<div class="sketchFact">${esc(x)}</div>`).join('');
+  const unknown=(a.unknown||[]).map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('');
+  return `${facts}${dims}${unknown?`<h3>Noch offen</h3>${unknown}`:''}`||'<p>Noch keine Angaben erkannt.</p>';
+}
+function renderSketchReview(){
+  if(!pendingSketch)return;
+  $('#sketchSourcePreview').src=pendingSketch.dataUrl;
+  const a=pendingSketch.analysis||{};
+  $('#sketchFacts').innerHTML=(a.facts||[]).length?`<div class="readBlock"><h3>Bauteile & Hinweise</h3>${(a.facts||[]).map(x=>`<div class="sketchFact">${esc(x)}</div>`).join('')}</div>`:'<div class="readBlock"><h3>Bauteile & Hinweise</h3><p>Keine sicheren Angaben erkannt.</p></div>';
+  $('#sketchDimensions').innerHTML=dimensionEditor(a);
+  setDimensionRoleValues();
+  $('#applySketchDimensions').classList.toggle('hidden',!(a.dimensions||[]).length);
+  const assumptions=(a.assumptions||[]),unknown=(a.unknown||[]);
+  $('#sketchUnknown').innerHTML=(assumptions.length?`<div class="readBlock"><h3>Vermutet</h3>${assumptions.map(x=>`<div class="status"><span class="dot mid"></span><div>${esc(x)}</div></div>`).join('')}</div>`:'')+(unknown.length?`<div class="readBlock"><h3>Noch offen</h3>${unknown.map(x=>`<div class="status"><span class="dot unknown"></span><div>${esc(x)}</div></div>`).join('')}</div>`:'');
+  const qs=a.confirmation_questions||[];
+  $('#sketchConfirmBox').innerHTML=qs.length?`<h3>Bitte kurz bestätigen</h3>${qs.map((q,i)=>`<div class="sketchConfirmRow"><label>${esc(q.question)}</label><input data-q="${i}" value="${esc(q.suggested_answer||'')}" placeholder="Deine Antwort …"></div>`).join('')}`:'';
+  $('#refineSketch').classList.toggle('hidden',!qs.length);
+  show('sketchReview');
+}
+async function startSketch(file,returnScreen='record'){
+  if(!file)return;
+  sketchReturnScreen=returnScreen;
+  const dataUrl=await fileToDataUrl(file);
+  pendingSketch={id:newId(),name:file.name||'Handskizze',dataUrl,addedAt:new Date().toISOString(),analysis:null};
+  show('sketchWorking');$('#sketchBar').style.width='35%';setTimeout(()=>$('#sketchBar').style.width='72%',350);
+  try{
+    const r=await secureFetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()})});
+    if(!r.ok)throw Error(await r.text());
+    pendingSketch.analysis=await r.json();pendingSketch.drawing=null;
+    $('#sketchBar').style.width='100%';setTimeout(renderSketchReview,180);
+  }catch(e){alert('Skizze konnte nicht ausgewertet werden: '+e.message);show(returnScreen)}
+}
+function mergeSketchIntoAnalysis(s){
+  const a=s.analysis||{},existing=current.analysis||{object:current.title||a.title||'Projekt',summary:a.summary||'',recognized:[],assumptions:[],unknown:[],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};
+  const add=[...(a.facts||[]),...(a.dimensions||[]).map(d=>`${d.role_label||DIM_ROLE_LABELS[d.role]||d.label}: ${d.value} ${d.unit||''}${d.meaning?` – ${d.meaning}`:''}`)];
+  const uniq=arr=>[...new Set(arr.filter(Boolean))];
+  current.analysis={...existing,recognized:uniq([...(existing.recognized||[]),...add]),assumptions:uniq([...(existing.assumptions||[]),...(a.assumptions||[])]),unknown:uniq([...(existing.unknown||[]),...(a.unknown||[])]).slice(0,3)};
+}
+function renderSketches(){
+  const box=$('#sketchList');if(!box)return;
+  const ss=current.sketches||[];
+  box.innerHTML=ss.length?ss.map((s,i)=>`<div class="card sketchCard"><div class="sketchGrid"><div><img class="sketchSource" src="${s.dataUrl}" alt="Handskizze ${i+1}"><p><strong>${esc(s.analysis?.title||s.name||'Werkstattskizze')}</strong></p><p class="hint">${esc(s.analysis?.summary||'')}</p></div><div><h3 style="margin-top:0">Übernommene Angaben</h3>${sketchDataSummary(s.analysis||{})}</div></div></div>`).join(''):'<p>Noch keine Skizze im Projekt.</p>';
+}
+$('#applySketchDimensions').onclick=()=>{applyDimensionEdits();renderSketchReview();};
+
+$('#refineSketch').onclick=async()=>{
+  if(!pendingSketch)return;
+  const btn=$('#refineSketch');
+  const answers=[...$('#sketchConfirmBox').querySelectorAll('input[data-q]')].map(el=>({
+    id:Number(el.dataset.q),
+    question:(pendingSketch.analysis?.confirmation_questions||[])[Number(el.dataset.q)]?.question||'',
+    answer:(el.value||'').trim()
+  })).filter(x=>x.answer);
+  if(!answers.length)return alert('Bitte mindestens eine Angabe bestätigen oder korrigieren.');
+  applyDimensionEdits();btn.disabled=true;btn.textContent='Angaben werden geprüft …';
+  try{
+    const r=await secureFetch(API+'/sketch/refine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      image:pendingSketch.dataUrl,
+      previous:pendingSketch.analysis||{},
+      confirmations:answers,
+      editedDimensions:pendingSketch.analysis?.dimensions||[],
+      knowledge:current.knowledge||'',
+      analysis:current.analysis||{},
+      profile:profilePayload()
+    })});
+    if(!r.ok)throw Error(await r.text());
+    pendingSketch.analysis=await r.json();
+    pendingSketch.drawing=null;
+    renderSketchReview();
+  }catch(e){alert('Skizze konnte nicht aktualisiert werden: '+e.message)}
+  finally{btn.disabled=false;btn.textContent='Unsichere Angaben prüfen'}
+};
+
+$('#confirmSketch').onclick=async()=>{
+  if(!pendingSketch)return;
+  applyDimensionEdits();
+  if((pendingSketch.analysis?.confirmation_questions||[]).length){
+    return alert('Bitte bestätige zuerst die noch unklaren Angaben.');
+  }
+  pendingSketch.confirmedAt=new Date().toISOString();
+  current.sketches=current.sketches||[];current.sketches.push(pendingSketch);
+  mergeSketchIntoAnalysis(pendingSketch);
+  current.reconstruction=null;
+  current.chat=current.chat||[];
+  current.chat.push({role:'assistant',text:`Skizze übernommen: ${pendingSketch.analysis?.summary||'Die erkannten Maße und Angaben sind jetzt Teil des Projektstands.'}`});
+  pendingSketch=null;renderRecord();await saveCurrent(true);
+  if(sketchReturnScreen==='photos'){renderAllPhotos();show('photos')}
+  else if(sketchReturnScreen==='develop'){renderAllPhotos();show('develop')}
+  else {show('record');switchTab('sketchPane')}
+};
+$('#retrySketch').onclick=()=>{pendingSketch=null;show(sketchReturnScreen)};
+$('#cancelSketch').onclick=()=>{pendingSketch=null;show(sketchReturnScreen)};
+['sketchInputPhotos'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'photos'));
+['sketchInputDevelop'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'develop'));
+['recordSketchCamera','recordSketchLibrary','talkSketchInput'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'record'));
+
+async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await secureFetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
+$('#analyzeBtn').onclick=()=>analyze();$('#developGo').onclick=()=>analyze();
+function renderAnalysis(){const a=current.analysis||{},list=(t,x,c='')=>`<h3>${t}</h3>${(x||[]).map(v=>`<div class="status"><span class="dot ${c}"></span><div>${esc(v)}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;$('#analysisCard').innerHTML=`<h2 style="margin-top:0">${esc(a.object||'Projekt')}</h2><p>${esc(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;const nr=a.next_request||{},enough=a.enough_information===true||nr.type==='done'||current.round>=4;$('#acceptAnalysis').classList.remove('hidden');if(enough){$('#nextRequest').classList.add('hidden');$('#detailPhotoActions').classList.add('hidden')}else{$('#nextRequest').textContent=nr.prompt||'Was sollten wir noch klären?';$('#nextRequest').classList.remove('hidden');$('#detailPhotoActions').classList.toggle('hidden',nr.type!=='detail_photo')}show('analysis')}
+$('#acceptAnalysis').onclick=()=>show('ready');$('#talkFirst').onclick=()=>{current.reconstruction=current.reconstruction||{title:current.analysis?.object,summary:current.analysis?.summary};renderRecord();show('record');switchTab('talkPane')};
+async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await secureFetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
+$('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
+function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
+function normalizePurchasedPart(x={}){return {id:x.id||newId(),item:String(x.item||x.name||'').trim(),supplier:String(x.supplier||x.vendor||x.brand||'').trim(),product:String(x.product||x.article||'').trim(),quantity:String(x.quantity||x.qty||'').trim(),dimensions:String(x.dimensions||x.size||'').trim(),use:String(x.use||x.purpose||x.note||'').trim(),link:String(x.link||x.url||'').trim(),source:String(x.source||'manual').trim()}}
+function purchaseToken(v=''){return String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function purchasedKey(x={}){return [x.item,x.supplier,x.product,x.dimensions].map(purchaseToken).join('|')}
+function purchasedPartsMatch(a={},b={}){
+  const ai=purchaseToken(a.item),bi=purchaseToken(b.item);
+  if(!ai||ai!==bi)return false;
+  const compat=(x,y)=>!x||!y||x===y;
+  const as=purchaseToken(a.supplier),bs=purchaseToken(b.supplier);
+  const ap=purchaseToken(a.product),bp=purchaseToken(b.product);
+  const ad=purchaseToken(a.dimensions),bd=purchaseToken(b.dimensions);
+  return compat(as,bs)&&compat(ap,bp)&&compat(ad,bd);
+}
+function mergePurchasedParts(parts=[]){
+  const merged=[];
+  const absorb=raw=>{
+    const x=normalizePurchasedPart(raw);if(!x.item)return;
+    const idx=merged.findIndex(y=>purchasedPartsMatch(y,x));
+    if(idx<0){merged.push(x);return}
+    const prev=merged[idx];
+    merged[idx]={...prev,...Object.fromEntries(Object.entries(x).filter(([key,v])=>key==='id'||v))};
+    merged[idx].id=prev.id||x.id;
+  };
+  for(const x of (current.purchasedParts||[]))absorb(x);
+  for(const x of (parts||[]))absorb(x);
+  current.purchasedParts=merged;
+}
+function renderPurchasedParts(){const box=$('#purchasedPartsList');if(!box)return;const inferred=current.reconstruction?.purchased_parts||[];if(inferred.length)mergePurchasedParts(inferred);const parts=current.purchasedParts||[];box.innerHTML=parts.length?parts.map((x,i)=>`<div class="purchaseCard"><strong>${esc(x.item||'Zukaufteil')}</strong><div class="purchaseMeta">${x.supplier?`<div><b>Hersteller / Händler:</b> ${esc(x.supplier)}</div>`:''}${x.product?`<div><b>Produkt:</b> ${esc(x.product)}</div>`:''}${x.quantity?`<div><b>Menge:</b> ${esc(x.quantity)}</div>`:''}${x.dimensions?`<div><b>Maße:</b> ${esc(x.dimensions)}</div>`:''}${x.use?`<div><b>Verwendung:</b> ${esc(x.use)}</div>`:''}${x.link?`<div class="purchaseLink"><b>Link:</b> <a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link)}</a></div>`:''}</div><div class="purchaseActions"><button class="ghost small deletePurchasedPart" data-i="${i}" type="button">Entfernen</button></div></div>`).join(''):'<p>Noch keine Zukaufteile eingetragen.</p>'}
+function renderRecord(){
+  const r=current.reconstruction||{};
+  const generatedTitle=r.title||current.analysis?.object||current.title||'Projekt';
+  const generatedSummary=r.summary||current.analysis?.summary||'';
+  $('#recordTitle').textContent=current.customTitle||generatedTitle;
+  $('#recordSummary').textContent=current.customDescription||generatedSummary;
+  const titleEdit=$('#projectTitleEdit'),descEdit=$('#projectDescriptionEdit');
+  if(titleEdit)titleEdit.value=current.customTitle||generatedTitle;
+  if(descEdit)descEdit.value=current.customDescription||generatedSummary;
+  const tr=current.transferMeta||{};
+  if($('#projectOrigin'))$('#projectOrigin').innerHTML=tr.imported?`<strong>Importiert</strong>${tr.testerId?` · Tester-ID: ${esc(tr.testerId)}`:''}${tr.importedAt?` · Import: ${new Date(tr.importedAt).toLocaleString('de-DE')}`:''}${tr.sourceAppVersion?` · Quellversion ${esc(tr.sourceAppVersion)}`:''}`:'Eigenes Projekt';
+  $('#overviewBox').innerHTML=`<h3 style="margin-top:0">Konstruktion</h3><p>${esc(r.construction||r.summary||'Noch kein Bauentwurf erstellt.')}</p>${r.open_points?.length?'<h3>Offene Punkte</h3><ul>'+r.open_points.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`;
+  renderAllPhotos();renderSketches();renderTalk();
+  $('#materialBox').innerHTML=renderTable(r.materials||[]);renderPurchasedParts();
+  $('#toolsBox').innerHTML=(r.tools||[]).map(x=>`<p>• ${esc(x)}</p>`).join('')||'<p>Noch keine Angaben.</p>';
+  $('#stepsBox').innerHTML=(r.steps||[]).map((s,i)=>`<div class="step"><div class="stepnum">${i+1}</div><p>${esc(s)}</p></div>`).join('')||'<p>Noch keine Bauanleitung erstellt.</p>';
+  $('#safetyBox').innerHTML=(r.safety_notes||[]).map(x=>`<div class="notice">${esc(x)}</div>`).join('')||'<div class="ok notice">Keine besonderen Hinweise ermittelt.</div>';
+  $('#projectStatus').textContent=`${current.photos.length} Foto${current.photos.length===1?'':'s'} · ${(current.sketches||[]).length} Skizze${(current.sketches||[]).length===1?'':'n'} · ${(current.analysis?.unknown||[]).length} offene Punkte · ${current.chat.length} Talk-Beiträge`;
+}
+function switchTab(id){$$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.pane===id));$$('.pane').forEach(x=>x.classList.toggle('on',x.id===id));const ww=$('#workWindow');if(!ww)return;if(id==='talkPane'){requestAnimationFrame(()=>{ww.scrollTop=ww.scrollHeight})}else{ww.scrollTo({top:0,behavior:'smooth'})}}document.addEventListener('click',e=>{const t=e.target.closest?.('.tab[data-pane]');if(t) switchTab(t.dataset.pane)});
+function calcView(c){if(!c)return'';if(c.type==='circle_pattern')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Teilkreis Ø ${c.pitch_diameter_mm} mm · Umfang ${c.circumference_mm} mm<br><strong>${c.count} Bohrungen</strong> · tatsächliche Teilung ${c.actual_center_pitch_mm} mm · Winkel ${c.angle_deg}°${c.actual_edge_gap_mm!=null?` · freier Abstand ${c.actual_edge_gap_mm} mm`:''}</div>`;if(c.type==='equal_spacing')return `<div class="calc"><strong>Werkstattrechnung</strong><br>${c.count} Positionen auf ${c.length_mm} mm → ${c.spacing_mm} mm Abstand</div>`;if(c.type==='rectangle')return `<div class="calc"><strong>Werkstattrechnung</strong><br>Fläche ${c.area_m2} m²${c.volume_l!=null?` · Volumen ${c.volume_l} l`:''}</div>`;return''}
+function renderTalk(){const log=$('#chatLog');log.innerHTML=current.chat.length?current.chat.map(m=>`<div class="chatmsg ${m.role==='assistant'?'ai':''}"><div class="chatname">${m.role==='assistant'?"look, talk ’n build":"Du"}</div><div>${esc(m.text).replace(/\n/g,'<br>')}</div>${m.photoIds?.length?`<div class="photoStrip">${m.photoIds.map(id=>{const p=current.photos.find(x=>x.id===id);return p?`<img src="${p.dataUrl}" alt="Talk-Foto">`:''}).join('')}</div>`:''}${calcView(m.calculation)}</div>`).join(''):'<p>Noch kein Werkstattgespräch. Stell eine Frage – oder antworte mit Text, Foto oder beidem.</p>';const u=(current.analysis?.unknown||[]).slice(0,3),box=$('#editableOpen');box.innerHTML=u.length?u.map((q,i)=>`<div class="status"><span class="dot unknown"></span><div style="width:100%"><strong>${esc(q)}</strong><input class="openAnswer" data-i="${i}" style="margin-top:7px" placeholder="Antwort optional …"></div></div>`).join('')+'<button class="secondary" id="acceptOpenAnswers">Ausgefüllte Antworten übernehmen</button>':'<div class="ok notice">Keine offenen Punkte.</div>';gallery($('#pendingTalkPhotos'),pendingTalkPhotos)}
+
+let mediaRecorder=null,speechRecording=false,speechChunks=[],speechStream=null,speechTimer=null,speechStartedAt=0;
+let speechTarget=null,speechSelStart=null,speechSelEnd=null,lastEditableTarget=null;
+function audioRecordingSupported(){return !!(navigator.mediaDevices?.getUserMedia&&window.MediaRecorder)}
+function isSpeechEditable(el){
+  if(!el||el.disabled||el.readOnly)return false;
+  if(el.tagName==='TEXTAREA')return true;
+  if(el.tagName==='INPUT'){const t=(el.type||'text').toLowerCase();return ['text','search','url','email','tel','number'].includes(t)}
+  return !!el.isContentEditable;
+}
+document.addEventListener('focusin',e=>{if(isSpeechEditable(e.target))lastEditableTarget=e.target});
+function rememberSpeechTarget(){
+  const el=isSpeechEditable(document.activeElement)?document.activeElement:lastEditableTarget;
+  speechTarget=el||$('#chatInput');
+  if(speechTarget&&'selectionStart' in speechTarget){speechSelStart=speechTarget.selectionStart;speechSelEnd=speechTarget.selectionEnd}else{speechSelStart=speechSelEnd=null}
+}
+function insertTranscriptAtTarget(transcript){
+  const box=speechTarget&&document.contains(speechTarget)?speechTarget:($('#chatInput')||lastEditableTarget);
+  if(!box)return false;
+  if(box.isContentEditable){
+    box.focus();document.execCommand('insertText',false,transcript);box.dispatchEvent(new Event('input',{bubbles:true}));return true
+  }
+  const value=String(box.value||'');
+  const start=Number.isInteger(speechSelStart)?speechSelStart:value.length;
+  const end=Number.isInteger(speechSelEnd)?speechSelEnd:start;
+  const before=value.slice(0,start),after=value.slice(end);
+  const needSpaceBefore=before&&!/\s$/.test(before)&&transcript&&!/^\s/.test(transcript);
+  const needSpaceAfter=after&&!/^\s/.test(after)&&transcript&&!/\s$/.test(transcript);
+  const inserted=(needSpaceBefore?' ':'')+transcript+(needSpaceAfter?' ':'');
+  box.value=before+inserted+after;
+  const pos=before.length+inserted.length;
+  try{box.setSelectionRange(pos,pos)}catch{}
+  box.dispatchEvent(new Event('input',{bubbles:true}));box.dispatchEvent(new Event('change',{bubbles:true}));box.focus();
+  lastEditableTarget=box;speechTarget=box;speechSelStart=speechSelEnd=pos;return true
+}
+function setSpeechUi(on,msg=''){
+  speechRecording=on;
+  const btn=$('#speechBtn'),float=$('#speechFloatBtn'),status=$('#speechStatus'),txt=$('#speechStatusText');
+  if(btn){btn.textContent=on?'■ Aufnahme stoppen':'🎙 Sprechen';btn.classList.toggle('primary',on);btn.classList.toggle('secondary',!on)}
+  if(float){float.textContent=on?'■':'🎙';float.classList.toggle('recording',on)}
+  if(status)status.classList.toggle('on',!!msg);
+  if(txt)txt.textContent=msg||'';
+}
+function stopTracks(){try{speechStream?.getTracks().forEach(t=>t.stop())}catch{}speechStream=null}
+function clearSpeechTimer(){if(speechTimer){clearTimeout(speechTimer);speechTimer=null}}
+function blobToDataUrlSimple(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Audio konnte nicht gelesen werden.'));r.readAsDataURL(blob)})}
+async function transcribeSpeech(blob){
+  setSpeechUi(false,'Sprache wird in Text umgewandelt …');
+  const dataUrl=await blobToDataUrlSimple(blob);
+  const r=await secureFetch(API+'/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:dataUrl,language:'de'})});
+  if(!r.ok){let detail='';try{detail=(await r.json())?.detail||''}catch{}throw Error(detail||'Transkription fehlgeschlagen.')}
+  const d=await r.json();
+  const transcript=String(d.text||'').trim();
+  if(!transcript)throw Error('Es wurde kein gesprochener Text erkannt.');
+  if(!insertTranscriptAtTarget(transcript))throw Error('Kein Eingabefeld für die Spracheingabe gefunden.');
+  setSpeechUi(false,'Text erkannt – bitte prüfen.');
+  setTimeout(()=>setSpeechUi(false,''),2600);
+}
+function stopSpeech(){
+  clearSpeechTimer();
+  if(mediaRecorder&&mediaRecorder.state!=='inactive'){try{mediaRecorder.stop()}catch{}}
+  else{stopTracks();setSpeechUi(false,'')}
+}
+async function startSpeech(){
+  if(speechRecording){stopSpeech();return}
+  rememberSpeechTarget();
+  if(!audioRecordingSupported())return alert('Audioaufnahme wird von diesem Browser nicht unterstützt. Du kannst weiterhin die Diktierfunktion der Tastatur verwenden.');
+  try{
+    speechChunks=[];
+    speechStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const types=['audio/mp4','audio/webm;codecs=opus','audio/webm'];
+    const mimeType=types.find(t=>MediaRecorder.isTypeSupported?.(t))||'';
+    mediaRecorder=new MediaRecorder(speechStream,mimeType?{mimeType}:undefined);
+    speechStartedAt=Date.now();
+    mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)speechChunks.push(e.data)};
+    mediaRecorder.onerror=e=>{clearSpeechTimer();stopTracks();setSpeechUi(false,'');alert('Audioaufnahme fehlgeschlagen'+(e?.error?.message?': '+e.error.message:'.'))};
+    mediaRecorder.onstop=async()=>{
+      clearSpeechTimer();
+      stopTracks();
+      const type=mediaRecorder?.mimeType||speechChunks[0]?.type||'audio/mp4';
+      const blob=new Blob(speechChunks,{type});
+      mediaRecorder=null;speechChunks=[];speechRecording=false;
+      if(Date.now()-speechStartedAt<500||blob.size<1000){setSpeechUi(false,'');return alert('Die Aufnahme war zu kurz. Bitte noch einmal sprechen.')}
+      try{await transcribeSpeech(blob)}catch(e){setSpeechUi(false,'');alert('Spracheingabe fehlgeschlagen: '+e.message)}
+    };
+    mediaRecorder.start(250);
+    setSpeechUi(true,'Aufnahme läuft …');
+    speechTimer=setTimeout(()=>{if(speechRecording)stopSpeech()},60000);
+  }catch(e){
+    clearSpeechTimer();stopTracks();setSpeechUi(false,'');
+    const denied=e?.name==='NotAllowedError'||e?.name==='SecurityError';
+    alert(denied?'Mikrofonzugriff wurde nicht erlaubt. Bitte den Mikrofonzugriff für die App/Safari freigeben.':'Mikrofon konnte nicht gestartet werden: '+(e?.message||e));
+  }
+}
+$('#speechBtn').addEventListener('pointerdown',()=>rememberSpeechTarget());$('#speechBtn').onclick=startSpeech;
+function autoGrowChatInput(){const el=$('#chatInput');if(!el)return;el.style.height='auto';el.style.height=Math.max(72,el.scrollHeight)+'px'}
+$('#chatInput')?.addEventListener('input',autoGrowChatInput);
+// Der Werkstatt-Talk scrollt als eigenes Fenster. Das Textfeld selbst wächst mit dem Inhalt;
+// Wischbewegungen innerhalb des rechten Werkstattfensters bleiben dort, außerhalb scrollt die App-Seite.
+document.addEventListener('focusin',e=>{if(e.target?.matches?.('textarea,input')){rememberSpeechTarget(e.target);updateSpeechFloatVisibility()}});
+$('#speechFloatBtn')?.addEventListener('pointerdown',e=>{e.preventDefault();rememberSpeechTarget()});if($('#speechFloatBtn'))$('#speechFloatBtn').onclick=startSpeech;
+if($('#backFloatBtn'))$('#backFloatBtn').onclick=goBackView;
+let busy=false;
+function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn'),speechFloat=$('#speechFloatBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;if(speechFloat)speechFloat.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
+async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';autoGrowChatInput();setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await secureFetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;if(Array.isArray(d.purchased_parts_updates))mergePurchasedParts(d.purchased_parts_updates);current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
+$('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
+
+$('#addPurchasedPart').onclick=async()=>{const part=normalizePurchasedPart({item:$('#purchaseItem').value,supplier:$('#purchaseSupplier').value,product:$('#purchaseProduct').value,quantity:$('#purchaseQty').value,dimensions:$('#purchaseDimensions').value,use:$('#purchaseUse').value,link:$('#purchaseLink').value,source:'manual'});if(!part.item)return alert('Bitte eine Bezeichnung für das Zukaufteil eingeben.');mergePurchasedParts([part]);['purchaseItem','purchaseSupplier','purchaseProduct','purchaseQty','purchaseDimensions','purchaseUse','purchaseLink'].forEach(id=>$('#'+id).value='');renderPurchasedParts();await saveCurrent(true)};
+document.addEventListener('click',async e=>{if(e.target?.classList.contains('deletePurchasedPart')){const i=Number(e.target.dataset.i);if(Number.isInteger(i)&&current.purchasedParts?.[i]){current.purchasedParts.splice(i,1);renderPurchasedParts();await saveCurrent(true)}}});
+let rejectedIdeas=[];
+function currentIdeaBrief(){return {who:$('#ideaWho').value,occasion:$('#ideaOccasion').value,interests:$('#ideaInterests').value,time:$('#ideaTime').value,budget:$('#ideaBudget').value,style:$('#ideaStyle').value}}
+function renderIdeaResults(ideas=[]){
+  $('#ideaResults').innerHTML=ideas.map((x,i)=>`<div class="idea"><h3>${esc(x.title)}</h3><p>${esc(x.why)}</p><div class="chips"><span class="chip">${esc(x.difficulty)}</span><span class="chip">${esc(x.time)}</span><span class="chip">${esc(x.budget)}</span></div><p>${esc(x.concept)}</p><button class="primary chooseIdea" data-i="${i}">Diese Idee weiterentwickeln</button></div>`).join('');
+  $('#ideaResults').dataset.ideas=JSON.stringify(ideas);$('#ideaMoreBox').classList.toggle('hidden',!ideas.length);
+}
+async function requestIdeas({refine=false}={}){
+  const brief=currentIdeaBrief(),feedback=$('#ideaFeedback')?.value.trim()||'';
+  $('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';
+  try{
+    const r=await secureFetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload(),rejectedIdeas,feedback,refine})});
+    if(!r.ok)throw Error(await r.text());const d=await r.json();renderIdeaResults(d.ideas||[]);
+  }catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}
+}
+$('#findIdeas').onclick=()=>{rejectedIdeas=[];if($('#ideaFeedback'))$('#ideaFeedback').value='';requestIdeas()};
+$('#moreIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ideas||'[]');rejectedIdeas.push(...prev.map(x=>({title:x.title,concept:x.concept})));requestIdeas()};
+$('#refineIdeas').onclick=()=>{const prev=JSON.parse($('#ideaResults').dataset.ideas||'[]');rejectedIdeas.push(...prev.map(x=>({title:x.title,concept:x.concept})));requestIdeas({refine:true})};
+document.addEventListener('click',e=>{if(e.target?.classList.contains('chooseIdea')){const ideas=JSON.parse($('#ideaResults').dataset.ideas||'[]'),x=ideas[+e.target.dataset.i];resetProject('idea');current.title=x.title;current.knowledge=`Projektidee: ${x.title}. ${x.concept} Warum passend: ${x.why}`;current.analysis={object:x.title,summary:x.concept,recognized:[`Ausgewählte Projektidee: ${x.title}`,`Rahmen: ${x.time}, ${x.budget}`],assumptions:[],unknown:['Welche Maße bzw. gewünschte Größe soll das Projekt haben?'],safety_notes:[],enough_information:true,next_request:{type:'done',prompt:''}};current.reconstruction={title:x.title,summary:x.concept,construction:'Der genaue Aufbau wird im Werkstatt-Talk gemeinsam festgelegt.',materials:[],tools:x.main_tools||[],steps:[],open_points:current.analysis.unknown,safety_notes:[]};renderRecord();show('record');switchTab('talkPane')}});
+
+async function persistProfile(){
+  try{
+    profile.tools=profile.tools||{};
+    profile.skill=$('#skill')?.value||profile.skill||'Fortgeschritten';
+    $$('.toolStatus').forEach(el=>profile.tools[el.dataset.tool]=el.value);
+    localStorage.setItem(PROFILE,JSON.stringify(profile));
+    await dbPutSetting('workshopProfile',profile);
+    return true;
+  }catch(e){console.warn('Werkstattprofil konnte nicht gespeichert werden',e);return false}
+}
+$('#skill').addEventListener('change',()=>persistProfile());
+document.addEventListener('change',e=>{if(e.target?.classList.contains('toolStatus')){profile.tools=profile.tools||{};const tool=e.target.dataset.tool,value=e.target.value;profile.tools[tool]=value;persistProfile();if(value==='removed')renderToolsProfile()}if(e.target?.id==='skill')persistProfile()});
+$('#addTool').onclick=()=>{const n=$('#customTool').value.trim();if(!n)return;profile.tools=profile.tools||{};profile.tools[n]='want';$('#customTool').value='';renderToolsProfile();persistProfile()};
+
+$('#saveProfile').onclick=async()=>{if(await persistProfile())alert('Werkstattprofil gespeichert.');show('start')};
+function workshopSheetHtml(){
+  const r=current.reconstruction||{},a=current.analysis||{};
+  const title=esc(current.customTitle||r.title||a.object||current.title||'Projekt');
+  const desc=esc(current.customDescription||r.summary||a.summary||current.knowledge||'');
+  const image=(current.photos||[])[0]?.dataUrl||'';
+  const dimLines=[];
+  for(const sk of (current.sketches||[]))for(const d of (sk.analysis?.dimensions||[]))dimLines.push(`${esc(d.role_label||d.label||d.role||'Maß')}: ${esc(d.value)} ${esc(d.unit||'')}`);
+  for(const x of (a.recognized||[]))if(/\d/.test(String(x))&&/(mm|cm|m\b|ø|durchmesser|breite|höhe|tiefe|stärke)/i.test(String(x)))dimLines.push(esc(x));
+  const dims=[...new Set(dimLines)].slice(0,12);
+  let cut='';
+  if(Array.isArray(r.cutlist)&&r.cutlist.length){cut=`<table><thead><tr><th>Bauteil</th><th>Anz.</th><th>L</th><th>B</th><th>S</th><th>Material</th><th>Bemerkung</th></tr></thead><tbody>${r.cutlist.map(x=>`<tr><td>${esc(x.part||'')}</td><td>${esc(x.qty||'')}</td><td>${esc(x.length_mm??'')}</td><td>${esc(x.width_mm??'')}</td><td>${esc(x.thickness_mm??'')}</td><td>${esc(x.material||'')}</td><td>${esc(x.note||'')}</td></tr>`).join('')}</tbody></table>`}
+  else cut=`<table><thead><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr></thead><tbody>${(r.materials||[]).map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</tbody></table>`;
+  const purchased=(current.purchasedParts||[]).length?`<table><thead><tr><th>Zukaufteil</th><th>Hersteller / Händler</th><th>Menge / Maße</th><th>Verwendung</th></tr></thead><tbody>${(current.purchasedParts||[]).map(x=>`<tr><td>${esc(x.item||'')}${x.product?`<br><small>${esc(x.product)}</small>`:''}</td><td>${esc(x.supplier||'')}</td><td>${esc([x.quantity,x.dimensions].filter(Boolean).join(' · '))}</td><td>${esc(x.use||'')}${x.link?`<br><small>${esc(x.link)}</small>`:''}</td></tr>`).join('')}</tbody></table>`:'';
+  const applicationPattern=/(servieren|anrichten|verzehr|essen|trinken|befüllen und nutzen|in betrieb nehmen|aufstellen und verwenden|spätere anwendung|pflege im gebrauch|nach dem gebrauch|geschenk übergeben|verschenken|dekorieren vor dem servieren)/i;
+  const workshopSteps=(r.steps||[]).filter(x=>!applicationPattern.test(String(x)));
+  const steps=workshopSteps.map((x,i)=>`<li><span>${i+1}</span><div>${esc(x)}</div></li>`).join('')||'<li><div>Noch keine reinen Werkstattschritte vorhanden.</div></li>';
+  const notes=(r.safety_notes||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} – Werkstattbogen</title><style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#182019;font-size:11pt;margin:0;padding-top:17mm}.sheetActions{position:fixed;z-index:99;top:0;left:0;right:0;display:flex;gap:8px;justify-content:flex-end;padding:7px 12px;background:#f7f6f1;border-bottom:1px solid #dcdedb}.sheetActions button{width:auto;border:1px solid #dcdedb;border-radius:9px;padding:8px 12px;background:#fff;color:#182019;font-weight:700}.sheetActions .primary{background:#183327;color:#fff}h1{font-size:22pt;margin:0 0 4mm}h2{font-size:15pt;border-bottom:1px solid #bbb;padding-bottom:2mm;margin:8mm 0 4mm}p{line-height:1.4}.top{display:grid;grid-template-columns:1fr 52mm;gap:8mm;align-items:start}.top img{width:52mm;height:40mm;object-fit:cover;border:1px solid #ccc}.meta{font-size:9pt;color:#666}.dims{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 6mm}.dim{padding:2mm 0;border-bottom:1px solid #ddd}table{width:100%;border-collapse:collapse;font-size:9.5pt}th,td{border-bottom:1px solid #ccc;padding:2.2mm;text-align:left;vertical-align:top}th{background:#f0f2f0}ol{list-style:none;padding:0;margin:0}ol li{display:grid;grid-template-columns:9mm 1fr;gap:3mm;margin:0 0 4mm;page-break-inside:avoid}ol li span{width:8mm;height:8mm;border-radius:50%;background:#183327;color:#fff;display:grid;place-items:center;font-weight:bold;font-size:9pt}.section{page-break-inside:auto}@media print{body{padding-top:0}.sheetActions{display:none}}</style></head><body><div class="sheetActions"><button onclick="if(window.opener){window.close()}else{history.back()}">Zurück zur App</button><button class="primary" onclick="window.print()">Drucken / PDF</button></div><div class="top"><div><div class="meta">look, talk ’n build · Werkstattbogen · ${esc(APP_VERSION)}</div><h1>${title}</h1><p>${desc}</p>${dims.length?`<h2>Hauptmaße</h2><div class="dims">${dims.map(x=>`<div class="dim">${x}</div>`).join('')}</div>`:''}</div>${image?`<img src="${image}" alt="Projektfoto">`:''}</div><section class="section"><h2>Zuschnitt- / Materialliste</h2>${cut}</section>${purchased?`<section class="section"><h2>Zukaufteile / Einkaufsliste</h2>${purchased}</section>`:''}<section class="section"><h2>Step by Step</h2><ol>${steps}</ol></section>${notes?`<section class="section"><h2>Wichtige Hinweise</h2><ul>${notes}</ul></section>`:''}</body></html>`;
+}
+function printWorkshopSheet(){const w=window.open('','_blank');if(!w)return alert('Der Werkstattbogen konnte nicht geöffnet werden. Bitte Pop-ups für diese Seite erlauben.');w.document.open();w.document.write(workshopSheetHtml());w.document.close()}
+$('#printWorkshopSheet').onclick=printWorkshopSheet;
+
+
+function isGenericProjectTitle(v=''){return /^(mein projekt|projekt|unbenanntes projekt)$/i.test(String(v).trim())}
+$('#applyProjectMeta').onclick=async()=>{
+  const t=$('#projectTitleEdit').value.trim(),d=$('#projectDescriptionEdit').value.trim();
+  current.customTitle=t;current.customDescription=d;
+  renderRecord();await saveCurrent(true);alert('Titel und Beschreibung gespeichert.');
+};
+$('#saveProject').onclick=async()=>{
+  const visibleTitle=($('#projectTitleEdit')?.value||current.customTitle||current.title||'').trim();
+  if(isGenericProjectTitle(visibleTitle)){
+    const better=prompt('Der Projekttitel ist noch sehr allgemein. Möchtest du ihn jetzt genauer benennen?',visibleTitle);
+    if(better!==null&&better.trim()){current.customTitle=better.trim();if($('#projectTitleEdit'))$('#projectTitleEdit').value=current.customTitle;}
+  }
+  if($('#projectDescriptionEdit'))current.customDescription=$('#projectDescriptionEdit').value.trim();
+  await saveCurrent();renderRecord();
+};$('#exportCurrentProject').onclick=async()=>{await saveCurrent(true);await exportProject(current)};$('#newProject').onclick=()=>show('start');
+document.addEventListener('click',async e=>{
+  if(e.target?.classList.contains('openP'))await loadProject(e.target.dataset.id);
+  if(e.target?.classList.contains('exportP')){const p=await dbGetProject(e.target.dataset.id);if(p)await exportProject(p)}
+  if(e.target?.id==='confirmImportProject')await importPendingProject();
+  if(e.target?.id==='cancelImportProject'){pendingImport=null;$('#importPreview').classList.add('hidden');$('#importProjectInput').value=''}
+  if(e.target?.classList.contains('delP')){if(confirm('Projekt wirklich löschen?')){await dbDeleteProject(e.target.dataset.id);await updateSaved();await renderProjects()}}
+});
+(async()=>{await loadProfile();await migrateLegacyProjects();await updateSaved()})();updateSpeechFloatVisibility();autoGrowChatInput();/* Preview does not register a service worker. */
+</script>
+</body>
+</html>
