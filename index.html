@@ -42,9 +42,13 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 .ideaMoreBox{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.ideaMoreBox .composerActions{margin-top:8px}
 
 .purchaseGrid{display:grid;grid-template-columns:1fr;gap:10px}.purchaseCard{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.purchaseCard strong{display:block;margin-bottom:5px}.purchaseMeta{font-size:12px;color:var(--muted);line-height:1.45}.purchaseForm{display:grid;grid-template-columns:1fr 1fr;gap:10px}.purchaseForm .wide{grid-column:1/-1}.purchaseActions{display:flex;gap:8px;flex-wrap:wrap}.purchaseActions button{width:auto}.purchaseLink{word-break:break-all}@media(max-width:620px){.purchaseForm{grid-template-columns:1fr}.purchaseForm .wide{grid-column:auto}}
+
+#secureGate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:16px;background:#ecf2f6}#secureGate.hidden{display:none}#secureGate .cardGate{background:white;padding:32px;border-radius:22px;width:min(100%,520px);box-shadow:0 18px 60px #21354420}#secureGate h1{color:#293f50}#secureGate p{color:#4b626e}#secureGate label{display:block;font-weight:bold;margin-top:20px}#secureGate input{margin:8px 0}#secureGate .gateStatus{font-weight:650}#secureGate .gateError{color:#a43624}
 </style>
 </head>
 <body>
+<section id="secureGate" aria-label="Tester-Anmeldung"><div class="cardGate"><div class="eyebrow">Geschützter Testzugang · 0.9.20c</div><h1>look,<br>talk ’n<br>build</h1><p>Bitte deinen persönlichen Tester-Code eingeben. Er bleibt nur während dieser Sitzung im Arbeitsspeicher.</p><form id="secureLogin" autocomplete="off"><label for="secureCode">Tester-Zugangscode</label><input id="secureCode" type="password" minlength="24" maxlength="256" required autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Code eingeben oder einfügen"><button type="submit" class="primary" id="secureSubmit">Anmelden</button></form><p id="secureStatus" class="gateStatus" role="status" aria-live="polite"></p></div></section>
+
 <header><div class="headerRow"><div><div class="brand">look, talk ’n build</div><div class="claim">Sehen. Fachsimpeln. Bauen. <span class="by">· by HOBBYWOOD</span></div></div><nav class="topNav" aria-label="Hauptnavigation"><button id="navStart" class="navBtn on" type="button">Start</button><button id="navProjects" class="navBtn" type="button">Meine Projekte</button><button id="navProfile" class="navBtn" type="button">Meine Werkstatt</button><button id="navTalk" class="navBtn" type="button" disabled>Werkstatt-Talk</button></nav></div></header>
 <main>
 <section id="start" class="screen active">
@@ -175,9 +179,32 @@ dialog{border:0;border-radius:16px;padding:0;max-width:min(92vw,900px);backgroun
 <button id="backFloatBtn" class="backFloat hiddenBack" type="button" title="Zur vorherigen Ansicht" aria-label="Zur vorherigen Ansicht">‹ Zurück</button>
 <button id="speechFloatBtn" class="secondary speechFloat hiddenSpeech" type="button" title="Sprache an Cursorposition einfügen" aria-label="Sprache an Cursorposition einfügen">🎙</button>
 <script>
-const API='https://look-n-build-backend.onrender.com';
+const API='https://look-n-build-test-secure.onrender.com';
+let secureCode=null;
+const secureGate=document.getElementById('secureGate'),secureStatus=document.getElementById('secureStatus');
+function secureLogout(text='Bitte erneut anmelden.'){secureCode=null;secureGate.classList.remove('hidden');secureStatus.textContent=text;}
+document.getElementById('secureLogin').addEventListener('submit',async e=>{
+  e.preventDefault();const input=document.getElementById('secureCode'),btn=document.getElementById('secureSubmit');
+  const proposed=input.value.trim();input.value='';btn.disabled=true;secureStatus.classList.remove('gateError');
+  secureStatus.textContent='Prüfung läuft. Ein kostenloser Server kann bis zu einer Minute zum Starten benötigen.';
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),95000);
+  try{
+    const r=await fetch(API+'/__auth_probe',{method:'POST',headers:{Authorization:'Bearer '+proposed,'Content-Type':'application/json'},body:'{}',cache:'no-store',signal:controller.signal});
+    if(r.status===404){secureCode=proposed;secureGate.classList.add('hidden');secureStatus.textContent='';}
+    else if(r.status===401){secureStatus.classList.add('gateError');secureStatus.textContent='Code nicht erkannt. Bitte erneut eingeben.';}
+    else{secureStatus.classList.add('gateError');secureStatus.textContent='Serverantwort: HTTP '+r.status+'. Bitte später erneut versuchen.';}
+  }catch{secureStatus.classList.add('gateError');secureStatus.textContent='Server nicht erreichbar. Bitte später erneut versuchen.';}
+  finally{clearTimeout(timer);btn.disabled=false;}
+});
+async function secureFetch(url,options={}){
+  if(!secureCode){secureLogout('Bitte zuerst anmelden.');throw Error('Anmeldung erforderlich.');}
+  const r=await fetch(url,{...options,headers:{...(options.headers||{}),Authorization:'Bearer '+secureCode}});
+  if(r.status===401){secureLogout('Zugang nicht mehr gültig. Bitte erneut anmelden.');throw Error('Zugang abgelaufen.');}
+  return r;
+}
+
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const APP_VERSION='0.9.20a';
+const APP_VERSION='0.9.20c-secure';
 let projectFilter='all';
 const LEGACY_STORAGE='look_talk_n_build_projects_0_8', PROFILE='look_talk_n_build_profile_0_8', TESTER_ID='look_talk_n_build_tester_id';
 const DB_NAME='look_talk_n_build_db', DB_VERSION=2, PROJECT_STORE='projects', SETTINGS_STORE='settings';
@@ -624,7 +651,7 @@ async function startSketch(file,returnScreen='record'){
   pendingSketch={id:newId(),name:file.name||'Handskizze',dataUrl,addedAt:new Date().toISOString(),analysis:null};
   show('sketchWorking');$('#sketchBar').style.width='35%';setTimeout(()=>$('#sketchBar').style.width='72%',350);
   try{
-    const r=await fetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()})});
+    const r=await secureFetch(API+'/sketch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,knowledge:current.knowledge||'',analysis:current.analysis||{},profile:profilePayload()})});
     if(!r.ok)throw Error(await r.text());
     pendingSketch.analysis=await r.json();pendingSketch.drawing=null;
     $('#sketchBar').style.width='100%';setTimeout(renderSketchReview,180);
@@ -654,7 +681,7 @@ $('#refineSketch').onclick=async()=>{
   if(!answers.length)return alert('Bitte mindestens eine Angabe bestätigen oder korrigieren.');
   applyDimensionEdits();btn.disabled=true;btn.textContent='Angaben werden geprüft …';
   try{
-    const r=await fetch(API+'/sketch/refine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    const r=await secureFetch(API+'/sketch/refine',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       image:pendingSketch.dataUrl,
       previous:pendingSketch.analysis||{},
       confirmations:answers,
@@ -694,11 +721,11 @@ $('#cancelSketch').onclick=()=>{pendingSketch=null;show(sketchReturnScreen)};
 ['sketchInputDevelop'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'develop'));
 ['recordSketchCamera','recordSketchLibrary','talkSketchInput'].forEach(id=>$('#'+id).onchange=e=>startSketch(e.target.files?.[0],'record'));
 
-async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await fetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
+async function analyze(fromDetail=false){current.knowledge=(current.mode==='develop'?$('#developText').value:$('#knowledge').value).trim()||current.knowledge;if(!current.photos.length&&!current.knowledge)return alert('Bitte Foto oder Beschreibung ergänzen.');show('analyzing');$('#bar').style.width='38%';setTimeout(()=>$('#bar').style.width='72%',350);try{const r=await secureFetch(API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,previousState:current.analysis,chat:current.chat,round:current.round,profile:profilePayload(),sketches:sketchContext()})});if(!r.ok)throw Error(await r.text());current.analysis=await r.json();current.round++;$('#bar').style.width='100%';setTimeout(renderAnalysis,200)}catch(e){alert('Analyse fehlgeschlagen: '+e.message);show(current.mode==='develop'?'develop':'photos')}}
 $('#analyzeBtn').onclick=()=>analyze();$('#developGo').onclick=()=>analyze();
 function renderAnalysis(){const a=current.analysis||{},list=(t,x,c='')=>`<h3>${t}</h3>${(x||[]).map(v=>`<div class="status"><span class="dot ${c}"></span><div>${esc(v)}</div></div>`).join('')||'<p>Keine Angaben.</p>'}`;$('#analysisCard').innerHTML=`<h2 style="margin-top:0">${esc(a.object||'Projekt')}</h2><p>${esc(a.summary||'')}</p>${list('Erkannt',a.recognized)}${list('Vermutet',a.assumptions,'mid')}${list('Offen',a.unknown,'unknown')}`;const nr=a.next_request||{},enough=a.enough_information===true||nr.type==='done'||current.round>=4;$('#acceptAnalysis').classList.remove('hidden');if(enough){$('#nextRequest').classList.add('hidden');$('#detailPhotoActions').classList.add('hidden')}else{$('#nextRequest').textContent=nr.prompt||'Was sollten wir noch klären?';$('#nextRequest').classList.remove('hidden');$('#detailPhotoActions').classList.toggle('hidden',nr.type!=='detail_photo')}show('analysis')}
 $('#acceptAnalysis').onclick=()=>show('ready');$('#talkFirst').onclick=()=>{current.reconstruction=current.reconstruction||{title:current.analysis?.object,summary:current.analysis?.summary};renderRecord();show('record');switchTab('talkPane')};
-async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await fetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
+async function reconstruct(){show('reconstructing');$('#bar2').style.width='35%';setTimeout(()=>$('#bar2').style.width='72%',400);try{const r=await secureFetch(API+'/reconstruct',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis:current.analysis,images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,chat:current.chat,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());current.reconstruction=await r.json();current.title=current.reconstruction.title;$('#bar2').style.width='100%';setTimeout(()=>{renderRecord();show('record')},220)}catch(e){alert('Mein Projekt konnte nicht erstellt werden: '+e.message);show('ready')}}
 $('#reconstructBtn').onclick=reconstruct;$('#refreshProject').onclick=reconstruct;
 function renderTable(items){if(!items?.length)return '<p>Keine Angaben.</p>';return `<table><tr><th>Bauteil / Material</th><th>Menge</th><th>Angabe</th></tr>${items.map(x=>`<tr><td>${esc(x.item||x.name||'')}</td><td>${esc(x.quantity||'')}</td><td>${esc(x.spec||x.details||'')}</td></tr>`).join('')}</table>`}
 function normalizePurchasedPart(x={}){return {id:x.id||newId(),item:String(x.item||x.name||'').trim(),supplier:String(x.supplier||x.vendor||x.brand||'').trim(),product:String(x.product||x.article||'').trim(),quantity:String(x.quantity||x.qty||'').trim(),dimensions:String(x.dimensions||x.size||'').trim(),use:String(x.use||x.purpose||x.note||'').trim(),link:String(x.link||x.url||'').trim(),source:String(x.source||'manual').trim()}}
@@ -799,7 +826,7 @@ function blobToDataUrlSimple(blob){return new Promise((resolve,reject)=>{const r
 async function transcribeSpeech(blob){
   setSpeechUi(false,'Sprache wird in Text umgewandelt …');
   const dataUrl=await blobToDataUrlSimple(blob);
-  const r=await fetch(API+'/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:dataUrl,language:'de'})});
+  const r=await secureFetch(API+'/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:dataUrl,language:'de'})});
   if(!r.ok){let detail='';try{detail=(await r.json())?.detail||''}catch{}throw Error(detail||'Transkription fehlgeschlagen.')}
   const d=await r.json();
   const transcript=String(d.text||'').trim();
@@ -854,7 +881,7 @@ $('#speechFloatBtn')?.addEventListener('pointerdown',e=>{e.preventDefault();reme
 if($('#backFloatBtn'))$('#backFloatBtn').onclick=goBackView;
 let busy=false;
 function setTalkBusy(on){busy=on;if(on&&speechRecording)stopSpeech();const w=$('#talkWorking'),send=$('#sendChat'),accept=$('#acceptOpenAnswers'),speech=$('#speechBtn'),speechFloat=$('#speechFloatBtn');if(w)w.classList.toggle('on',on);if(send){send.disabled=on;send.textContent=on?'Wird geprüft …':'Beitrag senden'}if(accept)accept.disabled=on;if(speech)speech.disabled=on;if(speechFloat)speechFloat.disabled=on;['talkCameraInput','talkLibraryInput'].forEach(id=>$('#'+id).disabled=on)}
-async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';autoGrowChatInput();setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await fetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;if(Array.isArray(d.purchased_parts_updates))mergePurchasedParts(d.purchased_parts_updates);current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
+async function talk({openAnswers=[]}={}){if(busy)return;const t=$('#chatInput').value.trim(),pics=[...pendingTalkPhotos];if(!t&&!pics.length&&!openAnswers.length)return alert('Bitte Text, Foto oder Antwort ergänzen.');const photoIds=pics.map(p=>p.id);if(pics.length){current.photos.push(...pics);pendingTalkPhotos=[];renderAllPhotos()}const userText=t|| (pics.length?'Foto als Antwort hinzugefügt.':'Antworten zu offenen Punkten.');current.chat.push({role:'user',text:userText,photoIds});$('#chatInput').value='';autoGrowChatInput();setTalkBusy(true);renderTalk();setTalkBusy(true);try{const r=await secureFetch(API+'/talk',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({images:current.photos.map(p=>p.dataUrl),knowledge:current.knowledge,analysis:current.analysis||{},chat:current.chat,openAnswers,profile:profilePayload(),sketches:sketchContext(),purchasedParts:current.purchasedParts||[]})});if(!r.ok)throw Error(await r.text());const d=await r.json();if(d.analysis)current.analysis=d.analysis;if(Array.isArray(d.purchased_parts_updates))mergePurchasedParts(d.purchased_parts_updates);current.chat.push({role:'assistant',text:d.reply||'Projektstand aktualisiert.',calculation:d.calculation||null});current.reconstruction=null;renderRecord();switchTab('talkPane');await saveCurrent(true)}catch(e){alert('Werkstatt-Talk fehlgeschlagen: '+e.message)}finally{setTalkBusy(false)}}
 $('#sendChat').onclick=()=>talk();document.addEventListener('click',e=>{if(e.target?.id==='acceptOpenAnswers'){const u=(current.analysis?.unknown||[]).slice(0,3);const answers=$$('.openAnswer').map(el=>({question:u[+el.dataset.i],answer:el.value.trim()})).filter(x=>x.answer);talk({openAnswers:answers})}});
 
 $('#addPurchasedPart').onclick=async()=>{const part=normalizePurchasedPart({item:$('#purchaseItem').value,supplier:$('#purchaseSupplier').value,product:$('#purchaseProduct').value,quantity:$('#purchaseQty').value,dimensions:$('#purchaseDimensions').value,use:$('#purchaseUse').value,link:$('#purchaseLink').value,source:'manual'});if(!part.item)return alert('Bitte eine Bezeichnung für das Zukaufteil eingeben.');mergePurchasedParts([part]);['purchaseItem','purchaseSupplier','purchaseProduct','purchaseQty','purchaseDimensions','purchaseUse','purchaseLink'].forEach(id=>$('#'+id).value='');renderPurchasedParts();await saveCurrent(true)};
@@ -869,7 +896,7 @@ async function requestIdeas({refine=false}={}){
   const brief=currentIdeaBrief(),feedback=$('#ideaFeedback')?.value.trim()||'';
   $('#ideaResults').innerHTML='<div class="notice">Ich entwickle passende Projektideen …</div>';
   try{
-    const r=await fetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload(),rejectedIdeas,feedback,refine})});
+    const r=await secureFetch(API+'/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brief,profile:profilePayload(),rejectedIdeas,feedback,refine})});
     if(!r.ok)throw Error(await r.text());const d=await r.json();renderIdeaResults(d.ideas||[]);
   }catch(e){$('#ideaResults').innerHTML=`<div class="danger notice">Ideen konnten nicht erstellt werden: ${esc(e.message)}</div>`}
 }
